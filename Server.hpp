@@ -21,6 +21,8 @@ class	Server
 					Server(void);
 					
 					~Server(void);
+			int		start(void);
+			void		handleClient(int socket);
 };
 
 #endif

@@ -13,6 +13,18 @@
 			_addrServer.sin_port = htons(6667);
 			bind(_socketServer, (const struct sockaddr *)&_addrServer, sizeof(_addrServer));
 			listen(_socketServer, 2);
+			
+
+		}
+
+		Server::~Server(void)
+		{
+			close(_socketServer);
+			close(_socketClient);
+		}
+
+int		Server::start(void)
+		{
 			while (1)
 			{
 				_clientSize = sizeof(_addrClient);
@@ -21,13 +33,20 @@
 				if (_socketClient >= 0)
 				{
 					std::cout << "connected" << std::endl;
+					_clients.push_back(std::thread(&Server::handleClient, _socketClient));
+					_clients.end()->join();
 				}
 			}
-
 		}
 
-		Server::~Server(void)
+void		Server::handleClient(int socket)
 		{
-			close(_socketServer);
-			close(_socketClient);
+			char	buffer[50];
+
+			send(socket, "Bienvenu\n", 9, 0);
+			while (1)
+			{
+				recv(socket, buffer, 50, 0);
+				std::cout << buffer << std::endl;
+			}
 		}
