@@ -1,6 +1,6 @@
 NAME	= ircserv
 
-SRCS	= User.cpp main.cpp 
+SRCS	= User.cpp main.cpp Server.cpp
 
 CC		= c++
 
@@ -8,7 +8,7 @@ OBJS	= $(SRCS:.cpp=.o)
 
 DEPS	= $(OBJS:.o=.d)
 
-CFLAGS	= -Wall -Wextra -Werror -std=c++98 -MMD -g3
+CFLAGS	= -Wall -Wextra -Werror -MMD -g3
 
 IFLAGS	= #put includes -Iincludes here
 

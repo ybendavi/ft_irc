@@ -13,7 +13,7 @@
 #include "User.hpp"
 
 User::User(void) : _isOperator(false), _isInvisible(false),
-					_isWallopable(true)
+					_isWallopable(true), online(true)
 { }
 
 User::User(const User &ref)
@@ -45,6 +45,8 @@ bool		User::getInv(void) const { return (this->_isInvisible); }
 bool		User::getWal(void) const { return (this->_isWallopable); }
 
 std::string	User::getRealname(void) const { return (this->_realname); }
+
+std::string	User::getUsername(void) const { return (this->_username); }
 
 std::string	User::getNickname(void) const { return (this->_nickname); }
 		
@@ -78,6 +80,12 @@ void		User::setNickname(std::string s)
 {
 	if (_nickname != s)
 		_nickname = s;
+}
+
+void		User::setUsername(std::string s)
+{
+	if (_username != s)
+		_username = s;
 }
 
 void		User::setPass(std::string s)
