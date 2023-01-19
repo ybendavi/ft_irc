@@ -1,9 +1,11 @@
 #include "Server.hpp"
-#include <thread>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <iostream>
 #include <unistd.h>
+#include <pthread.h>
+#include <string.h>
+#include "Thread.hpp"
 
 		Server::Server(void)
 		{
@@ -23,30 +25,61 @@
 			close(_socketClient);
 		}
 
-int		Server::start(void)
+void		*handleClient(void *server)
 		{
+			char	buffer[50];
+			int	sock;
+			std::string	last;
+			Server	*serv;
+
+			serv = (Server*)server;
+			sock = serv->_socketClient;
+			send(sock, "Bienvenu\n", 9, 0);
+			pthread_mutex_lock(&(serv->protect_messages));
+			last = "";
+			if (!serv->messages.empty())
+				last = *(serv->messages.end() - 1);
+			pthread_mutex_unlock(&(serv->protect_messages));
 			while (1)
 			{
-				_clientSize = sizeof(_addrClient);
-				_socketClient = accept(_socketServer, (struct sockaddr *)&_addrClient, &_clientSize);
-								
-				if (_socketClient >= 0)
+				pthread_mutex_lock(&(serv->protect_messages));
+				if (!serv->messages.empty())
 				{
-					std::cout << "connected" << std::endl;
-					_clients.push_back(std::thread(&Server::handleClient, _socketClient));
-					_clients.end()->join();
+					if (last.empty() || last.compare(*(serv->messages.end() - 1)) != 0)
+					{
+						last = *(serv->messages.end() - 1);
+						send(sock, last.c_str(), 50, 0);
+						std::cout << last << std::endl;
+					}
+				}
+				pthread_mutex_unlock(&(serv->protect_messages));
+				recv(sock, buffer, 50, 0);
+				if (buffer[0])
+				{
+					pthread_mutex_lock(&(serv->protect_messages));
+					serv->messages.push_back(buffer);
+					pthread_mutex_unlock(&(serv->protect_messages));
+					bzero(buffer, 50);
 				}
 			}
 		}
 
-void		Server::handleClient(int socket)
+int		Server::start(void)
 		{
-			char	buffer[50];
-
-			send(socket, "Bienvenu\n", 9, 0);
+			_clientSize = sizeof(_addrClient);
+			pthread_mutex_init(&protect_messages, NULL);
+			pthread_mutex_init(&protect_socket, NULL);
 			while (1)
 			{
-				recv(socket, buffer, 50, 0);
-				std::cout << buffer << std::endl;
+			_socketClient = accept(_socketServer, (struct sockaddr *)&_addrClient, &_clientSize);
+								
+				if (_socketClient >= 0)
+				{
+					std::cout << "connected" << std::endl;
+					_clients.push_back(Thread(handleClient, (void *)this));
+					(*(_clients.end())).join();
+				}
 			}
 		}
+
+
