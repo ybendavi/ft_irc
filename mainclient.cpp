@@ -27,8 +27,5 @@ int	main()
 		bzero(buffer, 50);
 		std::cin >> s;
 		send(sock, s.c_str(), s.size(), 0);
-		recv(sock, buffer, 50, 0);
-		if (buffer[0])
-			std::cout << buffer << std::endl;
 	}
 }
