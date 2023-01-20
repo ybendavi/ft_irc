@@ -4,6 +4,7 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <sys/types.h>
+#include <stdio.h>
 
 class	Client
 {
@@ -15,6 +16,8 @@ class	Client
 							Client(int socket_server);
 							~Client(void);
 				int			getSocket(void) const;
+				int			sende(const void *buffer, int size);
+				int			recve(void *buffer, int size);
 };
 
 #endif

@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <pthread.h>
 #include <string.h>
+#include <stdio.h>
 #include "Thread.hpp"
 #include "Client.hpp"
 
@@ -14,7 +15,7 @@
 			_addrServer.sin_family = AF_INET;
 			_addrServer.sin_addr.s_addr = htonl(INADDR_ANY);
 			_addrServer.sin_port = htons(6667);
-			bind(_socketServer, (const struct sockaddr *)&_addrServer, sizeof(_addrServer));
+			std::cout << bind(_socketServer, (const struct sockaddr *)&_addrServer, sizeof(_addrServer)) << std::endl;
 			listen(_socketServer, 10);
 			
 
@@ -35,7 +36,8 @@ void		*handleClient(void *server)
 			serv = (Server*)server;
 			sock = (*(serv->_socketClient.end() - 1)).getSocket();
 			std::cout << sock << std::endl;
-			send(sock, "Bienvenu\n", 9, 0);
+			std::cout << send(sock, "Bienvenu\n", 9, 0) << std::endl;
+			perror(NULL);
 			pthread_mutex_lock(&(serv->protect_messages));
 			last = "";
 			bzero(buffer, 50);
@@ -73,10 +75,12 @@ int		Server::start(void)
 			while (1)
 			{
 			_socketClient.push_back(Client(_socketServer));
+			(*(_socketClient.end() - 1)).sende("coucou\n", 7);
 				if ((*(_socketClient.end() - 1)).getSocket() >= 0)
 				{
 					std::cout << (*(_socketClient.end() - 1)).getSocket() << std::endl;
 					_clients.push_back(Thread(handleClient, (void *)this));
+					(*(_clients.end() - 1)).detach();
 				}
 			}
 		}
