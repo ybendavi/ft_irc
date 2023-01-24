@@ -8,6 +8,8 @@
 #include <string>
 #include <string.h>
 #include <stdio.h>
+#include <fcntl.h>
+
 int	main()
 {
 	int sock;
@@ -16,16 +18,21 @@ int	main()
 	std::string	s;
 
 	sock = socket(AF_INET, SOCK_STREAM, 0);
+	fcntl(_socketServer, F_SETFL, O_NONBLOCK);
 	client.sin_family = AF_INET;
-	client.sin_addr.s_addr = htonl(0.0.0.0);
+	client.sin_addr.s_addr = htonl(INADDR_ANY);
 	client.sin_port = htons(6667);
 	connect(sock, (struct sockaddr *)&client, sizeof(client));
 	std::cout << recv(sock, buffer, 50, 0) << std::endl;
 	std::cout << buffer << std::endl;
 	while (1)
 	{
-		bzero(buffer, 50);
-		std::cin >> s;
-		send(sock, s.c_str(), s.size(), 0);
+		s.clear();
+		while (s.size() == 0)
+		{
+			if (std::getline(std::cin, s).eof())
+				std::cout << "EOF reached" << std::endl;
+		}
+		send(sock, s.c_str(), s.size() + 1, 0);
 	}
 }

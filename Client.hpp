@@ -13,7 +13,7 @@ class	Client
 			struct sockaddr_in	_addr;
 	public:
 							Client(void);
-							Client(int socket_server);
+							Client(int socket_server, int socket_client);
 							~Client(void);
 				int			getSocket(void) const;
 				int			sende(const void *buffer, int size);

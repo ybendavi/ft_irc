@@ -5,8 +5,6 @@
 #include <netinet/in.h>
 #include <pthread.h>
 #include <vector>
-#include "Client.hpp"
-#include "Thread.hpp"
 
 class	Server
 {
@@ -14,17 +12,18 @@ class	Server
 			int				_socketServer;
 			socklen_t				_clientSize;
 			struct sockaddr_in		_addrServer;
-			std::vector<Thread>		_clients;
+//			int				_socketClient;
+			struct sockaddr			_addrClient;
 
 
 	public:
 			std::vector<std::string>		messages;
-			pthread_mutex_t			protect_messages;
-			std::vector<Client>		_socketClient;
+			std::vector<int>			socket_clients;
 					Server(void);
 					
 					~Server(void);
 			int		start(void);
+			int		handleClient(void);
 };
 
 #endif

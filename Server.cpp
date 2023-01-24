@@ -4,19 +4,19 @@
 #include <iostream>
 #include <unistd.h>
 #include <pthread.h>
+#include <fcntl.h>
 #include <string.h>
 #include <stdio.h>
-#include "Thread.hpp"
-#include "Client.hpp"
 
 		Server::Server(void)
 		{
 			_socketServer = socket(AF_INET, SOCK_STREAM, 0);
+			fcntl(_socketServer, F_SETFL, O_NONBLOCK);
 			_addrServer.sin_family = AF_INET;
 			_addrServer.sin_addr.s_addr = htonl(INADDR_ANY);
 			_addrServer.sin_port = htons(6667);
 			std::cout << bind(_socketServer, (const struct sockaddr *)&_addrServer, sizeof(_addrServer)) << std::endl;
-			listen(_socketServer, 10);
+			listen(_socketServer, 5);
 			
 
 		}
@@ -26,62 +26,49 @@
 			close(_socketServer);
 		}
 
-void		*handleClient(void *server)
+int		Server::handleClient(void)
 		{
+			size_t	i;
+			size_t	j;
 			char	buffer[50];
-			int	sock;
-			std::string	last;
-			Server	*serv;
 
-			serv = (Server*)server;
-			sock = (*(serv->_socketClient.end() - 1)).getSocket();
-			std::cout << sock << std::endl;
-			std::cout << send(sock, "Bienvenu\n", 9, 0) << std::endl;
-			perror(NULL);
-			pthread_mutex_lock(&(serv->protect_messages));
-			last = "";
-			bzero(buffer, 50);
-			if (!serv->messages.empty())
-				last = *(serv->messages.end() - 1);
-			pthread_mutex_unlock(&(serv->protect_messages));
-			while (1)
+			i = 0;
+			while (i < socket_clients.size())
 			{
-				pthread_mutex_lock(&(serv->protect_messages));
-				if (!serv->messages.empty())
+				if (recv(socket_clients[i], buffer, 50, MSG_DONTWAIT) > 0)
 				{
-					if (last.empty() || last.compare(*(serv->messages.end() - 1)) != 0)
+					//std::cout << buffer << std::endl;
+					j = 0;
+					messages.push_back(std::string(buffer));
+					while (j < socket_clients.size())
 					{
-						last = *(serv->messages.end() - 1);
-						send(sock, last.c_str(), 50, 0);
-						std::cout << last << std::endl;
+						if (j != i)
+							send(socket_clients[j], (*(messages.end() - 1)).c_str(), (*(messages.end() - 1)).size(), 0);
+						j++;
 					}
-				}
-				pthread_mutex_unlock(&(serv->protect_messages));
-				recv(sock, buffer, 50, 0);
-				if (buffer && buffer[0])
-				{
-				std::cout << "1";				
-					pthread_mutex_lock(&(serv->protect_messages));
-					serv->messages.push_back(buffer);
-					pthread_mutex_unlock(&(serv->protect_messages));
 					bzero(buffer, 50);
 				}
+				i++;
 			}
+			return (0);
 		}
 
 int		Server::start(void)
 		{
-			pthread_mutex_init(&protect_messages, NULL);
+			int	socket;
+
+			_clientSize = sizeof(_addrClient);
 			while (1)
 			{
-			_socketClient.push_back(Client(_socketServer));
-			(*(_socketClient.end() - 1)).sende("coucou\n", 7);
-				if ((*(_socketClient.end() - 1)).getSocket() >= 0)
+				socket = accept(_socketServer, (struct sockaddr* )&_addrClient, &_clientSize);
+				if (socket > 0)
 				{
-					std::cout << (*(_socketClient.end() - 1)).getSocket() << std::endl;
-					_clients.push_back(Thread(handleClient, (void *)this));
-					(*(_clients.end() - 1)).detach();
+					send(socket, "Bienvenue ma poule!", 20, 0);
+					socket_clients.push_back(socket);
+					std::cout << "Client with fd number " << *(socket_clients.end() - 1) << " was created." << std::endl;
 				}
+				handleClient();
+						
 			}
 		}
 
