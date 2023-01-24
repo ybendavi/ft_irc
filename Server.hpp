@@ -41,7 +41,7 @@ class	Server
 
 	private :
 
-		std::vector<User>				_users;
+		std::vector<User>				_users; //might become map 
 		static int						_nbUsers = 0;
 
 	public:
