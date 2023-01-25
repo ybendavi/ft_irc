@@ -1,4 +1,5 @@
 #include "Server.hpp"
+#include "Replies.hpp"
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <iostream>
@@ -14,7 +15,7 @@
 			fcntl(_socketServer, F_SETFL, O_NONBLOCK);
 			_addrServer.sin_family = AF_INET;
 			_addrServer.sin_addr.s_addr = htonl(INADDR_ANY);
-			_addrServer.sin_port = htons(6667);
+			_addrServer.sin_port = htons(6668);
 			std::cout << bind(_socketServer, (const struct sockaddr *)&_addrServer, sizeof(_addrServer)) << " bind" << std::endl;
 			listen(_socketServer, 5);
 			
@@ -30,23 +31,57 @@ int		Server::handleClient(void)
 		{
 			size_t	i;
 			size_t	j;
-			char	buffer[50];
+			char	buffer[512];
 
 			i = 0;
 			while (i < socket_clients.size())
 			{
-				if (recv(socket_clients[i], buffer, 50, MSG_DONTWAIT) > 0)
+				if (recv(socket_clients[i], buffer, 512, MSG_DONTWAIT) > 0)
 				{
 					j = 0;
 					messages.push_back(std::string(buffer));
-					std::cout << (*(messages.end() - 1)) << std::endl;
-					while (j < socket_clients.size())
-					{
-						if (j != i)
-							send(socket_clients[j], (*(messages.end() - 1)).c_str(), (*(messages.end() - 1)).size() + 1, 0);
-						j++;
-					}
-					bzero(buffer, 50);
+					std::cout << buffer << std::endl;
+					bzero(buffer, 512);
+				}
+
+				send(socket_clients[i], RPL_WELCOME, sizeof(RPL_WELCOME), 0);
+				
+				if (recv(socket_clients[i], buffer, 512, MSG_DONTWAIT) > 0)
+				{
+					j = 0;
+					messages.push_back(std::string(buffer));
+					std::cout << buffer << std::endl;
+					bzero(buffer, 512);
+				}
+
+				send(socket_clients[i], RPL_YOURHOST, sizeof(RPL_YOURHOST), 0);
+				
+				if (recv(socket_clients[i], buffer, 512, MSG_DONTWAIT) > 0)
+				{
+					j = 0;
+					messages.push_back(std::string(buffer));
+					std::cout << buffer << std::endl;
+					bzero(buffer, 512);
+				}
+
+				send(socket_clients[i], RPL_CREATED, sizeof(RPL_CREATED), 0);
+				
+				if (recv(socket_clients[i], buffer, 512, MSG_DONTWAIT) > 0)
+				{
+					j = 0;
+					messages.push_back(std::string(buffer));
+					std::cout << buffer << std::endl;
+					bzero(buffer, 512);
+				}
+
+				send(socket_clients[i], RPL_MYINFO, sizeof(RPL_MYINFO), 0);
+					
+				if (recv(socket_clients[i], buffer, 512, MSG_DONTWAIT) > 0)
+				{
+					j = 0;
+					messages.push_back(std::string(buffer));
+					std::cout << buffer << std::endl;
+					bzero(buffer, 512);
 				}
 				i++;
 			}
@@ -63,7 +98,7 @@ int		Server::start(void)
 				socket = accept(_socketServer, (struct sockaddr* )&_addrClient, &_clientSize);
 				if (socket > 0)
 				{
-					send(socket, "Bienvenue ma poule!", 20, 0);
+					std::cout << "coucou" << std::endl;
 					socket_clients.push_back(socket);
 					std::cout << "Client with fd number " << *(socket_clients.end() - 1) << " was created." << std::endl;
 				}
