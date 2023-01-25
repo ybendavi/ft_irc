@@ -6,7 +6,7 @@
 /*   By: ccottin <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/24 18:28:25 by ccottin           #+#    #+#             */
-/*   Updated: 2023/01/24 19:17:03 by ccottin          ###   ########.fr       */
+/*   Updated: 2023/01/25 16:18:24 by ccottin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ Message::~Message(void)
 Message::Message(const User &Sender, const User &Receiver,
 			const std::string content, const std::string command)
 	: _sender(Sender), _receiver(Receiver), _content(content),
-			_command(ommand)
+			_command(command)
 { }
 
 Message	&Message::operator=(const Message &ref)

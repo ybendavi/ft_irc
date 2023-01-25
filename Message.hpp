@@ -6,7 +6,7 @@
 /*   By: ccottin <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/24 18:26:30 by ccottin           #+#    #+#             */
-/*   Updated: 2023/01/24 21:44:31 by ccottin          ###   ########.fr       */
+/*   Updated: 2023/01/25 15:57:55 by ccottin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,7 @@ class	Message {
 		std::string	  _content;
 		std::string	  _command;
 		std::string	  _prefix;
-
-
+		std::string	* _params;
 
 };
 
