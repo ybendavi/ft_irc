@@ -15,7 +15,7 @@
 			_addrServer.sin_family = AF_INET;
 			_addrServer.sin_addr.s_addr = htonl(INADDR_ANY);
 			_addrServer.sin_port = htons(6667);
-			std::cout << bind(_socketServer, (const struct sockaddr *)&_addrServer, sizeof(_addrServer)) << std::endl;
+			std::cout << bind(_socketServer, (const struct sockaddr *)&_addrServer, sizeof(_addrServer)) << " bind" << std::endl;
 			listen(_socketServer, 5);
 			
 
@@ -37,13 +37,13 @@ int		Server::handleClient(void)
 			{
 				if (recv(socket_clients[i], buffer, 50, MSG_DONTWAIT) > 0)
 				{
-					//std::cout << buffer << std::endl;
 					j = 0;
 					messages.push_back(std::string(buffer));
+					std::cout << (*(messages.end() - 1)) << std::endl;
 					while (j < socket_clients.size())
 					{
 						if (j != i)
-							send(socket_clients[j], (*(messages.end() - 1)).c_str(), (*(messages.end() - 1)).size(), 0);
+							send(socket_clients[j], (*(messages.end() - 1)).c_str(), (*(messages.end() - 1)).size() + 1, 0);
 						j++;
 					}
 					bzero(buffer, 50);
