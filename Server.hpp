@@ -3,7 +3,7 @@
 
 #include <string>
 #include <netinet/in.h>
-#include <thread>
+#include <pthread.h>
 #include <vector>
 #include "User.hpp"
 
@@ -13,27 +13,20 @@ class	Server
 {
 	private:
 			int				_socketServer;
-			int				_socketClient;
 			socklen_t				_clientSize;
 			struct sockaddr_in		_addrServer;
-			struct sockaddr_in		_addrClient;
-			std::vector<std::thread>	_clients;
+//			int				_socketClient;
+			struct sockaddr			_addrClient;
 
 	public:
+			std::vector<std::string>		messages;
+			std::vector<int>			socket_clients;
 					Server(void);
 					
 					~Server(void);
 			int		start(void);
+
 			void		handleClient(int socket);
-
-
-
-
-
-
-
-
-
 
 
 
@@ -48,6 +41,7 @@ class	Server
 
 		bool	find_Nickname(std::string);
 		bool	find_Username(std::string);
+
 };
 
 #endif
