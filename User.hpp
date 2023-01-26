@@ -30,6 +30,7 @@ class	User {
 		bool		getInv(void) const;
 		bool		getWal(void) const;
 		std::string	getRealname(void) const;
+		std::string	getUsername(void) const;
 		std::string	getNickname(void) const;
 		std::string	getPass(void) const;
 
@@ -37,6 +38,7 @@ class	User {
 		void		setInv(bool);
 		void		setWal(bool);
 		void		setRealname(std::string);
+		void		setUsername(std::string);
 		void		setNickname(std::string);
 		void		setPass(std::string);
 
@@ -48,8 +50,9 @@ class	User {
 		bool		_isOperator;
 		bool		_isInvisible;
 		bool		_isWallopable;
+		bool		_online;
 
-
+		std::string	_username;
 		std::string	_realname;
 		std::string	_nickname; // max nine char
 		std::string	_pass;

@@ -8,7 +8,7 @@ OBJS	= $(SRCS:.cpp=.o)
 
 DEPS	= $(OBJS:.o=.d)
 
-CFLAGS	= -Wall -Wextra -Werror -std=c++98 -MMD -g3
+CFLAGS	= -Wall -Wextra -Werror -MMD -std=c=++98 -g3
 
 IFLAGS	= #put includes -Iincludes here
 
