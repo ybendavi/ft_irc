@@ -30,7 +30,6 @@
 int		Server::handleClient(void)
 		{
 			size_t	i;
-			size_t	j;
 			char	buffer[512];
 
 			i = 0;
@@ -38,7 +37,6 @@ int		Server::handleClient(void)
 			{
 				if (recv(socket_clients[i], buffer, 512, MSG_DONTWAIT) > 0)
 				{
-					j = 0;
 					messages.push_back(std::string(buffer));
 					std::cout << buffer << std::endl;
 					bzero(buffer, 512);
@@ -48,7 +46,6 @@ int		Server::handleClient(void)
 				
 				if (recv(socket_clients[i], buffer, 512, MSG_DONTWAIT) > 0)
 				{
-					j = 0;
 					messages.push_back(std::string(buffer));
 					std::cout << buffer << std::endl;
 					bzero(buffer, 512);
@@ -58,7 +55,6 @@ int		Server::handleClient(void)
 				
 				if (recv(socket_clients[i], buffer, 512, MSG_DONTWAIT) > 0)
 				{
-					j = 0;
 					messages.push_back(std::string(buffer));
 					std::cout << buffer << std::endl;
 					bzero(buffer, 512);
@@ -68,7 +64,6 @@ int		Server::handleClient(void)
 				
 				if (recv(socket_clients[i], buffer, 512, MSG_DONTWAIT) > 0)
 				{
-					j = 0;
 					messages.push_back(std::string(buffer));
 					std::cout << buffer << std::endl;
 					bzero(buffer, 512);
@@ -78,7 +73,6 @@ int		Server::handleClient(void)
 					
 				if (recv(socket_clients[i], buffer, 512, MSG_DONTWAIT) > 0)
 				{
-					j = 0;
 					messages.push_back(std::string(buffer));
 					std::cout << buffer << std::endl;
 					bzero(buffer, 512);
