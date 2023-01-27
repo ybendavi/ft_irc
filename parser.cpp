@@ -13,6 +13,8 @@
 #include <string>
 #include "Message.hpp"
 
+/*  Started; take it back when you actually can get what client send 
+
 //parser receive raw messages, check if its all good, send back appropriate
 //errors/replies and create an apropriate class Message
 
@@ -62,5 +64,5 @@ void	parser(std::string s)
 	if (s[oldpos + 1] == ':')
 		std::string content(s, oldpos, s.size);
 
-	Message	message(
-}
+	Message	message(+ constructors param) 
+} */

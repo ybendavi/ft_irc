@@ -11,9 +11,12 @@
 /* ************************************************************************** */
 
 #include "User.hpp"
+#include <iostream>
+#include <iostream>
+#include <iostream>
 
 User::User(void) : _isOperator(false), _isInvisible(false),
-					_isWallopable(true), online(true)
+					_isWallopable(true), _online(true)
 { }
 
 User::User(const User &ref)
@@ -51,6 +54,8 @@ std::string	User::getUsername(void) const { return (this->_username); }
 std::string	User::getNickname(void) const { return (this->_nickname); }
 		
 std::string	User::getPass(void) const { return (this->_pass); }
+
+std::string	User::getIp(void) const { return (this->_ip); }
 
 void		User::setOp(bool b) 
 { 
@@ -94,4 +99,30 @@ void		User::setPass(std::string s)
 		_pass = s;
 }
 
+void		User::parseUser(char * buffer)
+{
+	std::string	s(buffer);
+	int	i;
+	int	y;
 
+	i = s.find('\r') + 1;
+	std::string	tmp(buffer, 0, i + 1);
+	if (!tmp.compare("CAP LS\r\n"))
+		std::cout << "is good\n";
+	if (s[i] == '\n')
+		std::cout << "is LS\n";
+	i++;
+	i = s.find(' ', i) + 1;
+	y = s.find('\r', i);
+	this->_nickname = s.substr(i, y);
+	i = y + 2;
+	i = s.find(' ', i) + 1;
+	y = s.find(' ', i) - 1;
+	this->_username = s.substr(i, y);
+	i = s.find(' ', y + 2) + 1;
+	y = s.find(' ', i) - 1;
+	this->_ip = s.substr(i, y);
+	i = s.find(':', y) + 1;
+	y = s.find('\r', i) - 1;
+	this->_realname = s.substr(i, y);
+}

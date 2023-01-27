@@ -5,6 +5,8 @@
 #include <netinet/in.h>
 #include <pthread.h>
 #include <vector>
+#include <utility>
+#include <map>
 #include "User.hpp"
 
 #define MAX_USER 10;
@@ -26,16 +28,17 @@ class	Server
 					~Server(void);
 			int		start(void);
 
-			void		handleClient(int socket);
+			int		handleClient(void);
 
+			void	initClient(int socket);
 
 
 			/*handle Users*/
 
 	private :
 
-		std::vector<User>				_users; //might become map 
-		static int						_nbUsers = 0;
+		std::map<std::string, User>		_users;
+		int								_nbUsers;
 
 	public:
 

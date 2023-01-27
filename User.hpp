@@ -25,11 +25,13 @@ class	User {
 		~User(void);
 		User	&operator=(const User &ref);
 
+
 		/*Accessors*/
 		bool		getOp(void) const;
 		bool		getInv(void) const;
 		bool		getWal(void) const;
 		std::string	getRealname(void) const;
+		std::string	getIp(void) const;
 		std::string	getUsername(void) const;
 		std::string	getNickname(void) const;
 		std::string	getPass(void) const;
@@ -42,6 +44,10 @@ class	User {
 		void		setNickname(std::string);
 		void		setPass(std::string);
 
+		/*parser*/
+
+		void		parseUser(char *buffer);
+
 
 	private :
 		
@@ -53,6 +59,7 @@ class	User {
 		bool		_online;
 
 		std::string	_username;
+		std::string _ip;
 		std::string	_realname;
 		std::string	_nickname; // max nine char
 		std::string	_pass;
