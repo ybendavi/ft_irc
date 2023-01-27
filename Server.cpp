@@ -39,8 +39,9 @@ int		Server::handleClient(void)
 			{		
 				if (recv(socket_clients[i], buffer, 512, MSG_DONTWAIT) > 0)
 				{
+					std::cout << "i = " << i << std::endl;
 					messages.push_back(std::string(buffer));
-				//	std::cout << buffer << std::endl;
+					std::cout << buffer << std::endl;
 					bzero(buffer, 512);
 				}
 				i++;
@@ -63,12 +64,16 @@ void	Server::initClient(int socket)
 		<< user.getIp() << " realname= " << user.getRealname() << std::endl;
 	if (tmp.second == true)
 	{
+		if (send(socket, RPL_WELCOME, sizeof(RPL_WELCOME), 0) == -1)
+			std::cout << "err1\n";
+		if (send(socket, RPL_YOURHOST, sizeof(RPL_YOURHOST), 0) == -1)
+			std::cout << "err2\n";
+		if (send(socket, RPL_CREATED, sizeof(RPL_CREATED), 0) == -1)
+			std::cout << "err3\n";
+		if (send(socket, RPL_MYINFO, sizeof(RPL_MYINFO), 0) == -1)
+			std::cout << "err4\n";
 		socket_clients.push_back(socket);
 		std::cout << "Client with fd number " << *(socket_clients.end() - 1) << " was created." << std::endl;
-		send(socket_clients[_nbUsers], RPL_WELCOME, sizeof(RPL_WELCOME), 0);
-		send(socket_clients[_nbUsers], RPL_YOURHOST, sizeof(RPL_YOURHOST), 0);
-		send(socket_clients[_nbUsers], RPL_CREATED, sizeof(RPL_CREATED), 0);
-		send(socket_clients[_nbUsers], RPL_MYINFO, sizeof(RPL_MYINFO), 0);
 		++_nbUsers;
 		std::cout << "new";
 	}
@@ -92,7 +97,7 @@ int		Server::start(void)
 					initClient(socket);
 					std::cout << "Users registered = " << _nbUsers << std::endl;
 				}
-			//	handleClient();
+				handleClient();
 						
 			}
 		}

@@ -114,15 +114,15 @@ void		User::parseUser(char * buffer)
 	i++;
 	i = s.find(' ', i) + 1;
 	y = s.find('\r', i);
-	this->_nickname = s.substr(i, y);
+	this->_nickname = s.substr(i, y - i);
 	i = y + 2;
 	i = s.find(' ', i) + 1;
-	y = s.find(' ', i) - 1;
-	this->_username = s.substr(i, y);
-	i = s.find(' ', y + 2) + 1;
-	y = s.find(' ', i) - 1;
-	this->_ip = s.substr(i, y);
+	y = s.find(' ', i);
+	this->_username = s.substr(i, y - i);
+	i = s.find(' ', y + 1) + 1;
+	y = s.find(' ', i);
+	this->_ip = s.substr(i, y - i);
 	i = s.find(':', y) + 1;
-	y = s.find('\r', i) - 1;
-	this->_realname = s.substr(i, y);
+	y = s.find('\r', i);
+	this->_realname = s.substr(i, y - i);
 }
