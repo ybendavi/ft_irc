@@ -13,6 +13,7 @@
 #ifndef USER_HPP
 # define USER_HPP
 
+#include <poll.h>
 #include <string>
 #include "Replies.hpp"
 
@@ -21,6 +22,7 @@ class	User {
 	public :
 		
 		User(void);
+		User(int socket);
 		User(const User &ref);
 		~User(void);
 		User	&operator=(const User &ref);
@@ -35,6 +37,7 @@ class	User {
 		std::string	getUsername(void) const;
 		std::string	getNickname(void) const;
 		std::string	getPass(void) const;
+		int			getSocket(void) const;
 
 		void		setOp(bool);
 		void		setInv(bool);
@@ -64,6 +67,7 @@ class	User {
 		std::string	_nickname; // max nine char
 		std::string	_pass;
 
+		int			_socket;
 };
 
 #endif

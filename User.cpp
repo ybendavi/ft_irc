@@ -19,6 +19,10 @@ User::User(void) : _isOperator(false), _isInvisible(false),
 					_isWallopable(true), _online(true)
 { }
 
+User::User(int socket) : _isOperator(false), _isInvisible(false),
+					_isWallopable(true), _online(true), _socket(socket)
+{ }
+
 User::User(const User &ref)
 { 
 	*this = ref;
@@ -56,6 +60,8 @@ std::string	User::getNickname(void) const { return (this->_nickname); }
 std::string	User::getPass(void) const { return (this->_pass); }
 
 std::string	User::getIp(void) const { return (this->_ip); }
+
+int			User::getSocket(void) const { return (this->_socket); }
 
 void		User::setOp(bool b) 
 { 

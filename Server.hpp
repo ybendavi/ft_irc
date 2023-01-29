@@ -23,8 +23,7 @@ class	Server
 	public:
 			std::vector<std::string>		messages;
 			std::vector<int>			socket_clients;
-					Server(void);
-					
+					Server(int port);
 					~Server(void);
 			int		start(void);
 
@@ -39,6 +38,7 @@ class	Server
 
 		std::map<std::string, User>		_users;
 		int								_nbUsers;
+		void							_pollfunction(std::map<std::string, User>::iterator user);
 
 	public:
 
