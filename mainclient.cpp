@@ -11,18 +11,20 @@
 #include <fcntl.h>
 #include <iostream>
 
-int	main()
+int	main( int ac, char **av )
 {
 	int sock;
 	struct sockaddr_in	client;
 	char	buffer[512];
 	std::string	s;
 
+	if (ac != 2)
+		return (0);
 	sock = socket(AF_INET, SOCK_STREAM, 0);
 	fcntl(sock, F_SETFL, O_NONBLOCK);
 	client.sin_family = AF_INET;
 	client.sin_addr.s_addr = htonl(INADDR_ANY);
-	client.sin_port = htons(6669);
+	client.sin_port = htons(atoi(av[1]));
 	connect(sock, (struct sockaddr *)&client, sizeof(client));
 	while (recv(sock, buffer, 512, MSG_DONTWAIT) <= 0){}
 	std::cout << buffer << std::endl;

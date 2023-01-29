@@ -6,7 +6,7 @@
 /*   By: ccottin <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/18 18:30:32 by ccottin           #+#    #+#             */
-/*   Updated: 2023/01/18 18:56:15 by ccottin          ###   ########.fr       */
+/*   Updated: 2023/01/29 13:24:22 by ccottin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ class	User {
 		bool		getOp(void) const;
 		bool		getInv(void) const;
 		bool		getWal(void) const;
+		bool		getOnline(void) const;
 		std::string	getRealname(void) const;
 		std::string	getIp(void) const;
 		std::string	getUsername(void) const;

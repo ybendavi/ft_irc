@@ -6,7 +6,7 @@
 /*   By: ccottin <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/18 18:30:30 by ccottin           #+#    #+#             */
-/*   Updated: 2023/01/18 18:56:34 by ccottin          ###   ########.fr       */
+/*   Updated: 2023/01/29 13:23:49 by ccottin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,8 @@ bool		User::getOp(void) const { return (this->_isOperator); }
 bool		User::getInv(void) const { return (this->_isInvisible); }
 
 bool		User::getWal(void) const { return (this->_isWallopable); }
+
+bool		User::getOnline(void) const { return (this->_online); }
 
 std::string	User::getRealname(void) const { return (this->_realname); }
 

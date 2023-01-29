@@ -13,37 +13,31 @@
 
 class	Server
 {
-	private:
-			int				_socketServer;
-			socklen_t				_clientSize;
-			struct sockaddr_in		_addrServer;
-//			int				_socketClient;
-			struct sockaddr			_addrClient;
-
 	public:
-			std::vector<std::string>		messages;
-			std::vector<int>			socket_clients;
-					Server(int port);
-					~Server(void);
+			Server(int port);
+			~Server(void);
+	
+			/*getters ; faire un get channel*/
+
+			User	getUser(std::string) const;
 			int		start(void);
-
-			int		handleClient(void);
-
-			void	initClient(int socket);
-
-
-			/*handle Users*/
 
 	private :
 
-		std::map<std::string, User>		_users;
-		int								_nbUsers;
-		void							_pollfunction(std::map<std::string, User>::iterator user);
+//			int		handleClient(void);
+			void	initClient(int socket);
 
-	public:
+			
+			std::vector<std::string>		messages; //temporaire
+			std::vector<int>				socket_clients; 
+			int								_socketServer;
+			socklen_t						_clientSize;
+			struct sockaddr_in				_addrServer;
+			struct sockaddr					_addrClient;
 
-		bool	find_Nickname(std::string);
-		bool	find_Username(std::string);
+			std::map<std::string, User>		_users;
+			int								_nbUsers;
+			void							_pollfunction(std::map<std::string, User>::iterator user);
 
 };
 

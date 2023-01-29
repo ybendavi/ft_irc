@@ -27,7 +27,7 @@
 		{
 			close(_socketServer);
 		}
-
+/*
 int		Server::handleClient(void)
 		{
 			size_t	i;
@@ -35,7 +35,7 @@ int		Server::handleClient(void)
 	
 			i = 0;
 				
-			while (i < socket_clients.size())
+			while (i < _nbUsers)
 			{		
 				if (recv(socket_clients[i], buffer, 512, MSG_DONTWAIT) > 0)
 				{
@@ -45,7 +45,7 @@ int		Server::handleClient(void)
 					bzero(buffer, 512);
 					send(socket_clients[i], RPL_WELCOME, sizeof(RPL_WELCOME), 0);
 			}	
-		/*		if (recv(socket_clients[i], buffer, 512, MSG_DONTWAIT) > 0)
+				if (recv(socket_clients[i], buffer, 512, MSG_DONTWAIT) > 0)
 				{
 					messages.push_back(std::string(buffer));
 					std::cout << buffer << std::endl;
@@ -77,11 +77,11 @@ int		Server::handleClient(void)
 					messages.push_back(std::string(buffer));
 					std::cout << buffer << std::endl;
 					bzero(buffer, 512);
-				}*/
+				}
 				i++;
 			}
 			return (0);
-		}
+		}*/
 
 void	Server::_pollfunction(std::map<std::string, User>::iterator user) 
 {
@@ -135,13 +135,12 @@ void	Server::initClient(int socket)
 			std::cout << buffer <<  "4" << std::endl;
 			std::cout << "do i leave it?";
 		}
-		socket_clients.push_back(socket);
-		std::cout << "Client with fd number " << *(socket_clients.end() - 1) << " was created." << std::endl;
+		std::cout << "Client with fd number " << socket << " was created." << std::endl;
 		++_nbUsers;
 		std::cout << "new";
 	}
 	else
-		send(socket_clients[_nbUsers], ERR_NICKNAMEINUSE, sizeof(ERR_NICKNAMEINUSE), 0);
+		send(socket, ERR_NICKNAMEINUSE, sizeof(ERR_NICKNAMEINUSE), 0);
 
 }
 
@@ -155,12 +154,13 @@ int		Server::start(void)
 			while (1)
 			{
 				socket = accept(_socketServer, (struct sockaddr* )&_addrClient, &_clientSize);
+				fcntl(socket, F_SETFL, O_NONBLOCK);
 				if (socket > 0)
 				{
 					initClient(socket);
 					std::cout << "Users registered = " << _nbUsers << std::endl;
 				}
-				handleClient();
+			//	handleClient();
 						
 			}
 		}
