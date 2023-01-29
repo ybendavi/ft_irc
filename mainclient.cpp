@@ -28,6 +28,7 @@ int	main( int ac, char **av )
 	connect(sock, (struct sockaddr *)&client, sizeof(client));
 	while (recv(sock, buffer, 512, MSG_DONTWAIT) <= 0){}
 	std::cout << buffer << std::endl;
+//		send(sock, s.c_str(), s.size() + 1, 0);
 	while (1)
 	{
 //		s.clear();
