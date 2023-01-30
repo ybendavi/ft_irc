@@ -6,20 +6,21 @@
 /*   By: ccottin <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/18 18:30:30 by ccottin           #+#    #+#             */
-/*   Updated: 2023/01/29 13:23:49 by ccottin          ###   ########.fr       */
+/*   Updated: 2023/01/29 23:38:38 by ccottin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "User.hpp"
 #include <iostream>
-#include <iostream>
-#include <iostream>
 
 User::User(void) : _isOperator(false), _isInvisible(false),
 					_isWallopable(true), _online(true)
-{ }
+{
+	_socket.fd = -1;
+	_socket.events = 0;
+}
 
-User::User(int socket) : _isOperator(false), _isInvisible(false),
+User::User(struct pollfd socket) : _isOperator(false), _isInvisible(false),
 					_isWallopable(true), _online(true), _socket(socket)
 { }
 
@@ -29,7 +30,9 @@ User::User(const User &ref)
 }
 
 User::~User(void)
-{ }
+{ 
+	//close(_socket);
+}
 
 User	&User::operator=(const User &ref)
 {
@@ -41,6 +44,9 @@ User	&User::operator=(const User &ref)
 		this->_realname = ref.getRealname();
 		this->_nickname = ref.getNickname();
 		this->_pass = ref.getPass();
+		this->_online = ref.getOnline();
+		this->_ip = ref.getIp();
+		this->_socket = ref.getSocket();
 	}
 	return (*this);
 }
@@ -63,7 +69,9 @@ std::string	User::getPass(void) const { return (this->_pass); }
 
 std::string	User::getIp(void) const { return (this->_ip); }
 
-int			User::getSocket(void) const { return (this->_socket); }
+struct pollfd	&User::getSocket(void) { return (this->_socket); }
+
+struct pollfd	User::getSocket(void) const { return (this->_socket); }
 
 void		User::setOp(bool b) 
 { 
