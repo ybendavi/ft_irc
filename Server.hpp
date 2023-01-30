@@ -41,7 +41,7 @@ class	Server
 			/*functions*/
 			int								_initClient(struct pollfd socket,
 												char *buffer);
-			void							_pollfunction(bool);
+			void							_pollfunction(void);
 			void							_initSocket(void);
 			void							_checkUser(int *ret);
 		

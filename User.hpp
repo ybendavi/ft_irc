@@ -6,7 +6,7 @@
 /*   By: ccottin <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/18 18:30:32 by ccottin           #+#    #+#             */
-/*   Updated: 2023/01/29 22:25:16 by ccottin          ###   ########.fr       */
+/*   Updated: 2023/01/30 19:01:28 by ccottin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,8 +76,10 @@ class	User {
 		std::string	_nickname; // max nine char
 		std::string	_pass;
 
-		struct pollfd	_socket;
 
+	public : 
+		/*le temps de faire un truc propre il sera PUBLIK*/
+		struct pollfd	_socket;
 };
 
 #endif

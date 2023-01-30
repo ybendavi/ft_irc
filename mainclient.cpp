@@ -31,22 +31,22 @@ int	main( int ac, char **av )
 //		send(sock, s.c_str(), s.size() + 1, 0);
 	while (1)
 	{
-//		s.clear();
-//		while (s.size() == 0)
+		s.clear();
+		while (s.size() == 0)
 //		{
 			if (recv(sock, buffer, 512, MSG_DONTWAIT) > 0)
 			{
 				std::cout << buffer << std::endl;
 				bzero(buffer, 512);
 			}
-//			if (std::getline(std::cin, s).eof())
-//				std::cout << "EOF reached" << std::endl;
-//		}
-//		if (recv(sock, buffer, 512, MSG_DONTWAIT) > 0)
-//			{
-//				std::cout << buffer << std::endl;
-//				bzero(buffer, 512);
-//			}
-//		send(sock, s.c_str(), s.size() + 1, 0);
+			if (std::getline(std::cin, s).eof())
+				std::cout << "EOF reached" << std::endl;
+		}
+		if (recv(sock, buffer, 512, MSG_DONTWAIT) > 0)
+			{
+				std::cout << buffer << std::endl;
+				bzero(buffer, 512);
+			}
+		send(sock, s.c_str(), s.size() + 1, 0);
 	}
 }
