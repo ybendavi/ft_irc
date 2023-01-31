@@ -6,7 +6,7 @@
 /*   By: ccottin <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/18 18:30:32 by ccottin           #+#    #+#             */
-/*   Updated: 2023/01/30 19:01:28 by ccottin          ###   ########.fr       */
+/*   Updated: 2023/01/30 20:29:09 by ccottin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,8 +52,8 @@ class	User {
 		void		setPass(std::string);
 		
 		/*pushback le dernier lu & pop front qund on affiche*/
-		std::list<std::string>		receivedmsg; //will eventually become a class so...
-		std::list<std::string>		tosendmsg; //will eventually become a class so...
+		std::list< const char *>		receivedmsg; //will eventually become a class so...
+		std::list<const char *>		tosendmsg; //will eventually become a class so...
 		/*simple = on push back ce que l on doit envoyer et pop front ce au on envoye*/
 
 		/*parser*/
