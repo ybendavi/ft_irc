@@ -16,6 +16,7 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <errno.h>
 #include "User.hpp"
 #include "Replies.hpp"
 #include "Message.hpp"
@@ -26,33 +27,32 @@
 class	Server
 {
 	public:
-			Server(int port);
+			Server(void);
 			~Server(void);
 	
+			int		init(int port);
+			int		start(void);
+			
 			/*getters ; faire un get channel*/
 
 			User	getUser(std::string) const;
-			int		start(void);
 
 	private :
 
-			std::vector<std::string>		messages; //temporaire
-			std::vector<int>				socket_clients; //might diseaper
 //			int		handleClient(void);
-			
 
 			/*functions*/
-			int								_initClient(struct pollfd socket,
-												char *buffer);
+			int								_initClient(int index);
+			int								_initSocket(void);
 			void							_pollfunction(void);
-			void							_initSocket(void);
 			void							_checkUser(int *ret);
 			void							_handleMessage(void);
+
 		
 			/*server infos*/
-			struct pollfd					_socketServer;
 			struct sockaddr_in				_addrServer;
-			
+			int								_ret;
+
 			/*users mayhem*/
 			socklen_t						_clientSize;
 			struct sockaddr					_addrClient;
@@ -63,5 +63,7 @@ class	Server
 			int								_nbConn;
 
 };
+
+std::string	findNick(std::string buffer);
 
 #endif
