@@ -18,6 +18,7 @@
 #include <sys/stat.h>
 #include "User.hpp"
 #include "Replies.hpp"
+#include "Message.hpp"
 
 #define MAX_USER 10
 #define MAX_CONN 12
@@ -46,6 +47,7 @@ class	Server
 			void							_pollfunction(void);
 			void							_initSocket(void);
 			void							_checkUser(int *ret);
+			void							_handleMessage(void);
 		
 			/*server infos*/
 			struct pollfd					_socketServer;

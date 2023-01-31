@@ -41,7 +41,7 @@ void	Server::_checkUser(int *ret)
 	while (it != _users.end())
 	{
 //		std::cout << "inzewhile" << std::endl;
-		std::cout << it->second.getSocket().revents << std::endl;
+//		std::cout << it->second.getSocket().revents << std::endl;
 		if ( (it->second.getSocket().revents & 1) == POLLIN) 
 		{
 //			std::cout << "POLLIN" << std::endl;
@@ -56,8 +56,8 @@ void	Server::_checkUser(int *ret)
 				perror("recv :");
 			else if (rett > 0)
 			{
-				std::cout << "buffer = "<< buffer << std::endl;
-				it->second.receivedmsg.push_back(buffer);
+				//std::cout << "buffer = "<< buffer << std::endl;
+				it->second.receivedmsg.push_back(Message(buffer));
 			}
 			bzero(buffer, 512);
 			--(*ret);
@@ -74,7 +74,7 @@ void	Server::_checkUser(int *ret)
 			}
 //			std::cout << "POLLout = to send : " << it->second.tosendmsg.front() << std::endl;	
 		//	std::cout << sizeof(char *) << " ; " << sizeof(void*)<<  " ; " << sizeof(RPL_WELCOME) << " : "<< sizeof(&(it->second.tosendmsg.front())) << std::endl;
-			if (send(it->second.getSocket().fd, it->second.tosendmsg.front(), strlen(it->second.tosendmsg.front()), MSG_DONTWAIT) == -1)
+			if (send(it->second.getSocket().fd, it->second.tosendmsg.front().getToSend().c_str(), strlen(it->second.tosendmsg.front().getToSend().c_str()), MSG_DONTWAIT) == -1)
 				perror("send :");
 			else
 				it->second.tosendmsg.pop_front();
@@ -94,9 +94,9 @@ void	Server::_pollfunction(void)
 	ret = poll(_pollTab, _nbConn, 7000);
 		for (int i = 0;  i < _nbConn; ++i)
 	//			std::cout << "i = " << i << " event = " << _pollTab[i].events << "revent = " << _pollTab[i].revents << std::endl;
-	if (ret == 0)
-		std::cout << "Timeout\n";
-	else if (ret == -1)
+	//if (ret == 0)
+	//	std::cout << "Timeout\n";
+	/*else*/ if (ret == -1)
 		perror("poll :");
 	else
 	{
@@ -163,10 +163,10 @@ int		Server::_initClient(struct pollfd socket, char *buffer)
 	if (tmp.second == true)
 	{
 		++_nbUsers;
-		_users[user.getNickname()].tosendmsg.push_back(RPL_WELCOME);
-		_users[user.getNickname()].tosendmsg.push_back(RPL_YOURHOST);
-		_users[user.getNickname()].tosendmsg.push_back(RPL_CREATED);
-		_users[user.getNickname()].tosendmsg.push_back(RPL_MYINFO);
+		_users[user.getNickname()].tosendmsg.push_back(Message(RPL_WELCOME));
+		_users[user.getNickname()].tosendmsg.push_back(Message(RPL_YOURHOST));
+		_users[user.getNickname()].tosendmsg.push_back(Message(RPL_CREATED));
+		_users[user.getNickname()].tosendmsg.push_back(Message(RPL_MYINFO));
 	//	_users[user.getNickname()]._socket.events = POLLIN | POLLOUT;
 
 		
@@ -187,6 +187,8 @@ int		Server::start(void)
 	while (1)
 	{
 		_pollfunction();
+	//	_handleMessage();
+		
 //		std::cout << "Users registered = " << _nbUsers << std::endl;
 	//	sleep(2);
 	}
