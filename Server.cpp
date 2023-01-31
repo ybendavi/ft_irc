@@ -67,13 +67,15 @@ void	Server::_checkUser(int *ret)
 		{
 			if (it->second.tosendmsg.empty()) //virer ce if si on a pas besoin de ping ou le --
 			{
-				if (send(it->second.getSocket().fd, RPL_PING, strlen(RPL_PING), MSG_DONTWAIT) == -1)
-					_ret = -6;
+			//	if (send(it->second.getSocket().fd, RPL_PING, strlen(RPL_PING), MSG_DONTWAIT) == -1)
+			//		_ret = -6;
+				it->second.tosendmsg.push_back(Message(RPL_PING));
 				--(*ret);
 				return ;
 			}
 //			std::cout << "POLLout = to send : " << it->second.tosendmsg.front() << std::endl;	
 		//	std::cout << sizeof(char *) << " ; " << sizeof(void*)<<  " ; " << sizeof(RPL_WELCOME) << " : "<< sizeof(&(it->second.tosendmsg.front())) << std::endl;
+			std::cout << "mdg = " << it->second.tosendmsg.front().getToSend().c_str();
 			if (send(it->second.getSocket().fd, it->second.tosendmsg.front().getToSend().c_str(), strlen(it->second.tosendmsg.front().getToSend().c_str()), MSG_DONTWAIT) == -1)
 				_ret = -6;
 			else
@@ -146,7 +148,7 @@ int		Server::_initClient(int index)
 	std::string		nick;
 
 	sleep(1);
-//	if ( !((_pollTab[index].revents & 1) == POLLIN) )
+//	if ( !((_pollTab[index].revents & 1) == POLLIN) ) //resolve your fucking parser its ugly and glitchy
 //		return (0);
 	std::cout << index << " = index"  << std::endl;
 	if (recv(_pollTab[index].fd, buffer, 512, MSG_DONTWAIT) == -1)
@@ -158,7 +160,7 @@ int		Server::_initClient(int index)
 	}
 	//std::cout << "goto nick\n";
 	nick = findNick(std::string(buffer));
-	//std::cout << "nick = " << nick << " buffer = " << buffer << std::endl; 
+	std::cout << "nick = " << nick << " buffer = " << buffer << std::endl; 
 	if ( _users.find(nick) == _users.end() )
 	{
 		User		user( _pollTab[index] );
@@ -167,10 +169,10 @@ int		Server::_initClient(int index)
 		user.parseUser( buffer );
 		_users.insert( std::pair<std::string, User>(nick, user) );
 		++_nbUsers;
-		_users[user.getNickname()].tosendmsg.push_back(Message(RPL_WELCOME));
-		_users[user.getNickname()].tosendmsg.push_back(Message(RPL_YOURHOST));
-		_users[user.getNickname()].tosendmsg.push_back(Message(RPL_CREATED));
-		_users[user.getNickname()].tosendmsg.push_back(Message(RPL_MYINFO));
+		_users[nick].tosendmsg.push_back(Message(RPL_WELCOME));
+		_users[nick].tosendmsg.push_back(Message(RPL_YOURHOST));
+		_users[nick].tosendmsg.push_back(Message(RPL_CREATED));
+		_users[nick].tosendmsg.push_back(Message(RPL_MYINFO));
 	}
 	else
 	{

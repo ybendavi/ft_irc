@@ -1,6 +1,6 @@
 #include "Server.hpp"
 #include <stdlib.h>
-
+/*
 int		printErr(int ret)
 {
 	if (ret == -1)
@@ -15,6 +15,24 @@ int		printErr(int ret)
 		std::cerr << "Server problem : recv : " << errno << std::endl;
 	if (ret == -6)
 		std::cerr << "Server problem : send : " << errno << std::endl;
+	
+	return (1);
+}*/
+
+int		printErr(int ret)
+{
+	if (ret == -1)
+		perror("Server init : socket problem " );
+	if (ret == -2)
+		perror("Server init : fcntl problem ");
+	if (ret == -3)
+		perror("Server init : bind problem ");
+	if (ret == -4)
+		perror("Server init : listen problem " );
+	if (ret == -5)
+		perror("Server problem : recv ") ;
+	if (ret == -6)
+		perror("Server problem : send ");
 	
 	return (1);
 }
