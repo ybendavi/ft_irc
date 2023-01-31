@@ -24,8 +24,9 @@
 Message::~Message(void)
 { } 
 
-Message::Message(User &sender, const std::string message): _sender(sender)
+Message::Message(const char *message )
 { 
+	_tosend = std::string(message);
 	parseMessage(message);
 }
 
@@ -33,14 +34,13 @@ Message	&Message::operator=(const Message &ref)
 {
 	if (this != &ref)
 	{
-		this->_sender = ref._sender;
 		this->_receiver = ref._receiver;
 		this->_command = ref._command;
 	}
 	return (*this);
 }
 
-User&	Message::getSender(void) const { return (_sender); }
+std::string	Message::getToSend(void) const { return (_tosend); }
 
 std::string	Message::getParamsopt(void) const { return (_paramsopt); }
 
@@ -116,10 +116,10 @@ int	Message::parseMessage(const std::string message)
 	return (0);
 }
 
-char	*nick(Message& message)
+/*char	*nick(Message& message)
 {
 	if (message.getParams().size() == 0)
 		return (ERRNONICKNAMEGIVEN);
 	message._sender.setNickname(*(message.getParams().begin()));
 
-}
+}*/

@@ -17,6 +17,7 @@
 #include <poll.h>
 #include <string>
 #include <list>
+#include "Message.hpp"
 #include "Replies.hpp"
 
 class	User {
@@ -52,8 +53,8 @@ class	User {
 		void		setPass(std::string);
 		
 		/*pushback le dernier lu & pop front qund on affiche*/
-		std::list< const char *>		receivedmsg; //will eventually become a class so...
-		std::list<const char *>		tosendmsg; //will eventually become a class so...
+		std::list< Message >		receivedmsg; //will eventually become a class so...
+		std::list< Message >		tosendmsg; //will eventually become a class so...
 		/*simple = on push back ce que l on doit envoyer et pop front ce au on envoye*/
 
 		/*parser*/

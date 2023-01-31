@@ -19,6 +19,7 @@
 #include <errno.h>
 #include "User.hpp"
 #include "Replies.hpp"
+#include "Message.hpp"
 
 #define MAX_USER 10
 #define MAX_CONN 12
@@ -45,8 +46,8 @@ class	Server
 			int								_initSocket(void);
 			void							_pollfunction(void);
 			void							_checkUser(int *ret);
-			void							_recvMsg(int *ret);
-			void							_sendMsg(int *ret);
+			void							_handleMessage(void);
+
 		
 			/*server infos*/
 			struct sockaddr_in				_addrServer;

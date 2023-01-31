@@ -56,7 +56,8 @@ void	Server::_checkUser(int *ret)
 			if ( recv(it->second.getSocket().fd, buffer, 512, MSG_DONTWAIT) == -1 )
 				_ret = -5;
 			else
-				it->second.receivedmsg.push_back(buffer);
+				it->second.receivedmsg.push_back(Message(buffer));
+
 			bzero(buffer, 512);
 			--(*ret);
 		}
@@ -73,7 +74,7 @@ void	Server::_checkUser(int *ret)
 			}
 //			std::cout << "POLLout = to send : " << it->second.tosendmsg.front() << std::endl;	
 		//	std::cout << sizeof(char *) << " ; " << sizeof(void*)<<  " ; " << sizeof(RPL_WELCOME) << " : "<< sizeof(&(it->second.tosendmsg.front())) << std::endl;
-			if (send(it->second.getSocket().fd, it->second.tosendmsg.front(), strlen(it->second.tosendmsg.front()), MSG_DONTWAIT) == -1)
+			if (send(it->second.getSocket().fd, it->second.tosendmsg.front().getToSend().c_str(), strlen(it->second.tosendmsg.front().getToSend().c_str()), MSG_DONTWAIT) == -1)
 				_ret = -6;
 			else
 				it->second.tosendmsg.pop_front();
@@ -155,21 +156,21 @@ int		Server::_initClient(int index)
 		_ret = -5;
 		return (0);
 	}
-	std::cout << "goto nick\n";
+	//std::cout << "goto nick\n";
 	nick = findNick(std::string(buffer));
-	std::cout << "nick = " << nick << " buffer = " << buffer << std::endl; 
+	//std::cout << "nick = " << nick << " buffer = " << buffer << std::endl; 
 	if ( _users.find(nick) == _users.end() )
 	{
 		User		user( _pollTab[index] );
-
+    
 		std::cout << "goto user\n";
 		user.parseUser( buffer );
 		_users.insert( std::pair<std::string, User>(nick, user) );
 		++_nbUsers;
-		_users[nick].tosendmsg.push_back(RPL_WELCOME);
-		_users[nick].tosendmsg.push_back(RPL_YOURHOST);
-		_users[nick].tosendmsg.push_back(RPL_CREATED);
-		_users[nick].tosendmsg.push_back(RPL_MYINFO);
+		_users[user.getNickname()].tosendmsg.push_back(Message(RPL_WELCOME));
+		_users[user.getNickname()].tosendmsg.push_back(Message(RPL_YOURHOST));
+		_users[user.getNickname()].tosendmsg.push_back(Message(RPL_CREATED));
+		_users[user.getNickname()].tosendmsg.push_back(Message(RPL_MYINFO));
 	}
 	else
 	{
@@ -190,65 +191,8 @@ int		Server::start(void)
 		_pollfunction();
 		if (_ret)
 			return (_ret);
+     //	_handleMessage();
 //		std::cout << "Users registered = " << _nbUsers << std::endl;
 	//	sleep(2);
 	}
 }
-
-/*
-int		Server::handleClient(void)
-		{
-			size_t	i;
-			char	buffer[512];
-	
-			i = 0;
-				
-			while (i < _nbUsers)
-			{		
-				if (recv(socket_clients[i], buffer, 512, MSG_DONTWAIT) > 0)
-				{
-					std::cout << "i = " << i << std::endl;
-					messages.push_back(std::string(buffer));
-					std::cout << buffer << std::endl;
-					bzero(buffer, 512);
-					send(socket_clients[i], RPL_WELCOME, sizeof(RPL_WELCOME), 0);
-			}	
-				if (recv(socket_clients[i], buffer, 512, MSG_DONTWAIT) > 0)
-				{
-					messages.push_back(std::string(buffer));
-					std::cout << buffer << std::endl;
-					bzero(buffer, 512);
-				}
-
-				send(socket_clients[i], RPL_YOURHOST, sizeof(RPL_YOURHOST), 0);
-				
-				if (recv(socket_clients[i], buffer, 512, MSG_DONTWAIT) > 0)
-				{
-					messages.push_back(std::string(buffer));
-					std::cout << buffer << std::endl;
-					bzero(buffer, 512);
-				}
-
-				send(socket_clients[i], RPL_CREATED, sizeof(RPL_CREATED), 0);
-				
-				if (recv(socket_clients[i], buffer, 512, MSG_DONTWAIT) > 0)
-				{
-					messages.push_back(std::string(buffer));
-					std::cout << buffer << std::endl;
-					bzero(buffer, 512);
-				}
-
-				send(socket_clients[i], RPL_MYINFO, sizeof(RPL_MYINFO), 0);
-					
-				if (recv(socket_clients[i], buffer, 512, MSG_DONTWAIT) > 0)
-				{
-					messages.push_back(std::string(buffer));
-					std::cout << buffer << std::endl;
-					bzero(buffer, 512);
-				}
-				i++;
-			}
-			return (0);
-		}*/
-
-
