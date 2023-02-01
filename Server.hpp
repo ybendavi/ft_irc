@@ -56,11 +56,11 @@ class	Server
 			/*users mayhem*/
 			socklen_t						_clientSize;
 			struct sockaddr					_addrClient;
-			struct pollfd				*	_pollTab;
+			struct pollfd					_pollTab[MAX_CONN];
 
 			std::map<std::string, User>		_users;
 			int								_nbUsers;
-			int								_nbConn;
+			int								_nbSock;
 
 };
 

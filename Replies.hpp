@@ -7,7 +7,7 @@
 # define RPL_MYINFO "004 \r\n"
 # define RPL_PING "PING\r\n"
 
-# define ERR_NICKNAMEINUSE "433"
+# define ERR_NICKNAMEINUSE "433 :Nick in use\r\n"
 # define ERR_NONICKNAMEGIVEN "431"
 # define ERR_ERRONEUSNICKNAME "432"
 # define ERR_NICKCOLLISION "436"
