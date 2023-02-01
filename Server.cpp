@@ -1,23 +1,16 @@
 #include "Server.hpp"
 
-Server::Server(void)
-{
-	_pollTab = new struct pollfd[MAX_CONN];
-	_clientSize = sizeof(_addrClient);
-	_nbUsers = 0;
-	_nbConn = 0;
-	_ret = 0;
-}
+Server::Server(void) : _ret(0), _clientSize(sizeof(_addrClient) ) , _nbUsers(0), _nbSock(0)
+{ }
 
 Server::~Server(void)
 {
-	while (_nbConn > 0)
+	while (_nbSock > 0)
 	{
-		--_nbConn;
-		if (_pollTab[_nbConn].fd != -1)
-			close(_pollTab[_nbConn].fd);
+		--_nbSock;
+		if (_pollTab[_nbSock].fd != -1)
+			close(_pollTab[_nbSock].fd);
 	}
-	delete [] _pollTab;
 }
 
 int	Server::init(int port)
@@ -27,7 +20,7 @@ int	Server::init(int port)
 		return (-1);
 	if (fcntl(_pollTab[0].fd, F_SETFL, O_NONBLOCK) < 0)
 		return (-2);
-	++_nbConn;
+	++_nbSock;
 	_pollTab[0].events = POLLIN;
 	_pollTab[0].revents = 0;
 
@@ -69,14 +62,15 @@ void	Server::_checkUser(int *ret)
 			{
 			//	if (send(it->second.getSocket().fd, RPL_PING, strlen(RPL_PING), MSG_DONTWAIT) == -1)
 			//		_ret = -6;
-				it->second.tosendmsg.push_back(Message(RPL_PING));
+		//		it->second.tosendmsg.push_back(Message(RPL_PING));
 				--(*ret);
 				return ;
 			}
 //			std::cout << "POLLout = to send : " << it->second.tosendmsg.front() << std::endl;	
 		//	std::cout << sizeof(char *) << " ; " << sizeof(void*)<<  " ; " << sizeof(RPL_WELCOME) << " : "<< sizeof(&(it->second.tosendmsg.front())) << std::endl;
 			std::cout << "mdg = " << it->second.tosendmsg.front().getToSend().c_str();
-			if (send(it->second.getSocket().fd, it->second.tosendmsg.front().getToSend().c_str(), strlen(it->second.tosendmsg.front().getToSend().c_str()), MSG_DONTWAIT) == -1)
+			if (send(it->second.getSocket().fd, it->second.tosendmsg.front().getToSend().c_str(),
+						strlen(it->second.tosendmsg.front().getToSend().c_str()), MSG_DONTWAIT) == -1)
 				_ret = -6;
 			else
 				it->second.tosendmsg.pop_front();
@@ -92,10 +86,10 @@ void	Server::_pollfunction(void)
 {
 	int		ret;
 		
-//	std::cout << "indc = " << _nbConn - _nbUsers << " flag= " << _pollTab[0].revents << "fd = "<< _pollTab[0].fd  << " nbconnect = " << _nbConn << std::endl;
-	ret = poll(_pollTab, _nbConn, 7000);
-//		for (int i = 0;  i < _nbConn; ++i)
-//				std::cout << "i = " << i << " event = " << _pollTab[i].events << "revent = " << _pollTab[i].revents << std::endl;
+//	std::cout << "indc = " << _nbSock - _nbUsers << " flag= " << _pollTab[0].revents << "fd = "<< _pollTab[0].fd  << " nbconnect = " << _nbSock << std::endl;
+	ret = poll(_pollTab, _nbSock, 7000);
+//	for (int i = 0;  i < _nbSock; i++)
+	//		std::cout << "i = " << i << " event = " << _pollTab[i].events << "revent = " << _pollTab[i].revents << std::endl;
 	if (ret == 0)
 		std::cout << "Timeout\n";
 	else if (ret == -1)
@@ -106,9 +100,9 @@ void	Server::_pollfunction(void)
 			_checkUser(&ret);
 		if (_ret)
 			return ;
-		while (_nbConn - _nbUsers > 1)
+		while (_nbSock - _nbUsers > 1)
 		{	
-			if (_initClient(_nbConn - _nbUsers - 1) < 0)
+			if (_initClient(_nbSock - _nbUsers - 1) < 0)
 				return ;
 		}
 		if (_pollTab[0].revents == POLLIN)
@@ -121,7 +115,7 @@ void	Server::_pollfunction(void)
 		if (ret > 0)
 		{
 	//		std::cout << "reste du ret de poll == " << ret << std::endl;
-	//		for (int i = 0;  i < _nbConn; ++i)
+	//		for (int i = 0;  i < _nbSock; ++i)
 	//			std::cout << "i = " << i << " event = " << _pollTab[i].events << "revent = " << _pollTab[i].revents << std::endl;
 		}
 	}
@@ -129,16 +123,17 @@ void	Server::_pollfunction(void)
 
 int		Server::_initSocket(void)
 {
-//	std::cout << "nb = " << _nbConn << std::endl;
-	_pollTab[_nbConn].fd  = accept(_pollTab[0].fd, (struct sockaddr* )&_addrClient,
+//	std::cout << "nb = " << _nbSock << std::endl;
+	_pollTab[_nbSock].fd  = accept(_pollTab[0].fd, (struct sockaddr* )&_addrClient,
 			&_clientSize);
-	if (_pollTab[_nbConn].fd  == -1)
+	if (_pollTab[_nbSock].fd  == -1)
 		return (-1);
-	if (fcntl(_pollTab[_nbConn].fd , F_SETFL, O_NONBLOCK) == -1)
+//	if (fcntl(_pollTab[_nbSock].fd , F_SETFL, 0) == -1)
+	if (fcntl(_pollTab[_nbSock].fd , F_SETFL, O_NONBLOCK) == -1)
 		return (-2);
-	_pollTab[_nbConn].events = POLLIN | POLLOUT;
-	_pollTab[_nbConn].revents = 0;
-	++_nbConn;
+	_pollTab[_nbSock].events = POLLIN | POLLOUT;
+	_pollTab[_nbSock].revents = 0;
+	++_nbSock;
 	return (0);
 }
 
@@ -149,18 +144,16 @@ int		Server::_initClient(int index)
 
 	sleep(1);
 //	if ( !((_pollTab[index].revents & 1) == POLLIN) ) //resolve your fucking parser its ugly and glitchy
-//		return (0);
+	//	return (0);
 	std::cout << index << " = index"  << std::endl;
 	if (recv(_pollTab[index].fd, buffer, 512, MSG_DONTWAIT) == -1)
 	{
-		--_nbConn;
+		--_nbSock;
 		close(_pollTab[index].fd);
 		_ret = -5;
 		return (0);
 	}
-	//std::cout << "goto nick\n";
 	nick = findNick(std::string(buffer));
-	std::cout << "nick = " << nick << " buffer = " << buffer << std::endl; 
 	if ( _users.find(nick) == _users.end() )
 	{
 		User		user( _pollTab[index] );
@@ -177,8 +170,8 @@ int		Server::_initClient(int index)
 	else
 	{
 		std::cout << "goto err\n";
-		--_nbConn;
-		send(_pollTab[_nbConn].fd, ERR_NICKNAMEINUSE,
+		--_nbSock;
+		send(_pollTab[_nbSock].fd, ERR_NICKNAMEINUSE,
 			strlen(ERR_NICKNAMEINUSE), 0);
 		close(_pollTab[index].fd);
 		return (1);

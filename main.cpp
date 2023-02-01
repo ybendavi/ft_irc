@@ -42,7 +42,7 @@ int		main(int ac, char **av)
 	int	ret;
 
 	if (ac != 2)
-		return (0);
+		return (1);
 	
 	Server	server;
 	

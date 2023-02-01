@@ -6,7 +6,7 @@
 /*   By: ccottin <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/18 18:30:32 by ccottin           #+#    #+#             */
-/*   Updated: 2023/01/30 20:29:09 by ccottin          ###   ########.fr       */
+/*   Updated: 2023/02/01 14:11:40 by ccottin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,13 +44,13 @@ class	User {
 		struct pollfd	&getSocket(void);
 		struct pollfd	getSocket(void) const;
 
-		void		setOp(bool);
-		void		setInv(bool);
-		void		setWal(bool);
-		void		setRealname(std::string);
-		void		setUsername(std::string);
-		void		setNickname(std::string);
-		void		setPass(std::string);
+		void			setOp(bool);
+		void			setInv(bool);
+		void			setWal(bool);
+		void			setRealname(std::string);
+		void			setUsername(std::string);
+		void			setNickname(std::string);
+		void			setPass(std::string);
 		
 		/*pushback le dernier lu & pop front qund on affiche*/
 		std::list< Message >		receivedmsg; //will eventually become a class so...
@@ -76,6 +76,8 @@ class	User {
 		std::string	_realname;
 		std::string	_nickname; // max nine char
 		std::string	_pass;
+
+		std::string	_checkParam(void);
 
 
 	public : 

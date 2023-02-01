@@ -6,7 +6,7 @@
 /*   By: ccottin <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/18 18:30:30 by ccottin           #+#    #+#             */
-/*   Updated: 2023/01/29 23:38:38 by ccottin          ###   ########.fr       */
+/*   Updated: 2023/02/01 14:22:23 by ccottin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,8 +114,14 @@ void		User::setPass(std::string s)
 	if (_pass != s)
 		_pass = s;
 }
+/*
+std::string		User::_checkParam(void)
+{
+	if (_nickname.size() > 9)
+		return (
+}*/
 
-void		User::parseUser(char * buffer)
+void	User::parseUser(char * buffer)
 {
 	std::string	s(buffer);
 	int	i;
@@ -141,4 +147,6 @@ void		User::parseUser(char * buffer)
 	i = s.find(':', y) + 1;
 	y = s.find('\r', i);
 	this->_realname = s.substr(i, y - i);
+	//return (checkParams());
+	//return (RPL_WELCOME);
 }
