@@ -6,7 +6,7 @@
 /*   By: ccottin <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/18 18:30:32 by ccottin           #+#    #+#             */
-/*   Updated: 2023/02/01 18:22:19 by ybendavi         ###   ########.fr       */
+/*   Updated: 2023/02/02 00:06:50 by ybendavi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,6 @@ class	User {
 		void			setUsername(std::string);
 		void			setNickname(std::string);
 		void			setPass(std::string);
-		void			execute(void);
 		
 		/*pushback le dernier lu & pop front qund on affiche*/
 		std::list< Message >		receivedmsg; //will eventually become a class so...

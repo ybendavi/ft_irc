@@ -35,7 +35,7 @@ class	Server
 			
 			/*getters ; faire un get channel*/
 
-			User	getUser(std::string) const;
+			std::map<std::string, User>::iterator	getUser(std::string);
 
 	private :
 
@@ -47,6 +47,8 @@ class	Server
 			void							_pollfunction(void);
 			void							_checkUser(int *ret);
 			void							_handleMessage(void);
+			void							_execute(User user);
+			void							_notice(User user);
 
 		
 			/*server infos*/
