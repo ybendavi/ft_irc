@@ -50,7 +50,7 @@ class	Server
 
 		
 			/*server infos*/
-			struct sockaddr_in				_addrServer;
+			struct sockaddr_in6				_addrServer;
 			int								_ret;
 
 			/*users mayhem*/
@@ -61,6 +61,10 @@ class	Server
 			std::map<std::string, User>		_users;
 			int								_nbUsers;
 			int								_nbSock;
+
+			/*socket options utils*/
+			int								_on;
+			int								_off;
 
 };
 

@@ -1,13 +1,13 @@
 #include "Server.hpp"
 
-Server::Server(void) : _ret(0), _clientSize(sizeof(_addrClient) ) , _nbUsers(0), _nbSock(0)
-{ }
+Server::Server(void) : _ret(0), _clientSize(sizeof(_addrClient) ) , _nbUsers(0), _nbSock(0), _on(1), _off(0)
+{}
 
 Server::~Server(void)
 {
-	while (_nbSock > 0)
+	while (_nbSock-- > 0)
 	{
-		--_nbSock;
+		//--_nbSock; add decrement in condition
 		if (_pollTab[_nbSock].fd != -1)
 			close(_pollTab[_nbSock].fd);
 	}
@@ -15,23 +15,35 @@ Server::~Server(void)
 
 int	Server::init(int port)
 {
-	_pollTab[0].fd = socket(AF_INET, SOCK_STREAM, 0);
+	if (!(port >= 1 && port <= 65535))
+		return (-7);
+
+	_pollTab[0].fd = socket(PF_INET6, SOCK_STREAM, 0);
 	if (_pollTab[0].fd < 0)
 		return (-1);
+
 	if (fcntl(_pollTab[0].fd, F_SETFL, O_NONBLOCK) < 0)
 		return (-2);
-	++_nbSock;
+
 	_pollTab[0].events = POLLIN;
 	_pollTab[0].revents = 0;
+	++_nbSock;
 
-	_addrServer.sin_family = AF_INET;
-	_addrServer.sin_addr.s_addr = htonl(INADDR_ANY);
-	_addrServer.sin_port = htons(port);
-	if ( bind(_pollTab[0].fd, (const struct sockaddr *)&_addrServer,
-			sizeof(_addrServer)) )
+	if ( setsockopt(_pollTab[0].fd, SOL_SOCKET, SO_REUSEADDR, &_on, sizeof(_on)) == -1 )
+		return (-8);
+	if ( setsockopt(_pollTab[0].fd, IPPROTO_IPV6, IPV6_V6ONLY, &_off, sizeof(_off)) == -1 )
+		return (-9);
+
+	memset(&_addrServer, 0, sizeof(_addrServer));
+	_addrServer.sin6_family = AF_INET6;
+	_addrServer.sin6_addr = in6addr_any;
+	_addrServer.sin6_port = htons(port);
+	if ( bind(_pollTab[0].fd, (sockaddr *)&_addrServer, sizeof(_addrServer)) )
 		return (-3);
-	if (listen(_pollTab[0].fd, 5))
+
+	if (listen(_pollTab[0].fd, MAX_USER)) //what macro should we use in listen call ?
 		return (-4);
+
 	return (0);
 }
 
@@ -54,7 +66,6 @@ void	Server::_checkUser(int *ret)
 			else
 			{
 				it->second.receivedmsg.push_back(Message(buffer));
-				it->second.execute();
 			//	std::cout << "incoming = " << buffer << std::endl;
 			}
 			bzero(buffer, 512);
@@ -188,13 +199,13 @@ int		Server::_initClient(int index)
 
 int		Server::start(void)
 {
-	while (1)
+	while (true)
 	{
 		_pollfunction();
 		if (_ret)
 			return (_ret);
-     //	_handleMessage();
-//		std::cout << "Users registered = " << _nbUsers << std::endl;
-	//	sleep(2);
+    	//_handleMessage();
+		//std::cout << "Users registered = " << _nbUsers << std::endl;
+		//sleep(2);
 	}
 }
