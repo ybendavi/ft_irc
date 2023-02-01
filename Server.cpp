@@ -38,6 +38,7 @@ int	Server::init(int port)
 void	Server::_checkUser(int *ret)
 {
 	char	buffer[512];
+
 	std::map<std::string, User>::iterator	it;
 
 	it = _users.begin();
@@ -46,6 +47,9 @@ void	Server::_checkUser(int *ret)
 	//	std::cout << it->second.getSocket().revents << std::endl;
 		if ( (it->second.getSocket().revents & 1) == POLLIN) 
 		{
+			struct stat	buff;
+
+			fstat(it->second.getSocket().fd, &buff);
 			if ( recv(it->second.getSocket().fd, buffer, 512, MSG_DONTWAIT) == -1 )
 			{
 				//std::cout << it->second.getSocket().fd << " = " << it->second.getSocket().revents << std::endl;
@@ -54,7 +58,8 @@ void	Server::_checkUser(int *ret)
 			else
 			{
 				it->second.receivedmsg.push_back(Message(buffer));
-			//	std::cout << "incoming = " << buffer << std::endl;
+				std::cout << "incoming = " << buffer << std::endl;
+				std::cout << "test status = "<< buff.st_size << buff.st_blocks << std::endl;
 			}
 			bzero(buffer, 512);
 			--(*ret);
