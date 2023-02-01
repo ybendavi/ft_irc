@@ -1,34 +1,37 @@
 NAME	= ircserv
 
-SRCS	= Server.cpp main.cpp User.cpp Message.cpp utils.cpp
+CXX		= c++
 
-CC		= c++
+CXXFLAGS	= -Wall -Wextra -Werror -MMD -std=c++98 -g3
 
-OBJS	= $(SRCS:.cpp=.o)
+SRCS	=	Server.cpp \
+			main.cpp \
+			User.cpp \
+			Message.cpp \
+			utils.cpp
+
+OBJS	= $(addprefix src/, $(SRCS:.cpp=.o))
 
 DEPS	= $(OBJS:.o=.d)
 
-CFLAGS	= -Wall -Wextra -Werror -MMD -std=c++98 -g3
-
-IFLAGS	= #put includes -Iincludes here
+IFLAGS	= -Iincludes
 
 all		:	$(NAME)
 
-%.o		:	%.cpp
-			$(CC) $(CFLAGS) $(IFLAGS) -c $< -o $@
-
 $(NAME)	:	$(OBJS)
-			$(CC) $(CFLAGS) $(OBJS) $(IFLAGS) -o $@
+			$(CXX) $(CXXFLAGS) $(IFLAGS) -o $@ $^
+
+%.o		:	%.cpp
+			$(CXX) $(CXXFLAGS) $(IFLAGS) -c $< -o $@
 
 clean	:
-			rm -rf $(DEPS)
-			rm -rf $(OBJS)
+			$(RM) $(DEPS)
+			$(RM) $(OBJS)
 
 fclean	:	clean
-			rm -rf $(NAME)
+			$(RM) $(NAME)
 
-re		:	fclean
-			make
+re		:	fclean all
 
 -include $(DEPS)
 
