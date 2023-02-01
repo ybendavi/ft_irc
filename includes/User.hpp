@@ -6,7 +6,7 @@
 /*   By: ccottin <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/18 18:30:32 by ccottin           #+#    #+#             */
-/*   Updated: 2023/02/01 14:11:40 by ccottin          ###   ########.fr       */
+/*   Updated: 2023/02/01 23:27:33 by ccottin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ class	User {
 	public :
 		
 		User(void);
-		User(struct pollfd socket);
+		User(struct pollfd & socket);
 		User(const User &ref);
 		~User(void);
 		User	&operator=(const User &ref);
@@ -42,7 +42,8 @@ class	User {
 		std::string		getNickname(void) const;
 		std::string		getPass(void) const;
 		struct pollfd	&getSocket(void);
-		struct pollfd	getSocket(void) const;
+		struct pollfd	&getSocket(void) const ;
+	//	struct pollfd	getSocket(void) const;
 
 		void			setOp(bool);
 		void			setInv(bool);
@@ -82,7 +83,7 @@ class	User {
 
 	public : 
 		/*le temps de faire un truc propre il sera PUBLIK*/
-		struct pollfd	_socket;
+		struct pollfd	&_socket;
 };
 
 #endif

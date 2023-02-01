@@ -6,25 +6,28 @@
 /*   By: ccottin <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/18 18:30:30 by ccottin           #+#    #+#             */
-/*   Updated: 2023/02/01 14:22:23 by ccottin          ###   ########.fr       */
+/*   Updated: 2023/02/01 23:28:31 by ccottin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "User.hpp"
 #include <iostream>
 
+struct pollfd	null; //necessaire pour le constructeur par defaut si c trop sale 
+// on fera un pointeur 
+
 User::User(void) : _isOperator(false), _isInvisible(false),
-					_isWallopable(true), _online(true)
-{
+					_isWallopable(true), _online(true), _socket(null)
+{ 
 	_socket.fd = -1;
 	_socket.events = 0;
 }
 
-User::User(struct pollfd socket) : _isOperator(false), _isInvisible(false),
+User::User(struct pollfd &socket) : _isOperator(false), _isInvisible(false),
 					_isWallopable(true), _online(true), _socket(socket)
 { }
 
-User::User(const User &ref)
+User::User(const User &ref) : _socket(ref.getSocket())
 { 
 	*this = ref;
 }
@@ -70,8 +73,10 @@ std::string	User::getPass(void) const { return (this->_pass); }
 std::string	User::getIp(void) const { return (this->_ip); }
 
 struct pollfd	&User::getSocket(void) { return (this->_socket); }
+ 
+struct pollfd	&User::getSocket(void) const { return (this->_socket); }
 
-struct pollfd	User::getSocket(void) const { return (this->_socket); }
+//struct pollfd	User::getSocket(void) const { return (this->_socket); }
 
 void		User::setOp(bool b) 
 { 

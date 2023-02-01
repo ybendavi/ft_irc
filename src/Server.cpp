@@ -56,34 +56,26 @@ void	Server::_checkUser(int *ret)
 	while (it != _users.end())
 	{
 	//	std::cout << it->second.getSocket().revents << std::endl;
+		if ( (it->second.getSocket().revents & (POLLNVAL|POLLERR|POLLHUP) ))
+			std::cout << "client disconnected" << std::endl;
 		if ( (it->second.getSocket().revents & 1) == POLLIN) 
 		{
-			if ( recv(it->second.getSocket().fd, buffer, 512, MSG_DONTWAIT) == -1 )
-			{
-				//std::cout << it->second.getSocket().fd << " = " << it->second.getSocket().revents << std::endl;
-				//_ret = -5;
-			}
+			if (recv(it->second.getSocket().fd, buffer, 512, MSG_DONTWAIT) == -1)
+				_ret = -5;
 			else
 			{
 				it->second.receivedmsg.push_back(Message(buffer));
-			//	std::cout << "incoming = " << buffer << std::endl;
+				std::cout << "incoming = " << buffer << std::endl;
 			}
 			bzero(buffer, 512);
 			--(*ret);
-			
 		}
 		if (_ret)
 			return ;
 		if ( (it->second.getSocket().revents & 4) == POLLOUT) 
 		{
 			if (it->second.tosendmsg.empty()) //virer ce if si on a pas besoin de ping ou le --
-			{
-			//	if (send(it->second.getSocket().fd, RPL_PING, strlen(RPL_PING), MSG_DONTWAIT) == -1)
-			//		_ret = -6;
-		//		it->second.tosendmsg.push_back(Message(RPL_PING));
-				--(*ret);
 				return ;
-			}
 //			std::cout << "POLLout = to send : " << it->second.tosendmsg.front() << std::endl;	
 		//	std::cout << sizeof(char *) << " ; " << sizeof(void*)<<  " ; " << sizeof(RPL_WELCOME) << " : "<< sizeof(&(it->second.tosendmsg.front())) << std::endl;
 		//	std::cout << "mdg = " << it->second.tosendmsg.front().getToSend().c_str();
@@ -97,6 +89,7 @@ void	Server::_checkUser(int *ret)
 		if (_ret)
 			return ;
 		++it;
+		std::cout << "un pachage\n";
 	}
 }
 
@@ -105,10 +98,9 @@ void	Server::_pollfunction(void)
 	int		ret; //pour l instant on le garde pis si il sert pas dans le else on vire l'autre variable et on use lui pr init cli
 	int		cli;
 		
-//	std::cout << "indc = " << _nbSock - _nbUsers << " flag= " << _pollTab[0].revents << "fd = "<< _pollTab[0].fd  << " nbconnect = " << _nbSock << std::endl;
 	ret = poll(_pollTab, _nbSock, 7000);
-//	for (int i = 0;  i < _nbSock; i++)
-	//		std::cout << "i = " << i << " event = " << _pollTab[i].events << "revent = " << _pollTab[i].revents << std::endl;
+	for (int i = 0;  i < _nbSock; i++)
+			std::cout << "i = " << i << " event = " << _pollTab[i].events << "revent = " << _pollTab[i].revents << std::endl;
 	if (ret == 0)
 		std::cout << "Timeout\n";
 	else if (ret == -1)
