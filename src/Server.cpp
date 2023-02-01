@@ -1,4 +1,7 @@
 #include "Server.hpp"
+#include "signal.hpp"
+
+extern volatile sig_atomic_t loop;
 
 Server::Server(void) : _ret(0), _clientSize(sizeof(_addrClient) ) , _nbUsers(0), _nbSock(0), _on(1), _off(0)
 {}
@@ -200,13 +203,13 @@ int		Server::_initClient(int index)
 
 int		Server::start(void)
 {
-	while (true)
+	while (loop && !(_ret))
 	{
 		_pollfunction();
-		if (_ret)
-			return (_ret);
     	//_handleMessage();
 		//std::cout << "Users registered = " << _nbUsers << std::endl;
 		//sleep(2);
 	}
+
+	return (_ret);
 }

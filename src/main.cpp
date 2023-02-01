@@ -1,5 +1,8 @@
 #include "Server.hpp"
+#include "signal.hpp"
 #include <stdlib.h>
+
+volatile sig_atomic_t loop = 1;
 
 /*int		printErr(int ret)
 {
@@ -44,11 +47,14 @@ int		main(int ac, char **av)
 	Server	server;
 	int		ret;
 
+	signal(SIGINT, sighandler);
+
 	if (ac != 3)
 	{
 		std::cerr << "Error" << std::endl << "usage: ./ircserv <port> <password>" << std::endl;
 		return (EXIT_FAILURE);
 	}
+
 	ret = server.init( atoi(av[1]) );
 	if (ret)
 		return ( printErr(ret) );
