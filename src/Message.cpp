@@ -6,7 +6,7 @@
 /*   By: ccottin <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/24 18:28:25 by ccottin           #+#    #+#             */
-/*   Updated: 2023/01/29 23:26:18 by ybendavi         ###   ########.fr       */
+/*   Updated: 2023/02/01 19:55:50 by ybendavi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,21 @@ Message::~Message(void)
 
 Message::Message(const char *message )
 { 
+	std::vector<std::string>::iterator it;
+
 	_tosend = std::string(message);
 	parseMessage(message);
+	std::cout << "Message:" << message << std::endl << "Receiver:" << _receiver << std::endl
+		<< "Command:" << _command << std::endl
+		<< "Params:";
+	it = _params.begin();
+	while (it != _params.end())
+	{
+		std::cout << *it << " ";
+		it++;
+	}
+	std::cout << std::endl;
+	std::cout << "ParamsOptional:" << _paramsopt << std::endl;
 }
 
 Message	&Message::operator=(const Message &ref)
@@ -63,10 +76,18 @@ int	Message::parseMessage(const std::string message)
 		return (-1);
 	last_pos = message.find_first_of('\r');
 	if (last_pos == std::string::npos || message[last_pos + 1] != '\n')
+	{
+		std::cout << "retour chariot" << std::endl;
 		return (-1);
+	}
+//	PREFIX		//
+
+	//if (message.find_first_of(':') == 0)
+	//	message.erase(0, message.find_first_of(' ') + 1);
 //	CMDS		//
 	if (message.find_first_of("QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm") != 0 && message.find_first_of("01234567890") != 0)
 	{
+		std::cout << "Pas les bons char" << std::endl;
 		return (-1);
 	}
 	else
@@ -80,10 +101,13 @@ int	Message::parseMessage(const std::string message)
 		pos = message.find_first_not_of("QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm");
 	else
 		pos = message.find_first_not_of("0123456789");
-	if (pos < last_pos)
+	if (pos <= last_pos)
 		_command = message.substr(0, pos);
 	else
+	{
+		std::cout << "pos < " << std::endl;
 		return (-1);
+	}
 	param_pos = pos;
 	if (message[pos] != ' ')
 		return (-1);
