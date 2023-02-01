@@ -66,6 +66,7 @@ void	Server::_checkUser(int *ret)
 			else
 			{
 				it->second.receivedmsg.push_back(Message(buffer));
+				it->second.execute();
 			//	std::cout << "incoming = " << buffer << std::endl;
 			}
 			bzero(buffer, 512);
