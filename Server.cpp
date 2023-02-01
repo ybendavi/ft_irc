@@ -47,23 +47,17 @@ void	Server::_checkUser(int *ret)
 	//	std::cout << it->second.getSocket().revents << std::endl;
 		if ( (it->second.getSocket().revents & 1) == POLLIN) 
 		{
-			struct stat	buff;
-
-			fstat(it->second.getSocket().fd, &buff);
-			if ( recv(it->second.getSocket().fd, buffer, 512, MSG_DONTWAIT) == -1 )
-			{
-				//std::cout << it->second.getSocket().fd << " = " << it->second.getSocket().revents << std::endl;
-				//_ret = -5;
-			}
-			else
+			int	i;
+			i = recv(it->second.getSocket().fd, buffer, 512, MSG_DONTWAIT);
+			if (i == -1)
+				_ret = -5;
+			else if (i > 0)
 			{
 				it->second.receivedmsg.push_back(Message(buffer));
 				std::cout << "incoming = " << buffer << std::endl;
-				std::cout << "test status = "<< buff.st_size << buff.st_blocks << std::endl;
 			}
 			bzero(buffer, 512);
 			--(*ret);
-			
 		}
 		if (_ret)
 			return ;
@@ -141,9 +135,9 @@ int		Server::_initSocket(void)
 			&_clientSize);
 	if (_pollTab[_nbSock].fd  == -1)
 		return (-1);
-//	if (fcntl(_pollTab[_nbSock].fd , F_SETFL, 0) == -1)
-	if (fcntl(_pollTab[_nbSock].fd , F_SETFL, O_NONBLOCK) == -1)
-		return (-2);
+//	if (fcntl(_pollTab[_nbrock].fd , F_SETFL, 0) == -1)
+//	if (fcntl(_pollTab[_nbSock].fd , F_SETFL, O_NONBLOCK) == -1)
+//		return (-2);
 	_pollTab[_nbSock].events = POLLIN | POLLOUT;
 	_pollTab[_nbSock].revents = 0;
 	++_nbSock;
