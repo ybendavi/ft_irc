@@ -47,8 +47,9 @@ class	Server
 			void							_pollfunction(void);
 			void							_checkUser(int *ret);
 			void							_handleMessage(void);
-			void							_execute(User user);
-			void							_notice(User user);
+			void							_execute(User *user);
+			void							_notice(User *user);
+			void							_privMsg(User *user);
 
 		
 			/*server infos*/

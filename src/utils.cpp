@@ -7,5 +7,6 @@ std::string	findNick(std::string buffer)
 
 	begin = buffer.find("NICK ");
 	end = buffer.find("\r\n");
+	std::cout << "ligne nickname:" << buffer << std::endl;
 	return ( buffer.substr(begin + 5, end - begin ));
 }
