@@ -12,6 +12,8 @@
 # define ERR_ERRONEUSNICKNAME "432"
 # define ERR_NICKCOLLISION "436"
 # define ERR_UNAVAILRESOURCE "437"
+# define ERR_NOTREGISTERED "451 :You have not registered\r\n"
+
 # define ERR_RESTRICTED "484"
 //"<nick> :Nickname is already in use"
 # define ERR_NEEDMOREPARAMS "461"

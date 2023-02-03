@@ -16,7 +16,7 @@ std::string	Server::nick_cmd(std::string nick, std::string oldnick,
 {
 	std::map<std::string, User>::iterator	it;
 
-	if(nick.empty())
+	if (nick.empty())
 		return (ERR_NONICKNAMEGIVEN);
 	it = _users.find(nick);
 	if (it != _users.end())
@@ -27,11 +27,12 @@ std::string	Server::nick_cmd(std::string nick, std::string oldnick,
 		if (fd == NULL || addr == NULL)
 			perror("Une variable n'a pas ete set correctement ");
 		_users.insert(std::pair<std::string, User>(nick, newUser));
+		std::cout << "nick = " << nick << std::endl;
 	}
 	else
 	{
 		std::swap(_users[nick], _users[oldnick]);
 		_users.erase(oldnick);
 	}
-	return (nick);
+	return ("");
 }
