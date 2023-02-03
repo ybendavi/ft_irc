@@ -47,8 +47,6 @@ class	User {
 		struct pollfd	*getSocket(void) const ;
 		struct sockaddr	*getAddr(void);
 		struct sockaddr	*getAddr(void) const;
- 
-	//	struct pollfd	getSocket(void) const;
 
 		void			setOp(bool);
 		void			setInv(bool);
@@ -57,6 +55,7 @@ class	User {
 		void			setUsername(std::string);
 		void			setNickname(std::string);
 		void			setPass(std::string);
+		void			execute(void);
 		
 		/*pushback le dernier lu & pop front qund on affiche*/
 		std::list< Message >		receivedmsg; //will eventually become a class so...

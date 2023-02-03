@@ -8,3 +8,9 @@ https://libera.chat/guides/clients
 
 https://hechao.li/2022/01/04/select-vs-poll-vs-epoll/
 
+test pour nc & recup tous les retours d'un serveur "normal"
+
+nc -CN punch.wa.us.dal.net 6667
+
+
+retour la cmd stat = :<server name> 219 truc * :End of /STATS report. 

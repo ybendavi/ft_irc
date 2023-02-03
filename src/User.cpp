@@ -152,3 +152,24 @@ void	User::parseUser(char * buffer)
 	//return (checkParams());
 	//return (RPL_WELCOME);
 }
+
+void	User::execute(void)
+{
+	if (receivedmsg.empty() == true)
+	{
+		std::cout << "false" << std::endl;
+		return ;
+	}
+	if (receivedmsg.front().getCommand().compare("PING") == 0)
+	{
+		std::string	pong("PONG \r\n");
+
+		pong.insert(5, *(receivedmsg.front().getParams().begin()));
+		tosendmsg.push_back(Message(pong.c_str()));
+	}
+	else
+	{
+		std::cout << "not pong:" << receivedmsg.front().getCommand() << std::endl;
+	}
+	receivedmsg.pop_front();
+}
