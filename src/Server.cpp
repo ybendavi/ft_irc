@@ -73,7 +73,7 @@ void	Server::_checkUser(int *ret)
 				while (!buff.empty()) // si msg coupes go here
 				{
 					it->second.receivedmsg.push_back(Message( gnm(buff) ));
-					it->second.execute();
+					_execute(&(it->second));
 					//	std::cout << "incoming = " << buffer << std::endl;
 				}
 			}
