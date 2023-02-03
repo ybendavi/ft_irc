@@ -40,6 +40,8 @@ class	Server
 
 	private :
 
+			typedef std::map<std::string, User>::iterator	iterator; //should change name if we gonna use other containers with iterator
+
 //			int		handleClient(void);
 
 			/*functions*/
@@ -48,6 +50,8 @@ class	Server
 			void							_pollfunction(void);
 			void							_checkUser(int *ret);
 			void							_handleMessage(void);
+
+			void							_disconnectClient(iterator leaving, iterator replace);
 			void							_execute(User *user);
 			void							_notice(User *user);
 			void							_privMsg(User *user);
