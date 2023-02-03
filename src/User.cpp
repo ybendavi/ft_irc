@@ -6,7 +6,7 @@
 /*   By: ccottin <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/18 18:30:30 by ccottin           #+#    #+#             */
-/*   Updated: 2023/02/01 23:28:31 by ccottin          ###   ########.fr       */
+/*   Updated: 2023/02/02 19:57:52 by ccottin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,10 +134,6 @@ void	User::parseUser(char * buffer)
 
 	i = s.find('\r') + 1;
 	std::string	tmp(buffer, 0, i + 1);
-	if (!tmp.compare("CAP LS\r\n"))
-		std::cout << "is good\n";
-	if (s[i] == '\n')
-		std::cout << "is LS\n";
 	i++;
 	i = s.find(' ', i) + 1;
 	y = s.find('\r', i);

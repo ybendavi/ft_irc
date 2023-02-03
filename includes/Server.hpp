@@ -60,7 +60,7 @@ class	Server
 
 			std::map<std::string, User>		_users;
 			int								_nbUsers;
-			int								_nbSock;
+			nfds_t								_nbSock;
 
 			/*socket options utils*/
 			int								_on;

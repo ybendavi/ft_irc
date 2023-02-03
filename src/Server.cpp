@@ -1,7 +1,7 @@
 #include "Server.hpp"
 
 Server::Server(void) : _ret(0), _clientSize(sizeof(_addrClient) ) , _nbUsers(0), _nbSock(0), _on(1), _off(0)
-{}
+{ }
 
 Server::~Server(void)
 {
@@ -98,13 +98,17 @@ void	Server::_pollfunction(void)
 	int		ret; //pour l instant on le garde pis si il sert pas dans le else on vire l'autre variable et on use lui pr init cli
 	int		cli;
 		
+//	for (int i = 0;  i < _nbSock; i++)
+//			std::cout << "before : i = " << i << " event = " << _pollTab[i].events << "revent = " << _pollTab[i].revents << std::endl;
 	ret = poll(_pollTab, _nbSock, 7000);
-	for (int i = 0;  i < _nbSock; i++)
-			std::cout << "i = " << i << " event = " << _pollTab[i].events << "revent = " << _pollTab[i].revents << std::endl;
+//	for (int i = 0;  i < _nbSock; i++)
+//			std::cout << "after : i = " << i << " event = " << _pollTab[i].events << "revent = " << _pollTab[i].revents << std::endl;
 	if (ret == 0)
 		std::cout << "Timeout\n";
 	else if (ret == -1)
-		perror("poll :"); //au moment ou tu ecriras ta gestion d'user qui part faut gerr ca
+		perror("poll :"); //au moment ou tu ecriras ta gestion d'user qui part faut gerr cap
+	else if ( (_pollTab[0].events & (POLLNVAL|POLLERR|POLLHUP) ))
+		std::cout << "buggybugg" << std::endl;
 	else
 	{
 		if (_nbUsers)
@@ -135,7 +139,7 @@ void	Server::_pollfunction(void)
 
 int		Server::_initSocket(void)
 {
-//	std::cout << "nb = " << _nbSock << std::endl;
+	std::cout << "init sockt\n";
 	_pollTab[_nbSock].fd  = accept(_pollTab[0].fd, (struct sockaddr* )&_addrClient,
 			&_clientSize);
 	if (_pollTab[_nbSock].fd  == -1)
@@ -163,7 +167,10 @@ int		Server::_initClient(int index)
 		_ret = -5;
 		return (0);
 	}
+	std::cout <<"buffer = " << buffer << std::endl;
 	nick = findNick(std::string(buffer));
+	std::cout <<"nick =" <<nick << std::endl;
+	
 	if ( _users.find(nick) == _users.end() )
 	{
 		User		user( _pollTab[index] );

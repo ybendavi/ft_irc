@@ -6,6 +6,6 @@ std::string	findNick(std::string buffer)
 	int	end;
 
 	begin = buffer.find("NICK ");
-	end = buffer.find("\r\n");
-	return ( buffer.substr(begin + 5, end - begin ));
+	end = buffer.find("\r\n", begin);
+	return ( buffer.substr(begin + 5, end - (begin + 5)));
 }
