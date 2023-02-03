@@ -3,7 +3,7 @@
 
 extern volatile sig_atomic_t loop;
 
-Server::Server(void) : _ret(0), _clientSize(sizeof(struct sockaddr) ) , _nbUsers(0), _nbSock(0), _on(1), _off(0)
+Server::Server(void) : _ret(0), _clientSize(sizeof(struct sockaddr) ) , _users(), _channels(), _nbUsers(0), _nbSock(0), _on(1), _off(0)
 { 
 	bzero( _addrInfo, sizeof(struct sockaddr));
 }
