@@ -88,7 +88,7 @@ void	Server::_checkUser(int *ret)
 			else
 			{
 				it->second.receivedmsg.push_back(Message(buffer));
-				it->second.execute();
+				_execute(&(it->second));
 			//	std::cout << "incoming = " << buffer << std::endl;
 			}
 			bzero(buffer, 512);
@@ -107,7 +107,10 @@ void	Server::_checkUser(int *ret)
 						strlen(it->second.tosendmsg.front().getToSend().c_str()), MSG_DONTWAIT) == -1)
 				_ret = -6;
 			else
+			{
+				std::cout << "message sent:" << it->second.tosendmsg.front().getToSend() << std::endl;
 				it->second.tosendmsg.pop_front();
+			}
 			--(*ret);
 		}
 		if (_ret)
@@ -229,4 +232,85 @@ int		Server::start(void)
 		//sleep(2);
 	}
 	return (_ret);
+}
+
+void	Server::_execute(User *user)
+{
+	if (user->receivedmsg.empty() == true)
+	{
+		std::cout << "false" << std::endl;
+		return ;
+	}
+	if (user->receivedmsg.front().getCommand().compare("PING") == 0)
+	{
+		std::string	pong("PONG \r\n");
+
+		pong.insert(5, *(user->receivedmsg.front().getParams().begin()));
+		user->tosendmsg.push_back(Message(pong.c_str()));
+	}
+	else if (user->receivedmsg.front().getCommand().compare("NOTICE") == 0)
+		_notice(user);
+	else if (user->receivedmsg.front().getCommand().compare("PRIVMSG") == 0)
+		_notice(user);
+	else
+	{
+		std::cout << "not handled:" << user->receivedmsg.front().getCommand() << std::endl;
+	}
+	user->receivedmsg.pop_front();
+
+}
+
+void	Server::_notice(User *user)
+{
+	std::map<std::string, User>::iterator	it;
+	std::vector<std::string>::iterator	ite;
+
+	//std::cout << "ici" << std::endl;
+	if (user->receivedmsg.front().getParams().empty() == true
+		|| user->receivedmsg.front().getParamsopt().empty() == true)
+		return ;
+	//std::cout << "et ici" << std::endl;
+	ite = user->receivedmsg.front().getParams().begin();
+	//std::cout << "nick:" << *(user->receivedmsg.front().getParams().begin()) << std::endl;
+	//std::cout << "nick of user:" << (_users.begin()++)->second.getNickname() << std::endl;
+	it = getUser(*(user->receivedmsg.front().getParams().begin()));
+	//if (getUser(*(user->receivedmsg.front().getParams().begin())) == _users.end())
+	//	return ;
+	//std::cout << "userlooking:" << _users.begin()->first << std::endl;
+	//std::cout << "userlooking:" << _users.find(std::string("LS\r\n"))->second.getNickname()<< std::endl;
+	if (_users.find(std::string("LS\r\n")) == _users.end())
+		return ;
+	//std::cout << "encore ici" << std::endl;
+	//_users.find(*(user->receivedmsg.front().getParams().begin()))->second.tosendmsg.push_back(Message(user->receivedmsg.front().getMessage().c_str()));
+	_users.find(std::string("LS\r\n"))->second.tosendmsg.push_back(Message(user->receivedmsg.front().getToSend().c_str()));
+}
+
+void	Server::_privMsg(User *user)
+{
+	std::map<std::string, User>::iterator	it;
+	std::vector<std::string>::iterator	ite;
+
+	//std::cout << "ici" << std::endl;
+	if (user->receivedmsg.front().getParams().empty() == true
+		|| user->receivedmsg.front().getParamsopt().empty() == true)
+		return ;
+	//std::cout << "et ici" << std::endl;
+	ite = user->receivedmsg.front().getParams().begin();
+	//std::cout << "nick:" << *(user->receivedmsg.front().getParams().begin()) << std::endl;
+	//std::cout << "nick of user:" << (_users.begin()++)->second.getNickname() << std::endl;
+	it = getUser(*(user->receivedmsg.front().getParams().begin()));
+	//if (getUser(*(user->receivedmsg.front().getParams().begin())) == _users.end())
+	//	return ;
+	//std::cout << "userlooking:" << _users.begin()->first << std::endl;
+	//std::cout << "userlooking:" << _users.find(std::string("LS\r\n"))->second.getNickname()<< std::endl;
+	if (_users.find(std::string("LS\r\n")) == _users.end())
+		return ;
+	//std::cout << "encore ici" << std::endl;
+	//_users.find(*(user->receivedmsg.front().getParams().begin()))->second.tosendmsg.push_back(Message(user->receivedmsg.front().getMessage().c_str()));
+	_users.find(std::string("LS\r\n"))->second.tosendmsg.push_back(Message(user->receivedmsg.front().getToSend().c_str()));
+}
+
+std::map<std::string, User>::iterator	Server::getUser(std::string nick)
+{
+	return (_users.find(nick));
 }
