@@ -2,6 +2,7 @@
 # define SERVER_HPP
 
 #include <string>
+#include <algorithm>
 #include <netinet/in.h>
 #include <vector>
 #include <utility>
@@ -52,7 +53,13 @@ class	Server
 			void							_notice(User *user);
 			void							_privMsg(User *user);
 
-		
+			/*tmp commands stash*/
+
+			std::string	nick_cmd(std::string nick, std::string oldnick = "",
+					struct pollfd * fd = NULL, struct sockaddr * addr = NULL);
+			std::string	cmd_user(Message & msg, User & user);
+			
+
 			/*server infos*/
 			struct sockaddr_in6				_addrServer;
 			int								_ret;
@@ -74,5 +81,6 @@ class	Server
 };
 
 std::string	findNick(std::string buffer);
+std::string	gnm(std::string & buff);
 
 #endif

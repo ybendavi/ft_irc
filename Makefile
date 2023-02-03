@@ -9,7 +9,9 @@ SRCS	=	Server.cpp \
 			User.cpp \
 			Message.cpp \
 			utils.cpp \
-			signal.cpp
+			signal.cpp \
+			nick_cmd.cpp \
+			user_cmd.cpp
 
 OBJS	= $(addprefix src/, $(SRCS:.cpp=.o))
 

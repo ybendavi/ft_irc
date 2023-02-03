@@ -85,6 +85,12 @@ void		User::setOp(bool b)
 		_isOperator = b;
 }
 
+void		User::setIp(std::string s) 
+{ 
+	if (_ip != s)
+		_ip = s;
+}
+
 void		User::setInv(bool b)
 { 
 	if (_isInvisible != b)

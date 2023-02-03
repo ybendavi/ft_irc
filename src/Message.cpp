@@ -24,11 +24,11 @@
 Message::~Message(void)
 { } 
 
-Message::Message(const char *message )
+Message::Message(const std::string message )
 { 
 	std::vector<std::string>::iterator it;
 
-	_tosend = std::string(message);
+	_tosend = message;
 	parseMessage(message);
 	std::cout << "Message:" << message << std::endl << "Receiver:" << _receiver << std::endl
 		<< "Command:" << _command << std::endl

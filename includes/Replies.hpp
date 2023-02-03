@@ -8,7 +8,7 @@
 # define RPL_PING "PING\r\n"
 
 # define ERR_NICKNAMEINUSE "433 :Nick in use\r\n"
-# define ERR_NONICKNAMEGIVEN "431"
+# define ERR_NONICKNAMEGIVEN "431 :No nickname given\r\n"
 # define ERR_ERRONEUSNICKNAME "432"
 # define ERR_NICKCOLLISION "436"
 # define ERR_UNAVAILRESOURCE "437"
@@ -16,7 +16,6 @@
 //"<nick> :Nickname is already in use"
 # define ERR_NEEDMOREPARAMS "461"
 //"<command> :Not enough parameters"
-# define ERR_ALREADYREGISTRED "462"
-// ":Unauthorized command (already registered)"
+# define ERR_ALREADYREGISTRED "462 :Unauthorized command (already registered)\r\n"
 
 #endif
