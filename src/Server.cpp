@@ -52,9 +52,20 @@ int	Server::init(int port)
 	return (0);
 }
 
+void	Server::_disconnectClient(iterator leaving, iterator replace)
+{
+	std::cout << "Client " << leaving->first << " disconnected" << std::endl;
+
+	close(leaving->second.getSocket()->fd);
+	leaving->second.getSocket()->fd = replace->second.getSocket()->fd;
+	_users.erase(leaving);
+	--_nbUsers;
+}
+
 void	Server::_checkUser(int *ret)
 {
 	char	buffer[512];
+	int		status;
 	std::map<std::string, User>::iterator	it;
 
 	it = _users.begin();
@@ -65,8 +76,15 @@ void	Server::_checkUser(int *ret)
 			std::cout << "client disconnected" << std::endl;
 		if ( (it->second.getSocket()->revents & 1) == POLLIN) 
 		{
-			if (recv(it->second.getSocket()->fd, buffer, 512, MSG_DONTWAIT) == -1)
-				_ret = -5;
+			status = recv(it->second.getSocket()->fd, buffer, 512, MSG_DONTWAIT); 
+			
+			if (status <= 0)
+			{
+				if (status == -1)
+					_ret = -5;
+				if (status == 0)
+					_disconnectClient(it, --_users.end());
+			}
 			else
 			{
 				it->second.receivedmsg.push_back(Message(buffer));
