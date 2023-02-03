@@ -1,11 +1,13 @@
 #include "Server.hpp"
 
-std::string	findNick(std::string buffer)
+std::string	gnm(std::string & buff)
 {
-	int	begin;
-	int	end;
+	int	i;
+	std::string	ret;
 
-	begin = buffer.find("NICK ");
-	end = buffer.find("\r\n", begin);
-	return ( buffer.substr(begin + 5, end - (begin + 5)));
+	ret = buff;
+	i = buff.find("\r\n");
+	ret.resize(i + 2);
+	buff.erase(0, i + 2);
+	return ( ret );
 }

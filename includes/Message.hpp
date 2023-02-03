@@ -6,7 +6,7 @@
 /*   By: ccottin <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/24 18:26:30 by ccottin           #+#    #+#             */
-/*   Updated: 2023/02/01 19:52:05 by ybendavi         ###   ########.fr       */
+/*   Updated: 2023/02/03 17:53:32 by ccottin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ class	Message {
 
 	public :
 						//Message(void);
-						Message(const char *);
+						Message(std::string);
 						Message	&operator=(const Message &ref);
 						//Message(const Message &ref);
 						~Message(void);

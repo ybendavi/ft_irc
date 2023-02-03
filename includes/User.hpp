@@ -6,7 +6,7 @@
 /*   By: ccottin <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/18 18:30:32 by ccottin           #+#    #+#             */
-/*   Updated: 2023/02/03 12:37:53 by ccottin          ###   ########.fr       */
+/*   Updated: 2023/02/03 18:17:25 by ccottin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ class	User {
 		void			setOp(bool);
 		void			setInv(bool);
 		void			setWal(bool);
+		void			setIp(std::string);
 		void			setRealname(std::string);
 		void			setUsername(std::string);
 		void			setNickname(std::string);

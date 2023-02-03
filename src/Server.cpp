@@ -69,9 +69,13 @@ void	Server::_checkUser(int *ret)
 				_ret = -5;
 			else
 			{
-				it->second.receivedmsg.push_back(Message(buffer));
-				it->second.execute();
-			//	std::cout << "incoming = " << buffer << std::endl;
+				std::string buff(buffer);
+				while (!buff.empty()) // si msg coupes go here
+				{
+					it->second.receivedmsg.push_back(Message( gnm(buff) ));
+					it->second.execute();
+					//	std::cout << "incoming = " << buffer << std::endl;
+				}
 			}
 			bzero(buffer, 512);
 			--(*ret);
@@ -102,7 +106,6 @@ void	Server::_checkUser(int *ret)
 void	Server::_pollfunction(void) 
 {
 	int		ret; //pour l instant on le garde pis si il sert pas dans le else on vire l'autre variable et on use lui pr init cli
-	int		cli;
 		
 //	for (int i = 0;  i < _nbSock; i++)
 //			std::cout << "before : i = " << i << " event = " << _pollTab[i].events << "revent = " << _pollTab[i].revents << std::endl;
@@ -121,19 +124,14 @@ void	Server::_pollfunction(void)
 			_checkUser(&ret);
 		if (_ret)
 			return ;
-		cli = _nbSock - _nbUsers;
-		while (cli > 1)
-		{
-			if (_initClient(_nbUsers + 1) < 0)
-					return ;
-			--cli;
-		}
+
 		if (_pollTab[0].revents == POLLIN)
 		{
 			_ret = _initSocket();
 			if (_ret)
 				return ;
 		}
+
 		if (ret > 0)
 		{
 	//		std::cout << "reste du ret de poll == " << ret << std::endl;
@@ -149,9 +147,15 @@ int		Server::_initSocket(void)
 	_pollTab[_nbSock].fd  = accept(_pollTab[0].fd, (struct sockaddr* )&_addrInfo[_nbSock],
 			&_clientSize);
 	if (_pollTab[_nbSock].fd  == -1)
-		return (-1);
+	{
+		perror("accept : ");
+		return (0);
+	}
 	if (fcntl(_pollTab[_nbSock].fd , F_SETFL, O_NONBLOCK) == -1)
-		return (-2);
+	{
+		close(_pollTab[_nbSock].fd);
+		return (0);
+	}
 	_pollTab[_nbSock].events = POLLIN | POLLOUT;
 	_pollTab[_nbSock].revents = 0;
 	++_nbSock;
@@ -163,19 +167,6 @@ int		Server::_initClient(int index)
 	char			buffer[512];
 	std::string		nick;
 
-	if ( !((_pollTab[index].revents & 1) == POLLIN) ) //resolve your fucking parser its ugly and glitchy
-		return (0);
-	if (recv(_pollTab[index].fd, buffer, 512, MSG_DONTWAIT) == -1)
-	{
-		--_nbSock;
-		close(_pollTab[index].fd);
-		_ret = -5;
-		return (0);
-	}
-//	std::cout <<"buffer = " << buffer << std::endl;
-	nick = findNick(std::string(buffer));
-//	std::cout <<"nick =" <<nick << std::endl;
-	
 	if ( _users.find(nick) == _users.end() )
 	{
 		User		user( &(_pollTab[index]), &(_addrInfo[index]) );
@@ -183,12 +174,7 @@ int		Server::_initClient(int index)
 	//	std::cout << "goto user\n";
 		user.parseUser( buffer );
 		_users.insert( std::pair<std::string, User>(nick, user) );
-		++_nbUsers;
-		_users[nick].tosendmsg.push_back(Message(RPL_WELCOME));
-		_users[nick].tosendmsg.push_back(Message(RPL_YOURHOST));
-		_users[nick].tosendmsg.push_back(Message(RPL_CREATED));
-		_users[nick].tosendmsg.push_back(Message(RPL_MYINFO));
-	}
+		}
 	else
 	{
 		std::cout << "goto err\n";
@@ -204,11 +190,6 @@ int		Server::_initClient(int index)
 int		Server::start(void)
 {
 	while (loop && !(_ret))
-	{
 		_pollfunction();
-    	//_handleMessage();
-		//std::cout << "Users registered = " << _nbUsers << std::endl;
-		//sleep(2);
-	}
 	return (_ret);
 }

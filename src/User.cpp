@@ -6,7 +6,7 @@
 /*   By: ccottin <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/18 18:30:30 by ccottin           #+#    #+#             */
-/*   Updated: 2023/02/03 12:45:27 by ccottin          ###   ########.fr       */
+/*   Updated: 2023/02/03 18:18:04 by ccottin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,12 @@ void		User::setOp(bool b)
 { 
 	if (_isOperator != b)
 		_isOperator = b;
+}
+
+void		User::setIp(std::string s) 
+{ 
+	if (_ip != s)
+		_ip = s;
 }
 
 void		User::setInv(bool b)

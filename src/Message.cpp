@@ -6,7 +6,7 @@
 /*   By: ccottin <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/24 18:28:25 by ccottin           #+#    #+#             */
-/*   Updated: 2023/02/01 19:55:50 by ybendavi         ###   ########.fr       */
+/*   Updated: 2023/02/03 17:55:25 by ccottin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,11 +24,11 @@
 Message::~Message(void)
 { } 
 
-Message::Message(const char *message )
+Message::Message(const std::string message )
 { 
 	std::vector<std::string>::iterator it;
 
-	_tosend = std::string(message);
+	_tosend = message;
 	parseMessage(message);
 	std::cout << "Message:" << message << std::endl << "Receiver:" << _receiver << std::endl
 		<< "Command:" << _command << std::endl
