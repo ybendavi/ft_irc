@@ -6,7 +6,7 @@
 /*   By: ccottin <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/24 18:28:25 by ccottin           #+#    #+#             */
-/*   Updated: 2023/02/03 17:55:25 by ccottin          ###   ########.fr       */
+/*   Updated: 2023/02/02 14:41:40 by ybendavi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,11 +80,7 @@ int	Message::parseMessage(const std::string message)
 		std::cout << "retour chariot" << std::endl;
 		return (-1);
 	}
-//	PREFIX		//
-
-	//if (message.find_first_of(':') == 0)
-	//	message.erase(0, message.find_first_of(' ') + 1);
-//	CMDS		//
+	//	CMDS		//
 	if (message.find_first_of("QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm") != 0 && message.find_first_of("01234567890") != 0)
 	{
 		std::cout << "Pas les bons char" << std::endl;
@@ -133,8 +129,8 @@ int	Message::parseMessage(const std::string message)
 	}
 	if (param_pos < last_pos && param_pos != std::string::npos && message[param_pos] == ':')
 	{
-		if (message.find_first_of("\n\r: ", param_pos + 1) != std::string::npos)
-			_paramsopt = message.substr(param_pos + 1,  message.find_first_of("\n\r: ", param_pos + 1) - param_pos - 1);
+		if (message.find_first_of("\n\r:", param_pos + 1) != std::string::npos)
+			_paramsopt = message.substr(param_pos + 1,  message.find_first_of("\n\r:", param_pos + 1) - param_pos - 1);
 
 	}
 	return (0);
