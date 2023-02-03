@@ -6,28 +6,23 @@
 /*   By: ccottin <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/18 18:30:30 by ccottin           #+#    #+#             */
-/*   Updated: 2023/02/02 19:57:52 by ccottin          ###   ########.fr       */
+/*   Updated: 2023/02/03 12:45:27 by ccottin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "User.hpp"
 #include <iostream>
 
-struct pollfd	null; //necessaire pour le constructeur par defaut si c trop sale 
-// on fera un pointeur 
-
 User::User(void) : _isOperator(false), _isInvisible(false),
-					_isWallopable(true), _online(true), _socket(null)
-{ 
-	_socket.fd = -1;
-	_socket.events = 0;
-}
-
-User::User(struct pollfd &socket) : _isOperator(false), _isInvisible(false),
-					_isWallopable(true), _online(true), _socket(socket)
+					_isWallopable(true), _online(true), _socket(NULL), _addr(NULL)
 { }
 
-User::User(const User &ref) : _socket(ref.getSocket())
+User::User(struct pollfd * socket, struct sockaddr * addr) : _isOperator(false), 
+					_isInvisible(false), _isWallopable(true), _online(true),
+					_socket(socket), _addr(addr)
+{ }
+
+User::User(const User &ref) : _socket(ref.getSocket()), _addr(ref.getAddr())
 { 
 	*this = ref;
 }
@@ -50,6 +45,7 @@ User	&User::operator=(const User &ref)
 		this->_online = ref.getOnline();
 		this->_ip = ref.getIp();
 		this->_socket = ref.getSocket();
+		this->_addr = ref.getAddr();
 	}
 	return (*this);
 }
@@ -72,9 +68,14 @@ std::string	User::getPass(void) const { return (this->_pass); }
 
 std::string	User::getIp(void) const { return (this->_ip); }
 
-struct pollfd	&User::getSocket(void) { return (this->_socket); }
+struct pollfd	*User::getSocket(void) { return (this->_socket); }
  
-struct pollfd	&User::getSocket(void) const { return (this->_socket); }
+struct pollfd	*User::getSocket(void) const { return (this->_socket); }
+
+struct sockaddr	*User::getAddr(void) { return (this->_addr); }
+ 
+struct sockaddr	*User::getAddr(void) const { return (this->_addr); }
+
 
 //struct pollfd	User::getSocket(void) const { return (this->_socket); }
 

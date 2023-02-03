@@ -1,7 +1,9 @@
 #include "Server.hpp"
 
-Server::Server(void) : _ret(0), _clientSize(sizeof(_addrClient) ) , _nbUsers(0), _nbSock(0), _on(1), _off(0)
-{ }
+Server::Server(void) : _ret(0), _clientSize(sizeof(struct sockaddr) ) , _nbUsers(0), _nbSock(0), _on(1), _off(0)
+{ 
+	bzero( _addrInfo, sizeof(struct sockaddr));
+}
 
 Server::~Server(void)
 {
@@ -56,30 +58,30 @@ void	Server::_checkUser(int *ret)
 	while (it != _users.end())
 	{
 	//	std::cout << it->second.getSocket().revents << std::endl;
-		if ( (it->second.getSocket().revents & (POLLNVAL|POLLERR|POLLHUP) ))
+		if ( (it->second.getSocket()->revents & (POLLNVAL|POLLERR|POLLHUP) ))
 			std::cout << "client disconnected" << std::endl;
-		if ( (it->second.getSocket().revents & 1) == POLLIN) 
+		if ( (it->second.getSocket()->revents & 1) == POLLIN) 
 		{
-			if (recv(it->second.getSocket().fd, buffer, 512, MSG_DONTWAIT) == -1)
+			if (recv(it->second.getSocket()->fd, buffer, 512, MSG_DONTWAIT) == -1)
 				_ret = -5;
 			else
 			{
 				it->second.receivedmsg.push_back(Message(buffer));
-				std::cout << "incoming = " << buffer << std::endl;
+			//	std::cout << "incoming = " << buffer << std::endl;
 			}
 			bzero(buffer, 512);
 			--(*ret);
 		}
 		if (_ret)
 			return ;
-		if ( (it->second.getSocket().revents & 4) == POLLOUT) 
+		if ( (it->second.getSocket()->revents & 4) == POLLOUT) 
 		{
 			if (it->second.tosendmsg.empty()) //virer ce if si on a pas besoin de ping ou le --
 				return ;
 //			std::cout << "POLLout = to send : " << it->second.tosendmsg.front() << std::endl;	
 		//	std::cout << sizeof(char *) << " ; " << sizeof(void*)<<  " ; " << sizeof(RPL_WELCOME) << " : "<< sizeof(&(it->second.tosendmsg.front())) << std::endl;
 		//	std::cout << "mdg = " << it->second.tosendmsg.front().getToSend().c_str();
-			if (send(it->second.getSocket().fd, it->second.tosendmsg.front().getToSend().c_str(),
+			if (send(it->second.getSocket()->fd, it->second.tosendmsg.front().getToSend().c_str(),
 						strlen(it->second.tosendmsg.front().getToSend().c_str()), MSG_DONTWAIT) == -1)
 				_ret = -6;
 			else
@@ -89,7 +91,7 @@ void	Server::_checkUser(int *ret)
 		if (_ret)
 			return ;
 		++it;
-		std::cout << "un pachage\n";
+	//	std::cout << "un pachage\n";
 	}
 }
 
@@ -139,12 +141,11 @@ void	Server::_pollfunction(void)
 
 int		Server::_initSocket(void)
 {
-	std::cout << "init sockt\n";
-	_pollTab[_nbSock].fd  = accept(_pollTab[0].fd, (struct sockaddr* )&_addrClient,
+//	std::cout << "init sockt\n";
+	_pollTab[_nbSock].fd  = accept(_pollTab[0].fd, (struct sockaddr* )&_addrInfo[_nbSock],
 			&_clientSize);
 	if (_pollTab[_nbSock].fd  == -1)
 		return (-1);
-//	if (fcntl(_pollTab[_nbSock].fd , F_SETFL, 0) == -1)
 	if (fcntl(_pollTab[_nbSock].fd , F_SETFL, O_NONBLOCK) == -1)
 		return (-2);
 	_pollTab[_nbSock].events = POLLIN | POLLOUT;
@@ -167,13 +168,13 @@ int		Server::_initClient(int index)
 		_ret = -5;
 		return (0);
 	}
-	std::cout <<"buffer = " << buffer << std::endl;
+//	std::cout <<"buffer = " << buffer << std::endl;
 	nick = findNick(std::string(buffer));
-	std::cout <<"nick =" <<nick << std::endl;
+//	std::cout <<"nick =" <<nick << std::endl;
 	
 	if ( _users.find(nick) == _users.end() )
 	{
-		User		user( _pollTab[index] );
+		User		user( &(_pollTab[index]), &(_addrInfo[index]) );
     
 	//	std::cout << "goto user\n";
 		user.parseUser( buffer );
