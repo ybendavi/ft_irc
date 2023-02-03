@@ -6,7 +6,7 @@
 /*   By: ccottin <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/18 18:30:30 by ccottin           #+#    #+#             */
-/*   Updated: 2023/02/01 19:14:39 by ybendavi         ###   ########.fr       */
+/*   Updated: 2023/02/03 12:45:27 by ccottin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,17 +14,15 @@
 #include <iostream>
 
 User::User(void) : _isOperator(false), _isInvisible(false),
-					_isWallopable(true), _online(true)
-{
-	_socket.fd = -1;
-	_socket.events = 0;
-}
-
-User::User(struct pollfd socket) : _isOperator(false), _isInvisible(false),
-					_isWallopable(true), _online(true), _socket(socket)
+					_isWallopable(true), _online(true), _socket(NULL), _addr(NULL)
 { }
 
-User::User(const User &ref)
+User::User(struct pollfd * socket, struct sockaddr * addr) : _isOperator(false), 
+					_isInvisible(false), _isWallopable(true), _online(true),
+					_socket(socket), _addr(addr)
+{ }
+
+User::User(const User &ref) : _socket(ref.getSocket()), _addr(ref.getAddr())
 { 
 	*this = ref;
 }
@@ -47,6 +45,7 @@ User	&User::operator=(const User &ref)
 		this->_online = ref.getOnline();
 		this->_ip = ref.getIp();
 		this->_socket = ref.getSocket();
+		this->_addr = ref.getAddr();
 	}
 	return (*this);
 }
@@ -69,9 +68,16 @@ std::string	User::getPass(void) const { return (this->_pass); }
 
 std::string	User::getIp(void) const { return (this->_ip); }
 
-struct pollfd	&User::getSocket(void) { return (this->_socket); }
+struct pollfd	*User::getSocket(void) { return (this->_socket); }
+ 
+struct pollfd	*User::getSocket(void) const { return (this->_socket); }
 
-struct pollfd	User::getSocket(void) const { return (this->_socket); }
+struct sockaddr	*User::getAddr(void) { return (this->_addr); }
+ 
+struct sockaddr	*User::getAddr(void) const { return (this->_addr); }
+
+
+//struct pollfd	User::getSocket(void) const { return (this->_socket); }
 
 void		User::setOp(bool b) 
 { 
@@ -129,10 +135,6 @@ void	User::parseUser(char * buffer)
 
 	i = s.find('\r') + 1;
 	std::string	tmp(buffer, 0, i + 1);
-	if (!tmp.compare("CAP LS\r\n"))
-		std::cout << "is good\n";
-	if (s[i] == '\n')
-		std::cout << "is LS\n";
 	i++;
 	i = s.find(' ', i) + 1;
 	y = s.find('\r', i);

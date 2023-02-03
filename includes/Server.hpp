@@ -24,6 +24,7 @@
 #define MAX_USER 10
 #define MAX_CONN 12
 
+
 class	Server
 {
 	public:
@@ -55,12 +56,13 @@ class	Server
 
 			/*users mayhem*/
 			socklen_t						_clientSize;
-			struct sockaddr					_addrClient;
+			struct sockaddr					_addrInfo[MAX_CONN];
 			struct pollfd					_pollTab[MAX_CONN];
+			unsigned short					_index; //maybe int-nutile
 
 			std::map<std::string, User>		_users;
 			int								_nbUsers;
-			int								_nbSock;
+			nfds_t							_nbSock;
 
 			/*socket options utils*/
 			int								_on;
