@@ -6,7 +6,7 @@
 /*   By: ccottin <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/18 18:30:30 by ccottin           #+#    #+#             */
-/*   Updated: 2023/02/03 12:45:27 by ccottin          ###   ########.fr       */
+/*   Updated: 2023/02/01 23:49:53 by ybendavi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,23 +153,3 @@ void	User::parseUser(char * buffer)
 	//return (RPL_WELCOME);
 }
 
-void	User::execute(void)
-{
-	if (receivedmsg.empty() == true)
-	{
-		std::cout << "false" << std::endl;
-		return ;
-	}
-	if (receivedmsg.front().getCommand().compare("PING") == 0)
-	{
-		std::string	pong("PONG \r\n");
-
-		pong.insert(5, *(receivedmsg.front().getParams().begin()));
-		tosendmsg.push_back(Message(pong.c_str()));
-	}
-	else
-	{
-		std::cout << "not pong:" << receivedmsg.front().getCommand() << std::endl;
-	}
-	receivedmsg.pop_front();
-}
