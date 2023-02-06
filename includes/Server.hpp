@@ -22,6 +22,7 @@
 #include "Replies.hpp"
 #include "Message.hpp"
 #include "signal.hpp"
+#include "Channel.hpp"
 
 #define MAX_USER 10
 #define MAX_CONN 12
@@ -79,6 +80,7 @@ class	Server
 			std::string						_tempRpl[MAX_CONN];
 
 			std::map<std::string, User>		_users;
+			std::map<std::string, Channel>	_channels;
 			int								_nbUsers;
 			nfds_t							_nbSock;
 
