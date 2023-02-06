@@ -30,17 +30,17 @@ Message::Message(const std::string message )
 
 	_tosend = message;
 	parseMessage(message);
-	std::cout << "Message:" << message << std::endl << "Receiver:" << _receiver << std::endl
-		<< "Command:" << _command << std::endl
-		<< "Params:";
-	it = _params.begin();
+//	std::cout << "Message:" << message << std::endl << "Receiver:" << _receiver << std::endl
+//		<< "Command:" << _command << std::endl
+//		<< "Params:";
+/*	it = _params.begin();
 	while (it != _params.end())
 	{
 		std::cout << *it << " ";
 		it++;
 	}
-	std::cout << std::endl;
-	std::cout << "ParamsOptional:" << _paramsopt << std::endl;
+	std::cout << std::endl;*/
+//	std::cout << "ParamsOptional:" << _paramsopt << std::endl;
 }
 
 Message	&Message::operator=(const Message &ref)
@@ -77,13 +77,13 @@ int	Message::parseMessage(const std::string message)
 	last_pos = message.find_first_of('\r');
 	if (last_pos == std::string::npos || message[last_pos + 1] != '\n')
 	{
-		std::cout << "retour chariot" << std::endl;
+//		std::cout << "retour chariot" << std::endl;
 		return (-1);
 	}
 	//	CMDS		//
 	if (message.find_first_of("QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm") != 0 && message.find_first_of("01234567890") != 0)
 	{
-		std::cout << "Pas les bons char" << std::endl;
+//		std::cout << "Pas les bons char" << std::endl;
 		return (-1);
 	}
 	else
@@ -91,7 +91,7 @@ int	Message::parseMessage(const std::string message)
 		if (message.find_first_of("0123456789") == 0 && message.find_first_not_of("0123456789") != 3)
 			return (-1);
 	}
-	std::cout << "1" << std::endl;
+//	std::cout << "1" << std::endl;
 //	PARAMS		//
 	if (message.find_first_of("QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm") == 0)
 		pos = message.find_first_not_of("QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm");

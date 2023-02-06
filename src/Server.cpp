@@ -106,9 +106,13 @@ void	Server::_checkUser(void)
 		{
 			if ( it != _users.end() )
 			{
-				if (!it->second.tosendmsg.empty() && send(_pollTab[i].fd, it->second.tosendmsg.front().getToSend().c_str(),
-							strlen(it->second.tosendmsg.front().getToSend().c_str()), MSG_DONTWAIT) == -1)
+				if (!it->second.tosendmsg.empty())
+				{
+					if (send(_pollTab[i].fd, it->second.tosendmsg.front().getToSend().c_str(),
+							strlen(it->second.tosendmsg.front().getToSend().c_str()), MSG_DONTWAIT) == -1)	
 					_ret = -6;
+				it->second.tosendmsg.pop_front();
+				}
 			}
 			else
 			{
@@ -231,11 +235,11 @@ void	Server::_execute(User *user)
 	else if (user->receivedmsg.front().getCommand().compare("PRIVMSG") == 0)
 		_notice(user);
 	else if (user->receivedmsg.front().getCommand().compare("USER") == 0)
-		cmd_user(*user);
-	else
+		cmd_user(user);
+/*	else
 	{
 		std::cout << "not handled:" << user->receivedmsg.front().getCommand() << std::endl;
-	}
+	}*/
 	user->receivedmsg.pop_front();
 
 }

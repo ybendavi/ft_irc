@@ -65,7 +65,7 @@ class	Server
 
 			std::string	nick_cmd(std::string nick, std::string oldnick = "",
 					struct pollfd * fd = NULL, struct sockaddr * addr = NULL);
-			std::string	cmd_user(User & user);
+			std::string	cmd_user(User * user);
 			
 
 			/*server infos*/
