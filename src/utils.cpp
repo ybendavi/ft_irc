@@ -7,6 +7,8 @@ std::string	gnm(std::string & buff)
 
 	ret = buff;
 	i = buff.find("\r\n");
+	if (i == -1)
+		return ("cKasse");
 	ret.resize(i + 2);
 	buff.erase(0, i + 2);
 	return ( ret );

@@ -21,6 +21,7 @@
 #include "User.hpp"
 #include "Replies.hpp"
 #include "Message.hpp"
+#include "signal.hpp"
 #include "Channel.hpp"
 
 #define MAX_USER 10
@@ -29,7 +30,12 @@
 
 class	Server
 {
+
 	public:
+
+		/*types*/
+			typedef std::map<std::string, User>::iterator	iterator; //should change name if we gonna use other containers with iterator
+
 			Server(void);
 			~Server(void);
 	
@@ -48,17 +54,19 @@ class	Server
 			int								_initClient(int index);
 			int								_initSocket(void);
 			void							_pollfunction(void);
-			void							_checkUser(int *ret);
+			void							_checkUser(void);
 			void							_handleMessage(void);
 			void							_execute(User *user);
 			void							_notice(User *user);
 			void							_privMsg(User *user);
+			iterator						_findUserByFd(int fd);
+			void							_unrgUser(int index, std::string buffer);
 
 			/*tmp commands stash*/
 
 			std::string	nick_cmd(std::string nick, std::string oldnick = "",
 					struct pollfd * fd = NULL, struct sockaddr * addr = NULL);
-			std::string	cmd_user(Message & msg, User & user);
+			std::string	cmd_user(User * user);
 			
 
 			/*server infos*/
@@ -69,7 +77,7 @@ class	Server
 			socklen_t						_clientSize;
 			struct sockaddr					_addrInfo[MAX_CONN];
 			struct pollfd					_pollTab[MAX_CONN];
-			unsigned short					_index; //maybe int-nutile
+			std::string						_tempRpl[MAX_CONN];
 
 			std::map<std::string, User>		_users;
 			std::map<std::string, Channel>	_channels;
