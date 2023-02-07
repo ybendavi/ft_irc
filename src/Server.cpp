@@ -97,7 +97,6 @@ void	Server::_ft_Pollin(unsigned int i, iterator it)
 		it = _findUserByFd(_pollTab[i].fd);
 	}
 	buff.erase();
-	std::cout << "out pollin\n";
 }
 
 void	Server::_ft_Pollout(unsigned int i, iterator it)
@@ -109,9 +108,14 @@ void	Server::_ft_Pollout(unsigned int i, iterator it)
 			std::string str = it->second.tosendmsg.front().getToSend();
 			if (str[0] != ':')
 			{
-				std::string temp = ":";
+				std::string temp = " ";
 
-				temp += _infoServer;
+				temp += it->second.getNickname();
+				str.insert(3, temp);
+				temp.erase();
+				temp = ":";
+			//	temp += _infoServer;
+				temp += "domain.main ";
 				str.insert(0, temp);
 			}	
 
