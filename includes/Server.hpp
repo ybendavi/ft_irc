@@ -61,6 +61,7 @@ class	Server
 			void							_privMsg(User *user);
 			iterator						_findUserByFd(int fd);
 			void							_unrgUser(int index, std::string buffer);
+			void							_disconnectClient(pollfd& client);
 
 			/*tmp commands stash*/
 

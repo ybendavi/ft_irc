@@ -69,8 +69,26 @@ void	Server::_unrgUser(int index, std::string buffer)
 	//coder quit ;)
 }
 
+void	Server::_disconnectClient(pollfd& client)
+{
+	iterator	cli;
+
+	std::cout << "Client with fd " << client.fd << " disconnected" << std::endl;
+
+	cli = _findUserByFd(client.fd);
+	if (cli != _users.end())
+	{
+		_users.erase(cli);
+		--_nbUsers;
+	}
+	close(client.fd);
+	client = _pollTab[_nbSock - 1];
+	--_nbSock;
+}
+
 void	Server::_checkUser(void)
 {
+	int										status;
 	unsigned int							i;
 	std::map<std::string, User>::iterator	it;
 
@@ -82,10 +100,13 @@ void	Server::_checkUser(void)
 		{
 			char		buffer[512];
 			
-			if (recv(_pollTab[i].fd, buffer, 512, MSG_DONTWAIT) == -1)
+			status = recv(_pollTab[i].fd, buffer, 512, MSG_DONTWAIT);
+			if (status <= 0)
 			{
-				_ret = -5;
-				return;
+				if (status == -1)
+					_ret = -5;
+				_disconnectClient(_pollTab[i]);
+				continue;
 			}
 
 			std::string buff(buffer);
@@ -150,6 +171,7 @@ void	Server::_pollfunction(void)
 		if (_pollTab[0].revents == POLLIN)
 		{
 			_ret = _initSocket();
+			std::cout << "ICI nbSock: " << _nbSock << std::endl;
 			if (_ret)
 				return ;
 		}
