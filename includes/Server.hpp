@@ -1,6 +1,7 @@
 #ifndef SERVER_HPP
 # define SERVER_HPP
 
+#include <arpa/inet.h>
 #include <string>
 #include <algorithm>
 #include <netinet/in.h>
@@ -59,6 +60,7 @@ class	Server
 			void							_execute(User *user);
 			void							_notice(User *user);
 			void							_privMsg(User *user);
+			void	_whoIs(User *user);
 			iterator						_findUserByFd(int fd);
 			void							_unrgUser(int index, std::string buffer);
 			void							_ft_Pollin(unsigned int i, iterator it);

@@ -209,82 +209,109 @@ int		Server::start(void)
 
 void	Server::_execute(User *user)
 {
+	char					buffer[INET6_ADDRSTRLEN];
+
 	if (user->receivedmsg.empty() == true)
 	{
-		std::cout << "false" << std::endl;
+	//	std::cout << "false" << std::endl;
 		return ;
 	}
+	inet_ntop(AF_INET6, &(_addrServer.sin6_addr), buffer, INET6_ADDRSTRLEN);
+	user->receivedmsg.front().setSender(std::string(":")
+						+= user->getNickname()
+						+= std::string("!")
+						+= user->getUsername()
+						+= std::string("@")
+						+= std::string(buffer)
+						+= std::string(" "));
+	//std::cout << "prefix:" << user->receivedmsg.front().setPrefix(std::string(":0.0.0.0")) << std::endl;
 	if (user->receivedmsg.front().getCommand().compare("PING") == 0)
 	{
 		std::string	pong("PONG \r\n");
 
-		pong.insert(5, *(user->receivedmsg.front().getParams().begin()));
-		user->tosendmsg.push_back(Message(pong.c_str()));
+		if (user->receivedmsg.front().getParams().empty() == true)
+			user->tosendmsg.push_back(Message(ERR_NOORIGIN));
+		else
+		{
+			pong.insert(5, *(user->receivedmsg.front().getParams().begin()));
+			user->tosendmsg.push_back(Message(pong.c_str()));
+		}
 	}
 	else if (user->receivedmsg.front().getCommand().compare("NOTICE") == 0)
 		_notice(user);
 	else if (user->receivedmsg.front().getCommand().compare("PRIVMSG") == 0)
-		_notice(user);
+		_privMsg(user);
 	else if (user->receivedmsg.front().getCommand().compare("USER") == 0)
 		cmd_user(user);
 //	else if (user->receivedmsg.front().getCommand().compare("MODE") == 0)
 //		mode_cmd(user);
-/*	else
+	else if (user->receivedmsg.front().getCommand().compare("WHOIS") == 0)
+			_whoIs(user);
+	else
 	{
-		std::cout << "not handled:" << user->receivedmsg.front().getCommand() << std::endl;
-	}*/
+	//	std::cout << "cmd:" << user->receivedmsg.front().getCommand() << std::endl;
+		//user->tosendmsg.push_back(Message(ERR_UNKNOWNCOMMAND));
+	}
 	user->receivedmsg.pop_front();
 	if (!user->tosendmsg.empty())
 		user->setEvent(POLLIN | POLLOUT);
 }
 
+void	Server::_whoIs(User *user)
+{
+	(void)user;
+}
 void	Server::_notice(User *user)
 {
-	std::map<std::string, User>::iterator	it;
-	std::vector<std::string>::iterator	ite;
+	std::string				to_send;
 
 	//std::cout << "ici" << std::endl;
 	if (user->receivedmsg.front().getParams().empty() == true
 		|| user->receivedmsg.front().getParamsopt().empty() == true)
 		return ;
 	//std::cout << "et ici" << std::endl;
-	ite = user->receivedmsg.front().getParams().begin();
 	//std::cout << "nick:" << *(user->receivedmsg.front().getParams().begin()) << std::endl;
 	//std::cout << "nick of user:" << (_users.begin()++)->second.getNickname() << std::endl;
-	it = getUser(*(user->receivedmsg.front().getParams().begin()));
-	//if (getUser(*(user->receivedmsg.front().getParams().begin())) == _users.end())
-	//	return ;
+	if (getUser(*(user->receivedmsg.front().getParams().begin())) == _users.end())
+		return ;
 	//std::cout << "userlooking:" << _users.begin()->first << std::endl;
 	//std::cout << "userlooking:" << _users.find(std::string("LS\r\n"))->second.getNickname()<< std::endl;
-	if (_users.find(*(user->receivedmsg.front().getParams().begin())) == _users.end())
-		return ;
 	//std::cout << "encore ici" << std::endl;
-	_users.find(*(user->receivedmsg.front().getParams().begin()))->second.tosendmsg.push_back(Message(user->receivedmsg.front().getMessage().c_str()));
+	to_send += user->receivedmsg.front().getToSend();
+	to_send += std::string("\r");
+	to_send += std::string("\n");
+	//std::cout << "envoyé:" << to_send << std::endl;
+	user->receivedmsg.front().setToSend(to_send);
+	_users.find(*(user->receivedmsg.front().getParams().begin()))->second.tosendmsg.push_back(Message(user->receivedmsg.front().getToSend().c_str()));
 }
 
 void	Server::_privMsg(User *user)
 {
-	std::map<std::string, User>::iterator	it;
-	std::vector<std::string>::iterator	ite;
+	std::string				to_send;
 
 	//std::cout << "ici" << std::endl;
 	if (user->receivedmsg.front().getParams().empty() == true
 		|| user->receivedmsg.front().getParamsopt().empty() == true)
 		return ;
 	//std::cout << "et ici" << std::endl;
-	ite = user->receivedmsg.front().getParams().begin();
 	//std::cout << "nick:" << *(user->receivedmsg.front().getParams().begin()) << std::endl;
 	//std::cout << "nick of user:" << (_users.begin()++)->second.getNickname() << std::endl;
-	it = getUser(*(user->receivedmsg.front().getParams().begin()));
-	//if (getUser(*(user->receivedmsg.front().getParams().begin())) == _users.end())
-	//	return ;
+	//std::cout << "user found:" << _users.find(*(user->receivedmsg.front().getParams().begin()))->second.getNickname() << std::endl;
+	if (_users.find(*(user->receivedmsg.front().getParams().begin())) == _users.end())
+	{
+		//std::cout << "trouve pas user" << std::endl;
+		user->tosendmsg.push_back(Message(ERR_NOSUCHNICK));
+		return ;
+	}
 	//std::cout << "userlooking:" << _users.begin()->first << std::endl;
 	//std::cout << "userlooking:" << _users.find(std::string("LS\r\n"))->second.getNickname()<< std::endl;
-	if (_users.find(std::string("LS\r\n")) == _users.end())
-		return ;
-	//std::cout << "encore ici" << std::endl;
-	//_users.find(*(user->receivedmsg.front().getParams().begin()))->second.tosendmsg.push_back(Message(user->receivedmsg.front().getMessage().c_str()));
-	_users.find(std::string("LS\r\n"))->second.tosendmsg.push_back(Message(user->receivedmsg.front().getToSend().c_str()));
+//	std::cout << "encore ici" << std::endl;
+	to_send += user->receivedmsg.front().getToSend();
+	to_send += std::string("\r");
+	to_send += std::string("\n");
+	//std::cout << "envoyé:" << to_send << std::endl;
+	user->receivedmsg.front().setToSend(to_send);
+	_users.find(*(user->receivedmsg.front().getParams().begin()))->second.tosendmsg.push_back(Message(user->receivedmsg.front().getToSend().c_str()));
 }
 
 std::map<std::string, User>::iterator	Server::getUser(std::string nick)

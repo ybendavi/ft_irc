@@ -33,13 +33,13 @@ Message::Message(const std::string message )
 //	std::cout << "Message:" << message << std::endl << "Receiver:" << _receiver << std::endl
 //		<< "Command:" << _command << std::endl
 //		<< "Params:";
-/*	it = _params.begin();
-	while (it != _params.end())
-	{
-		std::cout << *it << " ";
-		it++;
-	}
-	std::cout << std::endl;*/
+//	it = _params.begin();
+//	while (it != _params.end())
+//	{
+//		std::cout << *it << " ";
+//		it++;
+//	}
+//	std::cout << std::endl;
 //	std::cout << "ParamsOptional:" << _paramsopt << std::endl;
 }
 
@@ -101,7 +101,7 @@ int	Message::parseMessage(const std::string message)
 		_command = message.substr(0, pos);
 	else
 	{
-		std::cout << "pos < " << std::endl;
+//		std::cout << "pos < " << std::endl;
 		return (-1);
 	}
 	param_pos = pos;
@@ -134,6 +134,29 @@ int	Message::parseMessage(const std::string message)
 
 	}
 	return (0);
+}
+
+void	Message::setSender(std::string sender)
+{
+	_sender = sender;
+}
+
+void	Message::setToSend(std::string message)
+{
+	_tosend = message;
+}
+
+std::string	Message::setPrefix(std::string server_name)
+{
+
+	if (_sender.empty() == false)
+	{
+		return (_sender);
+	}
+	else
+	{
+		return (server_name);
+	}
 }
 
 /*char	*nick(Message& message)

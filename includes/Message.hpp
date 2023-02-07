@@ -31,10 +31,13 @@ class	Message {
 		std::string			getMessage(void) const;
 		std::string			getCommand(void) const;
 		std::vector<std::string>	getParams(void) const;
-
+		void				setToSend(std::string message);
+		void				setSender(std::string sender);
+		std::string			setPrefix(std::string server_name);
 	private :
 		//User				& _receiver;
 		std::string			_receiver;
+		std::string			_sender;
 		std::string			_message;
 		std::string	  		_command;
 		std::vector<std::string>	_params;
