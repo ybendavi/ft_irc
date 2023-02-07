@@ -5,12 +5,14 @@ void	get_mode(User * user)
 	std::string	mode;
 
 	mode = RPL_UMODEIS;
+	mode += user->getNickname();
+	mode += (" +");
 	if (user->getOp())
-		mode += "+o";
+		mode.push_back('o');
 	if (user->getInv())
-		mode += "+i";
+		mode.push_back('i');
 	if (user->getWal())
-		mode += "+w";
+		mode.push_back('w');
 	mode += "\r\n";
 	user->tosendmsg.push_back(Message(mode));
 }
@@ -36,9 +38,15 @@ void	Server::mode_cmd(User * user)
 	std::vector<std::string>::iterator	it;
 	it = params.begin();
 	++it;
-/*	while (it != params.end())
+	while (it != params.end())
 	{
-		if (
-	}*/
+		if (*it[0] == '+')
+			
+		else if (*it[0] == '-')
+
+		else
+			user->tosendmsg.push_back(Message(ERR_UMODEUNKNOWNFLAG));
+
+	}
 	
 }

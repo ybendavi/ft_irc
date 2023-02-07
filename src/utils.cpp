@@ -11,7 +11,6 @@ std::string	gnm(std::string & buff)
 	ret = buff;
 	if (buff.size() >= 512)
 	{
-		std::cout << "cucu\n";
 		buff[511] = '\n';
 		buff[510] = '\r';
 		buff.resize(512);
@@ -21,6 +20,5 @@ std::string	gnm(std::string & buff)
 		return ("cKasse");
 	ret.resize(i + 2);
 	buff.erase(0, i + 2);
-	std::cout << "gnm = " << buff << std::endl;
 	return ( ret );
 }

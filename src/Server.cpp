@@ -109,7 +109,6 @@ void	Server::_ft_Pollout(unsigned int i, iterator it)
 			if (send(_pollTab[i].fd, str.c_str(),
 					strlen(str.c_str()), MSG_DONTWAIT) == -1)	
 				_ret = -6;
-			std::cout << str << std::endl;
 			it->second.tosendmsg.pop_front();
 		}
 		else
@@ -215,7 +214,6 @@ void	Server::_execute(User *user)
 		std::cout << "false" << std::endl;
 		return ;
 	}
-	std::cout << "size = "<<  user->receivedmsg.size() << std::endl;
 	if (user->receivedmsg.front().getCommand().compare("PING") == 0)
 	{
 		std::string	pong("PONG \r\n");
