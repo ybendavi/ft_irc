@@ -8,6 +8,7 @@
 # define RPL_PING "PING\r\n"
 
 # define ERR_NICKNAMEINUSE "433 :Nick in use\r\n"
+# define ERR_NOSUCHNICK "401 \r\n"
 # define ERR_NONICKNAMEGIVEN "431 :No nickname given\r\n"
 # define ERR_ERRONEUSNICKNAME "432"
 # define ERR_NICKCOLLISION "436"
