@@ -69,6 +69,59 @@ void	Server::_unrgUser(int index, std::string buffer)
 	//coder quit ;)
 }
 
+void	Server::_ft_Pollin(unsigned int i, iterator it)
+{
+	char		buffer[512];
+
+	bzero(buffer, 512);
+	if (recv(_pollTab[i].fd, buffer, 512, MSG_DONTWAIT) == -1)
+	{
+		_ret = -5;
+		return;
+	}
+//	std::cout << "buffer = " << buffer << std::endl;
+	std::string buff(buffer);
+	bzero(buffer, strlen(buffer));
+	while (!buff.empty()) // si msg coupes go here
+	{
+		if ( it != _users.end() )
+		{
+			it->second.receivedmsg.push_back(Message( gnm(buff) ));
+			_execute(&(it->second));
+			if (!buff.empty())
+				std::cout << "incoming = " << buff << std::endl;
+		}
+		else
+			_unrgUser(i, gnm(buff) );
+		it = _findUserByFd(_pollTab[i].fd);
+	}
+	buff.erase();
+}
+
+void	Server::_ft_Pollout(unsigned int i, iterator it)
+{
+	if ( it != _users.end() )
+	{
+		if (!it->second.tosendmsg.empty())
+		{
+			std::string str = it->second.tosendmsg.front().getToSend();
+
+			if (send(_pollTab[i].fd, str.c_str(),
+					strlen(str.c_str()), MSG_DONTWAIT) == -1)	
+				_ret = -6;
+			it->second.tosendmsg.pop_front();
+		}
+	}
+	else
+	{
+		if (!_tempRpl[i].empty() && send(_pollTab[i].fd, _tempRpl[i].c_str(),
+				strlen(_tempRpl[i].c_str()), MSG_DONTWAIT) == -1)
+			_ret = -6;
+		_tempRpl[i].clear();
+	}
+}
+
+
 void	Server::_checkUser(void)
 {
 	unsigned int							i;
@@ -78,49 +131,15 @@ void	Server::_checkUser(void)
 	while (i < _nbSock)
 	{
 		it = _findUserByFd(_pollTab[i].fd);
-		if ((_pollTab[i].revents & 1) == POLLIN) //prob une foction par bail
-		{
-			char		buffer[512];
-			
-			if (recv(_pollTab[i].fd, buffer, 512, MSG_DONTWAIT) == -1)
-			{
-				_ret = -5;
-				return;
-			}
-
-			std::string buff(buffer);
-			while (!buff.empty()) // si msg coupes go here
-			{
-				if ( it != _users.end() )
-				{
-					it->second.receivedmsg.push_back(Message( gnm(buff) ));
-					_execute(&(it->second));
-					//	std::cout << "incoming = " << buffer << std::endl;
-				}
-				else
-					_unrgUser(i, gnm(buff) );
-				it = _findUserByFd(_pollTab[i].fd);
-			}
-		}
+		if ((_pollTab[i].revents & 1) == POLLIN)
+			_ft_Pollin(i, it);
+		if (_ret)
+			return ;
+		it = _findUserByFd(_pollTab[i].fd);
 		if ((_pollTab[i].revents & 4) == POLLOUT)
-		{
-			if ( it != _users.end() )
-			{
-				if (!it->second.tosendmsg.empty())
-				{
-					if (send(_pollTab[i].fd, it->second.tosendmsg.front().getToSend().c_str(),
-							strlen(it->second.tosendmsg.front().getToSend().c_str()), MSG_DONTWAIT) == -1)	
-					_ret = -6;
-				it->second.tosendmsg.pop_front();
-				}
-			}
-			else
-			{
-				if (!_tempRpl[i].empty() && send(_pollTab[i].fd, _tempRpl[i].c_str(), strlen(_tempRpl[i].c_str()), MSG_DONTWAIT) == -1)
-					_ret = -6;
-				_tempRpl[i].clear();
-			}
-		}
+			_ft_Pollout(i, it);
+		if (_ret)
+			return ;
 		++i;
 	}
 }
@@ -236,6 +255,8 @@ void	Server::_execute(User *user)
 		_notice(user);
 	else if (user->receivedmsg.front().getCommand().compare("USER") == 0)
 		cmd_user(user);
+	else if (user->receivedmsg.front().getCommand().compare("MODE") == 0)
+		cmd_user(user);
 /*	else
 	{
 		std::cout << "not handled:" << user->receivedmsg.front().getCommand() << std::endl;
@@ -262,11 +283,10 @@ void	Server::_notice(User *user)
 	//	return ;
 	//std::cout << "userlooking:" << _users.begin()->first << std::endl;
 	//std::cout << "userlooking:" << _users.find(std::string("LS\r\n"))->second.getNickname()<< std::endl;
-	if (_users.find(std::string("LS\r\n")) == _users.end())
+	if (_users.find(*(user->receivedmsg.front().getParams().begin())) == _users.end())
 		return ;
 	//std::cout << "encore ici" << std::endl;
-	//_users.find(*(user->receivedmsg.front().getParams().begin()))->second.tosendmsg.push_back(Message(user->receivedmsg.front().getMessage().c_str()));
-	_users.find(std::string("LS\r\n"))->second.tosendmsg.push_back(Message(user->receivedmsg.front().getToSend().c_str()));
+	_users.find(*(user->receivedmsg.front().getParams().begin()))->second.tosendmsg.push_back(Message(user->receivedmsg.front().getMessage().c_str()));
 }
 
 void	Server::_privMsg(User *user)

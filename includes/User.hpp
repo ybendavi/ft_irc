@@ -36,7 +36,6 @@ class	User {
 		bool			getOp(void) const;
 		bool			getInv(void) const;
 		bool			getWal(void) const;
-		bool			getOnline(void) const;
 		std::string		getRealname(void) const;
 		std::string		getIp(void) const;
 		std::string		getUsername(void) const;
@@ -73,7 +72,6 @@ class	User {
 		bool		_isOperator;
 		bool		_isInvisible;
 		bool		_isWallopable;
-		bool		_online;
 
 		std::string	_username;
 		std::string _ip;
