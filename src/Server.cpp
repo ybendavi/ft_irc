@@ -44,7 +44,6 @@ int	Server::init(int port)
 	_addrServer.sin6_port = htons(port);
 	if ( bind(_pollTab[0].fd, (sockaddr *)&_addrServer, sizeof(_addrServer)) )
 		return (-3);
-
 	if (listen(_pollTab[0].fd, 2))
 		return (-4);
 
@@ -209,22 +208,11 @@ int		Server::start(void)
 
 void	Server::_execute(User *user)
 {
-	char					buffer[INET6_ADDRSTRLEN];
-
 	if (user->receivedmsg.empty() == true)
 	{
 	//	std::cout << "false" << std::endl;
 		return ;
 	}
-	inet_ntop(AF_INET6, &(_addrServer.sin6_addr), buffer, INET6_ADDRSTRLEN);
-	user->receivedmsg.front().setSender(std::string(":")
-						+= user->getNickname()
-						+= std::string("!")
-						+= user->getUsername()
-						+= std::string("@")
-						+= std::string(buffer)
-						+= std::string(" "));
-	//std::cout << "prefix:" << user->receivedmsg.front().setPrefix(std::string(":0.0.0.0")) << std::endl;
 	if (user->receivedmsg.front().getCommand().compare("PING") == 0)
 	{
 		std::string	pong("PONG \r\n");
@@ -282,7 +270,7 @@ void	Server::_notice(User *user)
 	to_send += std::string("\n");
 	//std::cout << "envoyé:" << to_send << std::endl;
 	user->receivedmsg.front().setToSend(to_send);
-	_users.find(*(user->receivedmsg.front().getParams().begin()))->second.tosendmsg.push_back(Message(user->receivedmsg.front().getToSend().c_str()));
+	_users.find(*(user->receivedmsg.front().getParams().begin()))->second.tosendmsg.push_back(Message(user->getNickname(), user->getUsername(), user->receivedmsg.front().getToSend().c_str(), std::string("0.0.0.0")));
 }
 
 void	Server::_privMsg(User *user)
@@ -311,7 +299,8 @@ void	Server::_privMsg(User *user)
 	to_send += std::string("\n");
 	//std::cout << "envoyé:" << to_send << std::endl;
 	user->receivedmsg.front().setToSend(to_send);
-	_users.find(*(user->receivedmsg.front().getParams().begin()))->second.tosendmsg.push_back(Message(user->receivedmsg.front().getToSend().c_str()));
+	_users.find(*(user->receivedmsg.front().getParams().begin()))->second.tosendmsg.push_back(Message(user->getNickname(), user->getUsername(), user->receivedmsg.front().getToSend().c_str(), std::string("0.0.0.0")));
+
 }
 
 std::map<std::string, User>::iterator	Server::getUser(std::string nick)
