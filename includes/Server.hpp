@@ -60,6 +60,7 @@ class	Server
 			void							_execute(User *user);
 			void							_notice(User *user);
 			void							_privMsg(User *user);
+			void	_whoIs(User *user);
 			iterator						_findUserByFd(int fd);
 			void							_unrgUser(int index, std::string buffer);
 

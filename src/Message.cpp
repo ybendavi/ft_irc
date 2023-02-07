@@ -136,10 +136,29 @@ int	Message::parseMessage(const std::string message)
 	return (0);
 }
 
+void	Message::setSender(std::string sender)
+{
+	_sender = sender;
+}
+
 void	Message::setToSend(std::string message)
 {
 	_tosend = message;
 }
+
+std::string	Message::setPrefix(std::string server_name)
+{
+
+	if (_sender.empty() == false)
+	{
+		return (_sender);
+	}
+	else
+	{
+		return (server_name);
+	}
+}
+
 /*char	*nick(Message& message)
 {
 	if (message.getParams().size() == 0)
