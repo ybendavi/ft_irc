@@ -30,17 +30,17 @@ Message::Message(const std::string message )
 
 	_tosend = message;
 	parseMessage(message);
-	std::cout << "Message:" << message << std::endl << "Receiver:" << _receiver << std::endl
-		<< "Command:" << _command << std::endl
-		<< "Params:";
-	it = _params.begin();
-	while (it != _params.end())
-	{
-		std::cout << *it << " ";
-		it++;
-	}
-	std::cout << std::endl;
-	std::cout << "ParamsOptional:" << _paramsopt << std::endl;
+//	std::cout << "Message:" << message << std::endl << "Receiver:" << _receiver << std::endl
+//		<< "Command:" << _command << std::endl
+//		<< "Params:";
+//	it = _params.begin();
+//	while (it != _params.end())
+//	{
+//		std::cout << *it << " ";
+//		it++;
+//	}
+//	std::cout << std::endl;
+//	std::cout << "ParamsOptional:" << _paramsopt << std::endl;
 }
 
 Message	&Message::operator=(const Message &ref)
@@ -101,7 +101,7 @@ int	Message::parseMessage(const std::string message)
 		_command = message.substr(0, pos);
 	else
 	{
-		std::cout << "pos < " << std::endl;
+//		std::cout << "pos < " << std::endl;
 		return (-1);
 	}
 	param_pos = pos;

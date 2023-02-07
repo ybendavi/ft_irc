@@ -199,7 +199,7 @@ int		Server::_initClient(int index)
 		}
 	else
 	{
-		std::cout << "goto err\n";
+	//	std::cout << "goto err\n";
 		--_nbSock;
 		send(_pollTab[_nbSock].fd, ERR_NICKNAMEINUSE,
 			strlen(ERR_NICKNAMEINUSE), 0);
@@ -222,7 +222,7 @@ void	Server::_execute(User *user)
 
 	if (user->receivedmsg.empty() == true)
 	{
-		std::cout << "false" << std::endl;
+	//	std::cout << "false" << std::endl;
 		return ;
 	}
 	inet_ntop(AF_INET6, &(_addrServer.sin6_addr), buffer, INET6_ADDRSTRLEN);
@@ -233,7 +233,7 @@ void	Server::_execute(User *user)
 						+= std::string("@")
 						+= std::string(buffer)
 						+= std::string(" "));
-	std::cout << "prefix:" << user->receivedmsg.front().setPrefix(std::string("0.0.0.0")) << std::endl;
+	//std::cout << "prefix:" << user->receivedmsg.front().setPrefix(std::string(":0.0.0.0")) << std::endl;
 	if (user->receivedmsg.front().getCommand().compare("PING") == 0)
 	{
 		std::string	pong("PONG \r\n");
@@ -256,7 +256,7 @@ void	Server::_execute(User *user)
 			_whoIs(user);
 	else
 	{
-		std::cout << "cmd:" << user->receivedmsg.front().getCommand() << std::endl;
+	//	std::cout << "cmd:" << user->receivedmsg.front().getCommand() << std::endl;
 		//user->tosendmsg.push_back(Message(ERR_UNKNOWNCOMMAND));
 	}
 	user->receivedmsg.pop_front();
