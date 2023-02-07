@@ -236,6 +236,8 @@ void	Server::_execute(User *user)
 		_privMsg(user);
 	else if (user->receivedmsg.front().getCommand().compare("USER") == 0)
 		cmd_user(user);
+	else if (user->receivedmsg.front().getCommand().compare("JOIN") == 0)
+		_join(user);
 /*	else
 	{
 		std::cout << "not handled:" << user->receivedmsg.front().getCommand() << std::endl;
