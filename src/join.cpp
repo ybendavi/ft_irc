@@ -6,7 +6,7 @@
 /*   By: cdapurif <cdapurif@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/07 17:37:02 by cdapurif          #+#    #+#             */
-/*   Updated: 2023/02/07 19:22:44 by cdapurif         ###   ########.fr       */
+/*   Updated: 2023/02/07 22:23:43 by cdapurif         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,15 @@ void	Server::_join(User *user)
     }
 
     //check if channel exist or create it
+    std::map<std::string, Channel>::iterator    chan = _channels.find(channelName);
+    if (chan == _channels.end())
+    {
+        //create channel
+    }
+    else
+    {
+        //add user to channel
+    }
 
     //add user to channel with correct mode
 }
