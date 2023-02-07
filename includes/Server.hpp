@@ -52,8 +52,8 @@ class	Server
 //			int		handleClient(void);
 
 			/*functions*/
-			int								_initClient(int index);
-			int								_initSocket(void);
+			void								_initSocket(void);
+			int							_initClient(int index);
 			void							_pollfunction(void);
 			void							_checkUser(void);
 			void							_handleMessage(void);
@@ -63,12 +63,15 @@ class	Server
 			void	_whoIs(User *user);
 			iterator						_findUserByFd(int fd);
 			void							_unrgUser(int index, std::string buffer);
+			void							_ft_Pollin(unsigned int i, iterator it);
+			void							_ft_Pollout(unsigned int i, iterator it);
 
 			/*tmp commands stash*/
 
 			std::string	nick_cmd(std::string nick, std::string oldnick = "",
 					struct pollfd * fd = NULL, struct sockaddr * addr = NULL);
-			std::string	cmd_user(User * user);
+			void	cmd_user(User * user);
+			void	mode_cmd(User * user);
 			
 
 			/*server infos*/
@@ -80,6 +83,9 @@ class	Server
 			struct sockaddr					_addrInfo[MAX_CONN];
 			struct pollfd					_pollTab[MAX_CONN];
 			std::string						_tempRpl[MAX_CONN];
+		//	std::string						_leftover[MAX_CONN];
+		//	si finalement on decide de garder les messages de + de 512 on peut faire un 
+		//	stockage dans leftover et concaten a chaque nouvel appel de ft_pollin
 
 			std::map<std::string, User>		_users;
 			std::map<std::string, Channel>	_channels;
