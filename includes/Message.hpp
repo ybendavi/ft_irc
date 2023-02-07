@@ -31,6 +31,7 @@ class	Message {
 		std::string			getMessage(void) const;
 		std::string			getCommand(void) const;
 		std::vector<std::string>	getParams(void) const;
+		void				setToSend(std::string message);
 
 	private :
 		//User				& _receiver;

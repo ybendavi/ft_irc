@@ -1,6 +1,7 @@
 #ifndef SERVER_HPP
 # define SERVER_HPP
 
+#include <arpa/inet.h>
 #include <string>
 #include <algorithm>
 #include <netinet/in.h>
