@@ -46,7 +46,9 @@ int	Server::init(int port)
 		return (-3);
 	if (listen(_pollTab[0].fd, 2))
 		return (-4);
-
+	
+	inet_ntop(AF_INET6, &(_addrServer.sin6_addr), _infoServer, INET6_ADDRSTRLEN);
+	
 	return (0);
 }
 
@@ -95,6 +97,7 @@ void	Server::_ft_Pollin(unsigned int i, iterator it)
 		it = _findUserByFd(_pollTab[i].fd);
 	}
 	buff.erase();
+	std::cout << "out pollin\n";
 }
 
 void	Server::_ft_Pollout(unsigned int i, iterator it)
@@ -104,6 +107,13 @@ void	Server::_ft_Pollout(unsigned int i, iterator it)
 		if (!it->second.tosendmsg.empty())
 		{
 			std::string str = it->second.tosendmsg.front().getToSend();
+			if (str[0] != ':')
+			{
+				std::string temp = ":";
+
+				temp += _infoServer;
+				str.insert(0, temp);
+			}	
 
 			if (send(_pollTab[i].fd, str.c_str(),
 					strlen(str.c_str()), MSG_DONTWAIT) == -1)	
@@ -152,6 +162,8 @@ void	Server::_pollfunction(void)
 
 //	for (unsigned i = 0;  i < _nbSock; i++)
 //			std::cout << "before : i = " << i << " event = " << _pollTab[i].events << "revent = " << _pollTab[i].revents << std::endl;
+
+//probably rajouter un checker de temp relpyesss pour pollout
 	ret = poll(_pollTab, _nbSock, 7000);
 //	for (unsigned i = 0;  i < _nbSock; i++)
 //			std::cout << "after : i = " << i << " event = " << _pollTab[i].events << "revent = " << _pollTab[i].revents << std::endl;
@@ -231,8 +243,8 @@ void	Server::_execute(User *user)
 		_privMsg(user);
 	else if (user->receivedmsg.front().getCommand().compare("USER") == 0)
 		cmd_user(user);
-//	else if (user->receivedmsg.front().getCommand().compare("MODE") == 0)
-//		mode_cmd(user);
+	else if (user->receivedmsg.front().getCommand().compare("MODE") == 0)
+		mode_cmd(user);
 	else if (user->receivedmsg.front().getCommand().compare("WHOIS") == 0)
 			_whoIs(user);
 	else
