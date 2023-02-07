@@ -82,6 +82,10 @@ void		User::setOp(bool b)
 		_isOperator = b;
 }
 
+void		User::setEvent(short i)
+{
+	_socket->events = i;
+}
 void		User::setIp(std::string s) 
 { 
 	if (_ip != s)

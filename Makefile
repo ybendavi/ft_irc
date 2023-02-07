@@ -12,6 +12,7 @@ SRCS	=	Server.cpp \
 			signal.cpp \
 			nick_cmd.cpp \
 			user_cmd.cpp \
+			mode_cmd.cpp \
 			Channel.cpp
 
 OBJS	= $(addprefix src/, $(SRCS:.cpp=.o))

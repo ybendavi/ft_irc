@@ -51,8 +51,8 @@ class	Server
 //			int		handleClient(void);
 
 			/*functions*/
-			int								_initClient(int index);
-			int								_initSocket(void);
+			void								_initSocket(void);
+			int							_initClient(int index);
 			void							_pollfunction(void);
 			void							_checkUser(void);
 			void							_handleMessage(void);
@@ -69,6 +69,7 @@ class	Server
 			std::string	nick_cmd(std::string nick, std::string oldnick = "",
 					struct pollfd * fd = NULL, struct sockaddr * addr = NULL);
 			void	cmd_user(User * user);
+			void	mode_cmd(User * user);
 			
 
 			/*server infos*/

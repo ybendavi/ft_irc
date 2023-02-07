@@ -6,12 +6,16 @@
 void	Server::cmd_user(User * user)
 {
 	if ( !(user->getUsername().empty()) )
+	{
 		user->tosendmsg.push_back(Message(ERR_ALREADYREGISTRED));
-	return ;
+		return ;
+	}
 	if (user->receivedmsg.front().getParams().size() < 3
 			|| user->receivedmsg.front().getParamsopt().empty() )
+	{
 		user->tosendmsg.push_back(Message(ERR_NEEDMOREPARAMS));
-	return ;
+		return ;
+	}
 	user->setUsername(user->receivedmsg.front().getParams()[0]);
 	user->setIp(user->receivedmsg.front().getParams()[2]);
 	user->setRealname(user->receivedmsg.front().getParamsopt());
