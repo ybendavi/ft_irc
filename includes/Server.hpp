@@ -76,6 +76,7 @@ class	Server
 
 			/*server infos*/
 			struct sockaddr_in6				_addrServer;
+			char							_infoServer[INET6_ADDRSTRLEN];
 			int								_ret;
 
 			/*users mayhem*/
