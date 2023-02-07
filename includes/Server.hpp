@@ -62,6 +62,7 @@ class	Server
 			iterator						_findUserByFd(int fd);
 			void							_unrgUser(int index, std::string buffer);
 			void							_disconnectClient(pollfd& client);
+			void							_quit(User *user);
 
 			/*tmp commands stash*/
 

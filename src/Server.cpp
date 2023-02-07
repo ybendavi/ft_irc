@@ -258,6 +258,8 @@ void	Server::_execute(User *user)
 		_notice(user);
 	else if (user->receivedmsg.front().getCommand().compare("USER") == 0)
 		cmd_user(user);
+	else if (user->receivedmsg.front().getCommand().compare("QUIT") == 0)
+		_quit(user);	
 /*	else
 	{
 		std::cout << "not handled:" << user->receivedmsg.front().getCommand() << std::endl;
