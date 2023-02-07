@@ -218,17 +218,33 @@ int		Server::start(void)
 
 void	Server::_execute(User *user)
 {
+	char					buffer[INET6_ADDRSTRLEN];
+
 	if (user->receivedmsg.empty() == true)
 	{
 		std::cout << "false" << std::endl;
 		return ;
 	}
+	inet_ntop(AF_INET6, &(_addrServer.sin6_addr), buffer, INET6_ADDRSTRLEN);
+	user->receivedmsg.front().setSender(std::string(":")
+						+= user->getNickname()
+						+= std::string("!")
+						+= user->getUsername()
+						+= std::string("@")
+						+= std::string(buffer)
+						+= std::string(" "));
+	std::cout << "prefix:" << user->receivedmsg.front().setPrefix(std::string("0.0.0.0")) << std::endl;
 	if (user->receivedmsg.front().getCommand().compare("PING") == 0)
 	{
 		std::string	pong("PONG \r\n");
 
-		pong.insert(5, *(user->receivedmsg.front().getParams().begin()));
-		user->tosendmsg.push_back(Message(pong.c_str()));
+		if (user->receivedmsg.front().getParams().empty() == true)
+			user->tosendmsg.push_back(Message(ERR_NOORIGIN));
+		else
+		{
+			pong.insert(5, *(user->receivedmsg.front().getParams().begin()));
+			user->tosendmsg.push_back(Message(pong.c_str()));
+		}
 	}
 	else if (user->receivedmsg.front().getCommand().compare("NOTICE") == 0)
 		_notice(user);
@@ -236,18 +252,24 @@ void	Server::_execute(User *user)
 		_privMsg(user);
 	else if (user->receivedmsg.front().getCommand().compare("USER") == 0)
 		cmd_user(user);
-/*	else
+	else if (user->receivedmsg.front().getCommand().compare("WHOIS") == 0)
+			_whoIs(user);
+	else
 	{
-		std::cout << "not handled:" << user->receivedmsg.front().getCommand() << std::endl;
-	}*/
+		std::cout << "cmd:" << user->receivedmsg.front().getCommand() << std::endl;
+		//user->tosendmsg.push_back(Message(ERR_UNKNOWNCOMMAND));
+	}
 	user->receivedmsg.pop_front();
 
 }
 
+void	Server::_whoIs(User *user)
+{
+	(void)user;
+}
 void	Server::_notice(User *user)
 {
 	std::string				to_send;
-	char					buffer[INET6_ADDRSTRLEN];
 
 	//std::cout << "ici" << std::endl;
 	if (user->receivedmsg.front().getParams().empty() == true
@@ -261,12 +283,6 @@ void	Server::_notice(User *user)
 	//std::cout << "userlooking:" << _users.begin()->first << std::endl;
 	//std::cout << "userlooking:" << _users.find(std::string("LS\r\n"))->second.getNickname()<< std::endl;
 	//std::cout << "encore ici" << std::endl;
-	to_send += std::string(":");
-	to_send += user->getNickname();
-	to_send.push_back('!');
-	inet_ntop(AF_INET6, &(_addrServer.sin6_addr), buffer, INET6_ADDRSTRLEN);
-	to_send += std::string(buffer);
-	to_send += std::string(" ");
 	to_send += user->receivedmsg.front().getToSend();
 	to_send += std::string("\r");
 	to_send += std::string("\n");
@@ -278,7 +294,6 @@ void	Server::_notice(User *user)
 void	Server::_privMsg(User *user)
 {
 	std::string				to_send;
-	char					buffer[INET6_ADDRSTRLEN];
 
 	//std::cout << "ici" << std::endl;
 	if (user->receivedmsg.front().getParams().empty() == true
@@ -297,12 +312,6 @@ void	Server::_privMsg(User *user)
 	//std::cout << "userlooking:" << _users.begin()->first << std::endl;
 	//std::cout << "userlooking:" << _users.find(std::string("LS\r\n"))->second.getNickname()<< std::endl;
 //	std::cout << "encore ici" << std::endl;
-	to_send += std::string(":");
-	to_send += user->getNickname();
-	to_send.push_back('!');
-	inet_ntop(AF_INET6, &(_addrServer.sin6_addr), buffer, INET6_ADDRSTRLEN);
-	to_send += std::string(buffer);
-	to_send += std::string(" ");
 	to_send += user->receivedmsg.front().getToSend();
 	to_send += std::string("\r");
 	to_send += std::string("\n");

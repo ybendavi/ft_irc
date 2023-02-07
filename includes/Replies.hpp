@@ -7,6 +7,8 @@
 # define RPL_MYINFO "004 \r\n"
 # define RPL_PING "PING\r\n"
 
+# define ERR_UNKNOWNCOMMAND "421 \r\n"
+# define ERR_NOORIGIN "409 \r\n"
 # define ERR_NICKNAMEINUSE "433 :Nick in use\r\n"
 # define ERR_NOSUCHNICK "401 \r\n"
 # define ERR_NONICKNAMEGIVEN "431 :No nickname given\r\n"
