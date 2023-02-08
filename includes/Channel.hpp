@@ -6,7 +6,7 @@
 /*   By: cdapurif <cdapurif@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/03 20:02:03 by cdapurif          #+#    #+#             */
-/*   Updated: 2023/02/07 19:25:22 by cdapurif         ###   ########.fr       */
+/*   Updated: 2023/02/08 15:07:15 by cdapurif         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,10 +41,10 @@ class Channel
 
     public:
 
-        Channel(std::string name);  //names for channel must follow some rules (begin with a # character, must not contain ' ' or ',')
+        Channel(std::string name, unsigned short modes = PROTECTOP | EXTERNMESS);
         ~Channel();
 
-        void    addUser(const std::string& user, unsigned char modes); //calling function MUST check if user really exist before calling that method
+        void    addUser(const std::string& user, unsigned char modes = VOICE | INVITE);
     
     private:
 

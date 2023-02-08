@@ -6,7 +6,7 @@
 /*   By: cdapurif <cdapurif@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/07 17:37:02 by cdapurif          #+#    #+#             */
-/*   Updated: 2023/02/07 22:23:43 by cdapurif         ###   ########.fr       */
+/*   Updated: 2023/02/08 15:28:03 by cdapurif         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,13 +31,13 @@ void	Server::_join(User *user)
 	//check parameters
     if (user->receivedmsg.front().getParams().empty() == true)
     {
-        user->tosendmsg.push_back(Message(ERR_NEEDMOREPARAMS + user->getNickname() + " JOIN :Syntax error"));
+        user->tosendmsg.push_back(Message(ERR_NEEDMOREPARAMS + user->getNickname() + " JOIN :Syntax error\r\n"));
         return ;
     }
     channelName = (user->receivedmsg.front().getParams())[0];
     if (invalidChannelName(channelName))
     {
-        user->tosendmsg.push_back(Message(ERR_NOSUCHCHANNEL + user->getNickname() + " " + channelName + " :No such channel"));
+        user->tosendmsg.push_back(Message(ERR_NOSUCHCHANNEL + user->getNickname() + " " + channelName + " :No such channel\r\n"));
         return ;
     }
 
@@ -45,12 +45,9 @@ void	Server::_join(User *user)
     std::map<std::string, Channel>::iterator    chan = _channels.find(channelName);
     if (chan == _channels.end())
     {
-        //create channel
+        _channels[channelName] = Channel(channelName);
+        _channels[channelName].addUser(user->getNickname(), OPERATOR | VOICE | INVITE | TOPIC);
     }
     else
-    {
-        //add user to channel
-    }
-
-    //add user to channel with correct mode
+        chan->second.addUser(user->getNickname());
 }
