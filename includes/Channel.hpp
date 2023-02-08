@@ -45,6 +45,7 @@ class Channel
         ~Channel();
 
         void    addUser(const std::string& user, unsigned char modes = VOICE | INVITE);
+	bool    isUserOnChannel(const std::string& nickname);
         void    removeUserFromChannel(const std::string& nickname);
     
     private:

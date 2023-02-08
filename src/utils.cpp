@@ -3,6 +3,33 @@
 //rfc2812 says that there's no case where a buffer bigger than 512 is taken, should we leave this
 //that way?
 
+void	sendMessage(User *user, User *receiver, char *domainName)
+{
+
+	std::string				to_send;
+
+	//std::cout << "userlooking:" << _users.begin()->first << std::endl;
+	//std::cout << "userlooking:" << _users.find(std::string("LS\r\n"))->second.getNickname()<< std::endl;
+	//std::cout << "encore ici" << std::endl;
+	std::cout << user->getNickname() << std::endl;
+	std::cout << receiver->getNickname() << std::endl;
+	to_send += user->receivedmsg.front().getToSend();
+	//std::cout << "envoyé:" << to_send << std::endl;
+	user->receivedmsg.front().setToSend(to_send);
+
+	receiver->tosendmsg.push_back(Message(user->getNickname(), user->getUsername(), user->receivedmsg.front().getToSend().c_str(), std::string(domainName)));
+}
+
+void	sendMessagetochan(User *user, Channel *channel, std::map<std::string, User>::iterator users, std::map<std::string, User>::iterator end, char *domainName)
+{
+	while (users != end)
+	{
+		if (channel->isUserOnChannel(users->second.getNickname()) == true)
+			sendMessage(user, &(users->second), domainName);
+		users++;
+	}
+}
+
 std::string	gnm(std::string & buff)
 {
 	size_t	i;
