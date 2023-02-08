@@ -104,10 +104,8 @@ void	Server::_ft_Pollin(unsigned int i, iterator it)
 		_disconnectClient(_pollTab[i]);
 		return;
 	}
-//	std::cout << "buffer = " << buffer << std::endl;
 	std::string buff(buffer);
 	bzero(buffer, strlen(buffer));
-//	std::cout << " buff a la reception " << buff << std::endl;
 	while (!buff.empty() && _pollTab[i].fd > 0) // si msg coupes go here
 	{
 		std::string	s = gnm(buff);
@@ -120,7 +118,8 @@ void	Server::_ft_Pollin(unsigned int i, iterator it)
 		}
 		else
 			_unrgUser(i, s) ;
-	//	it = _findUserByFd(_pollTab[i].fd);
+		it = _findUserByFd(_pollTab[i].fd);
+		s.erase();
 	}
 	buff.erase();
 }
@@ -142,14 +141,13 @@ void	Server::_ft_Pollout(unsigned int i, iterator it)
 	}
 	else
 	{
-	//	std::cout << "temprpl = " << _tempRpl[i] << std::endl;
-		std::string str = _tempRpl[i];
+		str = _tempRpl[i];
 		readySendy(str, _domainName, "");
 		_tempRpl[i].clear();
 		_pollTab[i].events = POLLIN ;
-	}	
+	}
 	if ( !str.empty() && send(_pollTab[i].fd, str.c_str(),
-				strlen(str.c_str()), MSG_DONTWAIT) == -1)	
+				strlen(str.c_str()), MSG_DONTWAIT) == -1)
 		_ret = -6;
 }
 
