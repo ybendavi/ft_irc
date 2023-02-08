@@ -2,6 +2,25 @@
 
 //rfc2812 says that there's no case where a buffer bigger than 512 is taken, should we leave this
 //that way?
+/*
+std::string	gnm(std::string & buff)
+{
+	size_t	i;
+	std::string	ret;
+
+	i = buff.find("\r\n");
+	if ( !(i != std::string::npos) )
+		return ("");
+	ret = buff;
+	ret.resize(i + 2);
+	if (!buff.compare("\r\n"))
+		buff.erase();
+	else
+		buff.erase(0, i + 2);
+	return ( ret );
+}
+*/
+
 
 std::string	gnm(std::string & buff)
 {

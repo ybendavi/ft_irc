@@ -24,7 +24,6 @@ void	add_mode(std::string s, User * user)
 	mode = user->getMode();
 	for (unsigned int i = 1; i < s.size(); ++i)
 	{
-		std::cout << "si = " << s[i] << std::endl;
 		if (s[i] == 'i')
 			mode |= 1;
 		else if (s[i] == 'w')
@@ -42,7 +41,6 @@ void	rm_mode(std::string s, User * user)
 	mode = user->getMode();
 	for (unsigned int i = 1; i < s.size(); ++i)
 	{
-		std::cout << "si = " << s[i] << std::endl;
 		if (s[i] == 'o' && (mode & 4))
 			mode -= 4;
 		else if (s[i] == 'i' && (mode & 1))

@@ -3,7 +3,7 @@
 extern volatile sig_atomic_t loop;
 
 Server::Server(void) : _domainName("InRatableCrash"), _ret(0), _clientSize(sizeof(struct sockaddr) ),
-	_addrInfo(), _pollTab(), _tempRpl(), _users(), _channels(),
+	_addrInfo(), _pollTab(), _tempRpl(), _leftover(), _users(), _channels(),
 	_nbUsers(0), _nbSock(0), _on(1), _off(0)
 { }
 
@@ -147,7 +147,7 @@ void	Server::_ft_Pollout(unsigned int i, iterator it)
 		_tempRpl[i].clear();
 		_pollTab[i].events = POLLIN ;
 	}
-	if ( !str.empty() && send(_pollTab[i].fd, str.c_str(),
+	if ( !str.empty() &&  send(_pollTab[i].fd, str.c_str(),
 				strlen(str.c_str()), MSG_DONTWAIT) == -1)
 		_ret = -6;
 }
@@ -246,7 +246,6 @@ void	Server::_execute(User *user)
 	}
 	if (user->getUsername().empty() && user->receivedmsg.front().getCommand().compare("USER"))
 	{
-		std::cout << "username = " << user->getUsername() << std::endl;
 		user->receivedmsg.pop_front();
 		user->tosendmsg.push_back(Message(ERR_NOTREGISTERED));
 		return ;
@@ -282,11 +281,16 @@ void	Server::_execute(User *user)
 	}	
 	else if (user->receivedmsg.front().getCommand().compare("WHOIS") == 0)
 			_whoIs(user);
+	else if (user->receivedmsg.front().getCommand().compare("OPER") == 0)
+			oper_cmd(user);
+//	else if (user->receivedmsg.front().getCommand().compare("NICK") == 0)
+//		user = nick_holder(user); FOR NOW IT SEGV
 	else
 	{
 	//	std::cout << "cmd:" << user->receivedmsg.front().getCommand() << std::endl;
 		//user->tosendmsg.push_back(Message(ERR_UNKNOWNCOMMAND));
 	}
+	std::cout << user->getNickname() << std::endl;
 	user->receivedmsg.pop_front();
 	if (!user->tosendmsg.empty())
 		user->setEvent(POLLIN | POLLOUT);
