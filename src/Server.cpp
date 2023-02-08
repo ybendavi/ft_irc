@@ -296,8 +296,6 @@ void	Server::_execute(User *user)
 		_quit(user);
 		return ;
 	}	
-	else if (user->receivedmsg.front().getCommand().compare("MODE") == 0)
-		mode_cmd(user);
 	else if (user->receivedmsg.front().getCommand().compare("WHOIS") == 0)
 			_whoIs(user);
 	else
