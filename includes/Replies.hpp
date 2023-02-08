@@ -12,6 +12,7 @@
 # define ERR_NOORIGIN "409 "
 # define ERR_NICKNAMEINUSE "433 :Nick in use"
 # define ERR_NOSUCHNICK "401 "
+# define ERR_NOSUCHCHANNEL "403 "
 # define ERR_NONICKNAMEGIVEN "431 :No nickname given"
 # define ERR_ERRONEUSNICKNAME "432"
 # define ERR_NICKCOLLISION "436"

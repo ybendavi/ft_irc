@@ -245,15 +245,6 @@ void	Server::_execute(User *user)
 	//	std::cout << "false" << std::endl;
 		return ;
 	}
-/*	user->receivedmsg.front().setSender(std::string(":")
-						+= user->getNickname()
-						+= std::string("!")
-						+= user->getUsername()
-						+= std::string("@")
-					= std::string(_infoServer)
-						+= std::string(" "));
-	//std::cout << "prefix:" << user->receivedmsg.front().setPrefix(std::string(":0.0.0.0")) << std::endl;*/
-	std::cout << "msg.front = " << user->receivedmsg.front().getToSend() << std::endl;
 
 	if (user->receivedmsg.front().getCommand().compare("PING") == 0)
 	{// str.compare(0, 3, "PONG ", 0, 3) )//comp PONG marchpo :c
@@ -274,6 +265,8 @@ void	Server::_execute(User *user)
 		_privMsg(user);
 	else if (user->receivedmsg.front().getCommand().compare("USER") == 0)
 		cmd_user(user);
+//	else if (user->receivedmsg.front().getCommand().compare("JOIN") == 0)
+//		_join(user);
 //	else if (user->receivedmsg.front().getCommand().compare("MODE") == 0)
 //		mode_cmd(user);
 	else if (user->receivedmsg.front().getCommand().compare("QUIT") == 0)
