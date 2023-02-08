@@ -44,7 +44,6 @@ int	Server::init(int port)
 	_addrServer.sin6_port = htons(port);
 	if ( bind(_pollTab[0].fd, (sockaddr *)&_addrServer, sizeof(_addrServer)) )
 		return (-3);
-
 	if (listen(_pollTab[0].fd, 2))
 		return (-4);
 	
@@ -76,14 +75,35 @@ void	Server::_unrgUser(int index, std::string buffer)
 	//coder quit ;)
 }
 
+void	Server::_disconnectClient(pollfd& client)
+{
+	iterator	cli;
+
+	std::cout << "Client with fd " << client.fd << " disconnected" << std::endl;
+
+	cli = _findUserByFd(client.fd);
+	if (cli != _users.end())
+	{
+		_users.erase(cli);
+		--_nbUsers;
+	}
+	close(client.fd);
+	client = _pollTab[_nbSock - 1];
+	--_nbSock;
+}
+
 void	Server::_ft_Pollin(unsigned int i, iterator it)
 {
+	int			status;
 	char		buffer[512];
 
 	bzero(buffer, 512);
-	if (recv(_pollTab[i].fd, buffer, 512, MSG_DONTWAIT) == -1)
+	status = recv(_pollTab[i].fd, buffer, 512, MSG_DONTWAIT);
+	if (status <= 0)
 	{
-		_ret = -5;
+		if (status == -1)
+			_ret = -5;
+		_disconnectClient(_pollTab[i]);
 		return;
 	}
 //	std::cout << "buffer = " << buffer << std::endl;
@@ -148,7 +168,6 @@ void	Server::_ft_Pollout(unsigned int i, iterator it)
 	}
 }
 
-
 void	Server::_checkUser(void)
 {
 	unsigned int							i;
@@ -158,6 +177,7 @@ void	Server::_checkUser(void)
 	while (i < _nbSock)
 	{
 		it = _findUserByFd(_pollTab[i].fd);
+    
 		if ((_pollTab[i].revents & 1) == POLLIN)
 			_ft_Pollin(i, it);
 		if (_ret)
@@ -235,8 +255,6 @@ int		Server::start(void)
 
 void	Server::_execute(User *user)
 {
-	char					buffer[INET6_ADDRSTRLEN];
-
 	if (user->receivedmsg.empty() == true)
 	{
 	//	std::cout << "false" << std::endl;
@@ -252,6 +270,7 @@ void	Server::_execute(User *user)
 						+= std::string(" "));
 	//std::cout << "prefix:" << user->receivedmsg.front().setPrefix(std::string(":0.0.0.0")) << std::endl;
 	std::cout << "msg.front = " << user->receivedmsg.front().getToSend() << std::endl;
+
 	if (user->receivedmsg.front().getCommand().compare("PING") == 0)
 	{
 		std::string	pong("PONG \r\n");
@@ -272,6 +291,13 @@ void	Server::_execute(User *user)
 		cmd_user(user);
 //	else if (user->receivedmsg.front().getCommand().compare("MODE") == 0)
 //		mode_cmd(user);
+	else if (user->receivedmsg.front().getCommand().compare("QUIT") == 0)
+	{
+		_quit(user);
+		return ;
+	}	
+	else if (user->receivedmsg.front().getCommand().compare("MODE") == 0)
+		mode_cmd(user);
 	else if (user->receivedmsg.front().getCommand().compare("WHOIS") == 0)
 			_whoIs(user);
 	else
@@ -309,7 +335,7 @@ void	Server::_notice(User *user)
 	to_send += std::string("\n");
 	//std::cout << "envoyé:" << to_send << std::endl;
 	user->receivedmsg.front().setToSend(to_send);
-	_users.find(*(user->receivedmsg.front().getParams().begin()))->second.tosendmsg.push_back(Message(user->receivedmsg.front().getToSend().c_str()));
+	_users.find(*(user->receivedmsg.front().getParams().begin()))->second.tosendmsg.push_back(Message(user->getNickname(), user->getUsername(), user->receivedmsg.front().getToSend().c_str(), std::string("0.0.0.0")));
 }
 
 void	Server::_privMsg(User *user)
@@ -338,7 +364,8 @@ void	Server::_privMsg(User *user)
 	to_send += std::string("\n");
 	//std::cout << "envoyé:" << to_send << std::endl;
 	user->receivedmsg.front().setToSend(to_send);
-	_users.find(*(user->receivedmsg.front().getParams().begin()))->second.tosendmsg.push_back(Message(user->receivedmsg.front().getToSend().c_str()));
+	_users.find(*(user->receivedmsg.front().getParams().begin()))->second.tosendmsg.push_back(Message(user->getNickname(), user->getUsername(), user->receivedmsg.front().getToSend().c_str(), std::string("0.0.0.0")));
+
 }
 
 std::map<std::string, User>::iterator	Server::getUser(std::string nick)
