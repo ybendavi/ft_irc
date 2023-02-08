@@ -40,7 +40,7 @@ class	Server
 			Server(void);
 			~Server(void);
 	
-			int		init(int port);
+			int		init(int port, std::string pass);
 			int		start(void);
 			
 			/*getters ; faire un get channel*/
@@ -75,9 +75,13 @@ class	Server
 					struct pollfd * fd = NULL, struct sockaddr * addr = NULL);
 			void	cmd_user(User * user);
 			void	mode_cmd(User * user);
+			void	get_mode(User * user);
+			void	oper_cmd(User * user);
+			User	*nick_holder(User * user);
 			
 
 			/*server infos*/
+			std::string						_pass;
 			struct sockaddr_in6				_addrServer;
 			char							_domainName[16];
 			int								_ret;
@@ -87,9 +91,7 @@ class	Server
 			struct sockaddr					_addrInfo[MAX_CONN];
 			struct pollfd					_pollTab[MAX_CONN];
 			std::string						_tempRpl[MAX_CONN];
-		//	std::string						_leftover[MAX_CONN];
-		//	si finalement on decide de garder les messages de + de 512 on peut faire un 
-		//	stockage dans leftover et concaten a chaque nouvel appel de ft_pollin
+			std::string						_leftover[MAX_CONN];
 
 			std::map<std::string, User>		_users;
 			std::map<std::string, Channel>	_channels;

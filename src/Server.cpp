@@ -3,7 +3,7 @@
 extern volatile sig_atomic_t loop;
 
 Server::Server(void) : _domainName("InRatableCrash"), _ret(0), _clientSize(sizeof(struct sockaddr) ),
-	_addrInfo(), _pollTab(), _tempRpl(), _users(), _channels(),
+	_addrInfo(), _pollTab(), _tempRpl(), _leftover(), _users(), _channels(),
 	_nbUsers(0), _nbSock(0), _on(1), _off(0)
 { }
 
@@ -17,7 +17,7 @@ Server::~Server(void)
 	}
 }
 
-int	Server::init(int port)
+int	Server::init(int port, std::string pass)
 {
 	if (!(port >= 1 && port <= 65535))
 		return (-7);
@@ -46,7 +46,8 @@ int	Server::init(int port)
 		return (-3);
 	if (listen(_pollTab[0].fd, 2))
 		return (-4);
-	
+	_pass = pass;
+
 	return (0);
 }
 
@@ -146,7 +147,7 @@ void	Server::_ft_Pollout(unsigned int i, iterator it)
 		_tempRpl[i].clear();
 		_pollTab[i].events = POLLIN ;
 	}
-	if ( !str.empty() && send(_pollTab[i].fd, str.c_str(),
+	if ( !str.empty() &&  send(_pollTab[i].fd, str.c_str(),
 				strlen(str.c_str()), MSG_DONTWAIT) == -1)
 		_ret = -6;
 }
@@ -181,7 +182,6 @@ void	Server::_pollfunction(void)
 //	for (unsigned i = 0;  i < _nbSock; i++)
 //			std::cout << "before : i = " << i << " event = " << _pollTab[i].events << "revent = " << _pollTab[i].revents << std::endl;
 
-//probably rajouter un checker de temp relpyesss pour pollout
 	ret = poll(_pollTab, _nbSock, 7000);
 //	for (unsigned i = 0;  i < _nbSock; i++)
 //			std::cout << "after : i = " << i << " event = " << _pollTab[i].events << "revent = " << _pollTab[i].revents << std::endl;
@@ -238,9 +238,16 @@ int		Server::start(void)
 
 void	Server::_execute(User *user)
 {
+	std::cout << "rcvd = " << user->receivedmsg.front().getToSend() << std::endl;
 	if (user->receivedmsg.empty() == true)
 	{
 	//	std::cout << "false" << std::endl;
+		return ;
+	}
+	if (user->getUsername().empty() && user->receivedmsg.front().getCommand().compare("USER"))
+	{
+		user->receivedmsg.pop_front();
+		user->tosendmsg.push_back(Message(ERR_NOTREGISTERED));
 		return ;
 	}
 
@@ -265,8 +272,8 @@ void	Server::_execute(User *user)
 		cmd_user(user);
 //	else if (user->receivedmsg.front().getCommand().compare("JOIN") == 0)
 //		_join(user);
-//	else if (user->receivedmsg.front().getCommand().compare("MODE") == 0)
-//		mode_cmd(user);
+	else if (user->receivedmsg.front().getCommand().compare("MODE") == 0)
+		mode_cmd(user);
 	else if (user->receivedmsg.front().getCommand().compare("QUIT") == 0)
 	{
 		_quit(user);
@@ -274,11 +281,16 @@ void	Server::_execute(User *user)
 	}	
 	else if (user->receivedmsg.front().getCommand().compare("WHOIS") == 0)
 			_whoIs(user);
+	else if (user->receivedmsg.front().getCommand().compare("OPER") == 0)
+			oper_cmd(user);
+//	else if (user->receivedmsg.front().getCommand().compare("NICK") == 0)
+//		user = nick_holder(user); FOR NOW IT SEGV
 	else
 	{
 	//	std::cout << "cmd:" << user->receivedmsg.front().getCommand() << std::endl;
 		//user->tosendmsg.push_back(Message(ERR_UNKNOWNCOMMAND));
 	}
+	std::cout << user->getNickname() << std::endl;
 	user->receivedmsg.pop_front();
 	if (!user->tosendmsg.empty())
 		user->setEvent(POLLIN | POLLOUT);

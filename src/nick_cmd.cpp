@@ -11,6 +11,24 @@
 //l'erreur generee ; il conviendra donc de passer son retour a toSend.push_back() dans les utilisateurs
 //existants
 
+User		*Server::nick_holder(User * user) //il faut fix ce segfault !!
+{
+	const std::vector<std::string>	&params = user->receivedmsg.front().getParams();
+	
+	if (params.size() < 1)
+	{
+		user->tosendmsg.push_back(Message (ERR_NONICKNAMEGIVEN));
+		return (user);
+	}
+	std::string	ret;
+
+	ret = nick_cmd(params[0], user->getNickname(), NULL, NULL);
+	if (ret.empty())
+		return (&(_users.find(params[0])->second));
+	user->tosendmsg.push_back(Message(ret));
+	return (user);
+}
+
 std::string	Server::nick_cmd(std::string nick, std::string oldnick,
 		struct pollfd * fd, struct sockaddr * addr)
 {
