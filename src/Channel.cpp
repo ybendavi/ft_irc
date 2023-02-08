@@ -13,7 +13,9 @@
 #include "Channel.hpp"
 
 Channel::Channel(std::string name, unsigned short modes) : _channel(name), _chanMode(modes), _chanUsers()
-{}
+{
+    std::cout << _chanMode << std::endl; //temporary
+}
 
 Channel::~Channel(void)
 {}

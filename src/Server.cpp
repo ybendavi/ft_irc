@@ -2,7 +2,7 @@
 
 extern volatile sig_atomic_t loop;
 
-Server::Server(void) : _ret(0), _clientSize(sizeof(struct sockaddr) ),
+Server::Server(void) : _domainName("InRatableCrash"), _ret(0), _clientSize(sizeof(struct sockaddr) ),
 	_addrInfo(), _pollTab(), _tempRpl(), _users(), _channels(),
 	_nbUsers(0), _nbSock(0), _on(1), _off(0)
 { }
@@ -46,8 +46,6 @@ int	Server::init(int port)
 		return (-3);
 	if (listen(_pollTab[0].fd, 2))
 		return (-4);
-	
-	inet_ntop(AF_INET6, &(_addrServer.sin6_addr), _infoServer, INET6_ADDRSTRLEN);
 	
 	return (0);
 }
@@ -106,53 +104,36 @@ void	Server::_ft_Pollin(unsigned int i, iterator it)
 		_disconnectClient(_pollTab[i]);
 		return;
 	}
-//	std::cout << "buffer = " << buffer << std::endl;
 	std::string buff(buffer);
 	bzero(buffer, strlen(buffer));
-//	std::cout << " buff a la reception " << buff << std::endl;
-	while (!buff.empty()) // si msg coupes go here
+	while (!buff.empty() && _pollTab[i].fd > 0) // si msg coupes go here
 	{
 		std::string	s = gnm(buff);
 		if (s.empty())
 			return ;
 		if ( it != _users.end() )
 		{
-
 			it->second.receivedmsg.push_back(Message(s));
-//			std::cout << " 1 buffer after out = " << buff << std::endl;
 			_execute(&(it->second));
 		}
 		else
-			_unrgUser(i, gnm(s) );
-//		std::cout << " 2 buffer after out = " << buff << std::endl;
+			_unrgUser(i, s) ;
 		it = _findUserByFd(_pollTab[i].fd);
+		s.erase();
 	}
 	buff.erase();
 }
 
 void	Server::_ft_Pollout(unsigned int i, iterator it)
 {
+	std::string str;
+	
 	if ( it != _users.end() )
 	{
 		if (!it->second.tosendmsg.empty())
 		{
-			std::string str = it->second.tosendmsg.front().getToSend();
-			if (str[0] != ':')
-			{
-				std::string temp = " ";
-
-				temp += it->second.getNickname();
-				str.insert(3, temp);
-				temp.erase();
-				temp = ":";
-			//	temp += _infoServer;
-				temp += "domain.main ";
-				str.insert(0, temp);
-			}	
-
-			if (send(_pollTab[i].fd, str.c_str(),
-					strlen(str.c_str()), MSG_DONTWAIT) == -1)	
-				_ret = -6;
+			str = it->second.tosendmsg.front().getToSend();
+			readySendy(str, _domainName, it->second.getNickname());
 			it->second.tosendmsg.pop_front();
 		}
 		else
@@ -160,12 +141,14 @@ void	Server::_ft_Pollout(unsigned int i, iterator it)
 	}
 	else
 	{
-		if (!_tempRpl[i].empty() && send(_pollTab[i].fd, _tempRpl[i].c_str(),
-				strlen(_tempRpl[i].c_str()), MSG_DONTWAIT) == -1)
-			_ret = -6;
+		str = _tempRpl[i];
+		readySendy(str, _domainName, "");
 		_tempRpl[i].clear();
 		_pollTab[i].events = POLLIN ;
 	}
+	if ( !str.empty() && send(_pollTab[i].fd, str.c_str(),
+				strlen(str.c_str()), MSG_DONTWAIT) == -1)
+		_ret = -6;
 }
 
 void	Server::_checkUser(void)
@@ -260,19 +243,10 @@ void	Server::_execute(User *user)
 	//	std::cout << "false" << std::endl;
 		return ;
 	}
-	/*inet_ntop(AF_INET6, &(_addrServer.sin6_addr), buffer, INET6_ADDRSTRLEN);
-	user->receivedmsg.front().setSender(std::string(":")
-						+= user->getNickname()
-						+= std::string("!")
-						+= user->getUsername()
-						+= std::string("@")
-						+= std::string(buffer)
-						+= std::string(" "));
-	//std::cout << "prefix:" << user->receivedmsg.front().setPrefix(std::string(":0.0.0.0")) << std::endl;
-	std::cout << "msg.front = " << user->receivedmsg.front().getToSend() << std::endl;*/
 
 	if (user->receivedmsg.front().getCommand().compare("PING") == 0)
-	{
+	{// str.compare(0, 3, "PONG ", 0, 3) )//comp PONG marchpo :c
+					  // ugrade pong w/ prefix PONG domain.address :receiver
 		std::string	pong("PONG \r\n");
 
 		if (user->receivedmsg.front().getParams().empty() == true)
@@ -289,8 +263,8 @@ void	Server::_execute(User *user)
 		_privMsg(user);
 	else if (user->receivedmsg.front().getCommand().compare("USER") == 0)
 		cmd_user(user);
-	else if (user->receivedmsg.front().getCommand().compare("JOIN") == 0)
-		_join(user);
+//	else if (user->receivedmsg.front().getCommand().compare("JOIN") == 0)
+//		_join(user);
 //	else if (user->receivedmsg.front().getCommand().compare("MODE") == 0)
 //		mode_cmd(user);
 	else if (user->receivedmsg.front().getCommand().compare("QUIT") == 0)
