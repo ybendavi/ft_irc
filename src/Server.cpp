@@ -288,6 +288,7 @@ void	Server::_whoIs(User *user)
 {
 	(void)user;
 }
+	
 void	Server::_notice(User *user)
 {
 	std::string				to_send;
@@ -299,17 +300,21 @@ void	Server::_notice(User *user)
 	//std::cout << "et ici" << std::endl;
 	//std::cout << "nick:" << *(user->receivedmsg.front().getParams().begin()) << std::endl;
 	//std::cout << "nick of user:" << (_users.begin()++)->second.getNickname() << std::endl;
-	if (getUser(*(user->receivedmsg.front().getParams().begin())) == _users.end())
+	if ((user->receivedmsg.front().getParams().begin())->find('#', 0) == 0
+		|| (user->receivedmsg.front().getParams().begin())->find('&', 0) == 0)
+	{
+
+		if (_channels.find(*(user->receivedmsg.front().getParams().begin())) != _channels.end())
+		{
+			sendMessagetochan(user, &((_channels.find((*(user->receivedmsg.front().getParams().begin()))))->second), _users.begin(), _users.end(), _domainName);
+		}
+		else
+			return ;
+	}
+	if (_users.find(*(user->receivedmsg.front().getParams().begin())) == _users.end())
 		return ;
-	//std::cout << "userlooking:" << _users.begin()->first << std::endl;
-	//std::cout << "userlooking:" << _users.find(std::string("LS\r\n"))->second.getNickname()<< std::endl;
-	//std::cout << "encore ici" << std::endl;
-	to_send += user->receivedmsg.front().getToSend();
-	to_send += std::string("\r");
-	to_send += std::string("\n");
-	//std::cout << "envoyé:" << to_send << std::endl;
-	user->receivedmsg.front().setToSend(to_send);
-	_users.find(*(user->receivedmsg.front().getParams().begin()))->second.tosendmsg.push_back(Message(user->getNickname(), user->getUsername(), user->receivedmsg.front().getToSend().c_str(), std::string(_domainName)));
+	else
+		sendMessage(user, &((_users.find(*(user->receivedmsg.front().getParams().begin())))->second), _domainName);
 }
 
 void	Server::_privMsg(User *user)
@@ -319,27 +324,41 @@ void	Server::_privMsg(User *user)
 	//std::cout << "ici" << std::endl;
 	if (user->receivedmsg.front().getParams().empty() == true
 		|| user->receivedmsg.front().getParamsopt().empty() == true)
+	{
+		user->tosendmsg.push_back(Message(ERR_NEEDMOREPARAMS));
 		return ;
+	}
+	if (user->receivedmsg.front().getParams().begin() + 1 == user->receivedmsg.front().getParams().end())
+	{
+		
+		user->tosendmsg.push_back(Message(ERR_NEEDMOREPARAMS));
+		return ;
+	}
 	//std::cout << "et ici" << std::endl;
 	//std::cout << "nick:" << *(user->receivedmsg.front().getParams().begin()) << std::endl;
 	//std::cout << "nick of user:" << (_users.begin()++)->second.getNickname() << std::endl;
-	//std::cout << "user found:" << _users.find(*(user->receivedmsg.front().getParams().begin()))->second.getNickname() << std::endl;
+	if ((user->receivedmsg.front().getParams().begin())->find('#', 0) == 0
+		|| (user->receivedmsg.front().getParams().begin())->find('&', 0) == 0)
+	{
+
+		if (_channels.find(*(user->receivedmsg.front().getParams().begin())) != _channels.end())
+		{
+			sendMessagetochan(user, &((_channels.find((*(user->receivedmsg.front().getParams().begin()))))->second), _users.begin(), _users.end(), _domainName);
+		}
+		else
+		{
+			user->tosendmsg.push_back(Message(ERR_NOSUCHCHANNEL));
+			return ;
+		}
+	}
 	if (_users.find(*(user->receivedmsg.front().getParams().begin())) == _users.end())
 	{
 		//std::cout << "trouve pas user" << std::endl;
 		user->tosendmsg.push_back(Message(ERR_NOSUCHNICK));
 		return ;
 	}
-	//std::cout << "userlooking:" << _users.begin()->first << std::endl;
-	//std::cout << "userlooking:" << _users.find(std::string("LS\r\n"))->second.getNickname()<< std::endl;
-//	std::cout << "encore ici" << std::endl;
-	to_send += user->receivedmsg.front().getToSend();
-	to_send += std::string("\r");
-	to_send += std::string("\n");
-	//std::cout << "envoyé:" << to_send << std::endl;
-	user->receivedmsg.front().setToSend(to_send);
-	_users.find(*(user->receivedmsg.front().getParams().begin()))->second.tosendmsg.push_back(Message(user->getNickname(), user->getUsername(), user->receivedmsg.front().getToSend().c_str(), std::string(_domainName)));
-
+	else
+		sendMessage(user, &((_users.find(*(user->receivedmsg.front().getParams().begin())))->second), _domainName);
 }
 
 std::map<std::string, User>::iterator	Server::getUser(std::string nick)

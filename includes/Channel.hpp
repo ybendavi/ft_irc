@@ -6,7 +6,7 @@
 /*   By: cdapurif <cdapurif@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/03 20:02:03 by cdapurif          #+#    #+#             */
-/*   Updated: 2023/02/08 15:07:15 by cdapurif         ###   ########.fr       */
+/*   Updated: 2023/02/08 21:32:32 by ybendavi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ class Channel
         ~Channel();
 
         void    addUser(const std::string& user, unsigned char modes = VOICE | INVITE);
+	bool    isUserOnChannel(const std::string& nickname);
     
     private:
 
