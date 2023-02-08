@@ -309,7 +309,7 @@ void	Server::_notice(User *user)
 	to_send += std::string("\n");
 	//std::cout << "envoyé:" << to_send << std::endl;
 	user->receivedmsg.front().setToSend(to_send);
-	_users.find(*(user->receivedmsg.front().getParams().begin()))->second.tosendmsg.push_back(Message(user->getNickname(), user->getUsername(), user->receivedmsg.front().getToSend().c_str(), std::string("0.0.0.0")));
+	_users.find(*(user->receivedmsg.front().getParams().begin()))->second.tosendmsg.push_back(Message(user->getNickname(), user->getUsername(), user->receivedmsg.front().getToSend().c_str(), std::string(_domainName)));
 }
 
 void	Server::_privMsg(User *user)
@@ -338,7 +338,7 @@ void	Server::_privMsg(User *user)
 	to_send += std::string("\n");
 	//std::cout << "envoyé:" << to_send << std::endl;
 	user->receivedmsg.front().setToSend(to_send);
-	_users.find(*(user->receivedmsg.front().getParams().begin()))->second.tosendmsg.push_back(Message(user->getNickname(), user->getUsername(), user->receivedmsg.front().getToSend().c_str(), std::string("0.0.0.0")));
+	_users.find(*(user->receivedmsg.front().getParams().begin()))->second.tosendmsg.push_back(Message(user->getNickname(), user->getUsername(), user->receivedmsg.front().getToSend().c_str(), std::string(_domainName)));
 
 }
 
