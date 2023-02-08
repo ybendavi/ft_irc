@@ -23,6 +23,7 @@ class	Message {
 						//Message(void);
 						Message(std::string);
 						Message	&operator=(const Message &ref);
+						Message(const std::string nickname, const std::string username, const std::string message, const std::string host);
 						//Message(const Message &ref);
 						~Message(void);
 		int				parseMessage(const std::string message);
@@ -31,7 +32,7 @@ class	Message {
 		std::string			getMessage(void) const;
 		std::string			getCommand(void) const;
 		std::vector<std::string>	getParams(void) const;
-
+		void				setToSend(std::string message);
 	private :
 		//User				& _receiver;
 		std::string			_receiver;

@@ -37,6 +37,9 @@ int		printErr(int ret)
 		case 7: perror("invalid port number/argument "); break ;
 		case 8: perror("error: setsockopt for SO_REUSADDR "); break ;
 		case 9: perror("error: setsockopt for IPV6_V6ONLY "); break ;
+		case 10: perror("error: accept function "); break ;
+		case 11: perror("error: new socket fcntl "); break ;
+		case 12: perror("error: poll function "); break ;
 		default: perror("unknown error");
 	}	
 	return (ret);

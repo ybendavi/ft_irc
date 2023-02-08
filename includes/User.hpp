@@ -36,7 +36,6 @@ class	User {
 		bool			getOp(void) const;
 		bool			getInv(void) const;
 		bool			getWal(void) const;
-		bool			getOnline(void) const;
 		std::string		getRealname(void) const;
 		std::string		getIp(void) const;
 		std::string		getUsername(void) const;
@@ -55,7 +54,7 @@ class	User {
 		void			setUsername(std::string);
 		void			setNickname(std::string);
 		void			setPass(std::string);
-		
+		void			setEvent(short);	
 		/*pushback le dernier lu & pop front qund on affiche*/
 		std::list< Message >		receivedmsg; //will eventually become a class so...
 		std::list< Message >		tosendmsg; //will eventually become a class so...
@@ -73,7 +72,6 @@ class	User {
 		bool		_isOperator;
 		bool		_isInvisible;
 		bool		_isWallopable;
-		bool		_online;
 
 		std::string	_username;
 		std::string _ip;
