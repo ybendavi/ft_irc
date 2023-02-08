@@ -60,13 +60,16 @@ void	Server::_unrgUser(int index, std::string buffer)
 	if (!msg.getCommand().compare("CAP"))
 		return ;
 	_pollTab[index].events = POLLIN | POLLOUT;
+//	std::cout << "cmd = " << msg.getCommand() << std::endl;
 	if (msg.getCommand().compare("NICK") && msg.getCommand().compare("QUIT"))
 	{
 		_tempRpl[index] = ERR_NOTREGISTERED;
 		return ;
 	}
 	if (!msg.getCommand().compare("NICK") && msg.getParams().size() > 0)
+	{
 		_tempRpl[index] = nick_cmd(msg.getParams()[0], "", &(_pollTab[index]), &(_addrInfo[index]) );
+	}
 	else
 		_tempRpl[index] = ERR_NONICKNAMEGIVEN;
 		
@@ -90,16 +93,17 @@ void	Server::_ft_Pollin(unsigned int i, iterator it)
 	while (!buff.empty()) // si msg coupes go here
 	{
 		std::string	s = gnm(buff);
-	//	if (s.empty())
+		if (s.empty())
+			return ;
 		if ( it != _users.end() )
 		{
 
-			it->second.receivedmsg.push_back(Message(gnm(buff)));
+			it->second.receivedmsg.push_back(Message(s));
 //			std::cout << " 1 buffer after out = " << buff << std::endl;
 			_execute(&(it->second));
 		}
 		else
-			_unrgUser(i, gnm(buff) );
+			_unrgUser(i, gnm(s) );
 //		std::cout << " 2 buffer after out = " << buff << std::endl;
 		it = _findUserByFd(_pollTab[i].fd);
 	}
@@ -266,8 +270,8 @@ void	Server::_execute(User *user)
 		_privMsg(user);
 	else if (user->receivedmsg.front().getCommand().compare("USER") == 0)
 		cmd_user(user);
-	else if (user->receivedmsg.front().getCommand().compare("MODE") == 0)
-		mode_cmd(user);
+//	else if (user->receivedmsg.front().getCommand().compare("MODE") == 0)
+//		mode_cmd(user);
 	else if (user->receivedmsg.front().getCommand().compare("WHOIS") == 0)
 			_whoIs(user);
 	else
