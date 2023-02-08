@@ -263,8 +263,10 @@ void	Server::_execute(User *user)
 		_privMsg(user);
 	else if (user->receivedmsg.front().getCommand().compare("USER") == 0)
 		cmd_user(user);
-//	else if (user->receivedmsg.front().getCommand().compare("JOIN") == 0)
-//		_join(user);
+	else if (user->receivedmsg.front().getCommand().compare("JOIN") == 0)
+		_join(user);
+	else if (user->receivedmsg.front().getCommand().compare("PART") == 0)
+		_part(user);
 //	else if (user->receivedmsg.front().getCommand().compare("MODE") == 0)
 //		mode_cmd(user);
 	else if (user->receivedmsg.front().getCommand().compare("QUIT") == 0)

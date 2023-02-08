@@ -6,19 +6,26 @@
 /*   By: cdapurif <cdapurif@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/03 20:14:44 by cdapurif          #+#    #+#             */
-/*   Updated: 2023/02/08 17:27:43 by cdapurif         ###   ########.fr       */
+/*   Updated: 2023/02/08 20:56:07 by cdapurif         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Channel.hpp"
 
-Channel::Channel(std::string name, unsigned short modes) : _channel(name), _chanMode(modes), _chanUsers()
+Channel::Channel(std::string name, unsigned short modes) : _channel(name), _chanMode(modes), _chanUsers(), _banList(), _chanLimit(-1)
 {
-    std::cout << _chanMode << std::endl; //temporary
+    (void)_chanLimit;
 }
 
 Channel::~Channel(void)
 {}
+
+bool    Channel::isUserOnChannel(const std::string& nickname)
+{
+    if (_chanUsers.find(nickname) == _chanUsers.end())
+        return (false);
+    return (true);
+}
 
 void    Channel::removeUserFromChannel(const std::string& nickname)
 {

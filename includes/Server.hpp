@@ -68,6 +68,7 @@ class	Server
 			void							_quit(User *user);
 			void							_ft_Pollin(unsigned int i, iterator it);
 			void							_ft_Pollout(unsigned int i, iterator it);
+			void							_part(User *user);
 
 			/*tmp commands stash*/
 
@@ -105,5 +106,6 @@ class	Server
 std::string	findNick(std::string buffer);
 std::string	gnm(std::string & buff);
 void		readySendy(std::string &str, std::string domain, std::string nick);
+bool    	invalidChannelName(const std::string& channelName);
 
 #endif

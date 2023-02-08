@@ -17,6 +17,7 @@
 # define ERR_ERRONEUSNICKNAME "432"
 # define ERR_NICKCOLLISION "436"
 # define ERR_UNAVAILRESOURCE "437"
+# define ERR_NOTONCHANNEL "442 "
 # define ERR_NOTREGISTERED "451 :You have not registered"
 
 # define ERR_RESTRICTED "484 :Nickname is already in use"

@@ -6,7 +6,7 @@
 /*   By: cdapurif <cdapurif@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/07 17:37:02 by cdapurif          #+#    #+#             */
-/*   Updated: 2023/02/08 17:51:16 by cdapurif         ###   ########.fr       */
+/*   Updated: 2023/02/08 20:21:07 by cdapurif         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,12 +28,10 @@ void	Server::_join(User *user)
     std::string to_send;
     std::string channelName;
 
-    std::cout << "coucou" << std::endl;
-
 	//check parameters
-    if (user->receivedmsg.front().getParams().empty() == true)
+    if (user->receivedmsg.front().getParams().empty())
     {
-        user->tosendmsg.push_back(Message(ERR_NEEDMOREPARAMS + user->getNickname() + " JOIN :Syntax error\r\n"));
+        user->tosendmsg.push_back(Message(std::string(ERR_NEEDMOREPARAMS) + " JOIN :Syntax error\r\n"));
         return ;
     }
     channelName = (user->receivedmsg.front().getParams())[0];
@@ -41,7 +39,7 @@ void	Server::_join(User *user)
     if (invalidChannelName(channelName))
     {
         std::cout << "Invalid channel name" << std::endl;
-        user->tosendmsg.push_back(Message(ERR_NOSUCHCHANNEL + user->getNickname() + " " + channelName + " :No such channel\r\n"));
+        user->tosendmsg.push_back(Message(std::string(ERR_NOSUCHCHANNEL) + " " + channelName + " :No such channel\r\n"));
         return ;
     }
 
@@ -49,9 +47,13 @@ void	Server::_join(User *user)
     std::map<std::string, Channel>::iterator    chan = _channels.find(channelName);
     if (chan == _channels.end())
     {
+        //if (user->receivedmsg.front().getParamsopt().empty())
         _channels.insert(std::make_pair(channelName, Channel(channelName)));
+        /*else
+            _channels.insert(std::make_pair(channelName, Channel(channelName, function)));*/
         chan = _channels.find(channelName);
         chan->second.addUser(user->getNickname(), OPERATOR | VOICE | INVITE | TOPIC);
+        return ;
     }
     else
     {
