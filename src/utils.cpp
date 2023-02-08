@@ -17,13 +17,13 @@ std::string	gnm(std::string & buff)
 		buff.push_back('\r');
 		buff.push_back('\n');
 		i = buff.find("\r\n");
-		std::cout << "it goes in tho \n";
+	//	std::cout << "it goes in tho \n";
 	}
 	ret.resize(i + 2);
 	if (!buff.compare("\r\n"))
 		buff.erase();
 	else
 		buff.erase(0, i + 2);
-	std::cout << "buff before out = " << buff << std::endl;
+	//std::cout << "buff before out = " << buff << std::endl;
 	return ( ret );
 }
