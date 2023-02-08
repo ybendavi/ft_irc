@@ -105,24 +105,21 @@ void	Server::_ft_Pollin(unsigned int i, iterator it)
 		_disconnectClient(_pollTab[i]);
 		return;
 	}
-	std::string buff(buffer);
+	_leftover[i] += buffer;
+	//std::cout << "lefto =" <<  _leftover[i] << std::cout ;
 	bzero(buffer, strlen(buffer));
-	while (!buff.empty() && _pollTab[i].fd > 0) // si msg coupes go here
+	std::string	s = gnm(_leftover[i]);
+	if (s.empty())
+		return ;
+	if ( it != _users.end() )
 	{
-		std::string	s = gnm(buff);
-		if (s.empty())
-			return ;
-		if ( it != _users.end() )
-		{
-			it->second.receivedmsg.push_back(Message(s));
-			_execute(&(it->second));
-		}
-		else
-			_unrgUser(i, s) ;
-		it = _findUserByFd(_pollTab[i].fd);
-		s.erase();
+		it->second.receivedmsg.push_back(Message(s));
+		_execute(&(it->second));
 	}
-	buff.erase();
+	else
+		_unrgUser(i, s) ;
+	it = _findUserByFd(_pollTab[i].fd);
+	s.erase();
 }
 
 void	Server::_ft_Pollout(unsigned int i, iterator it)
