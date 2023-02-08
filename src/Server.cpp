@@ -91,12 +91,16 @@ void	Server::_disconnectClient(pollfd& client)
 
 void	Server::_ft_Pollin(unsigned int i, iterator it)
 {
+	int			status;
 	char		buffer[512];
 
 	bzero(buffer, 512);
-	if (recv(_pollTab[i].fd, buffer, 512, MSG_DONTWAIT) == -1)
+	status = recv(_pollTab[i].fd, buffer, 512, MSG_DONTWAIT);
+	if (status <= 0)
 	{
-		_ret = -5;
+		if (status == -1)
+			_ret = -5;
+		_disconnectClient(_pollTab[i]);
 		return;
 	}
 //	std::cout << "buffer = " << buffer << std::endl;
@@ -156,7 +160,6 @@ void	Server::_ft_Pollout(unsigned int i, iterator it)
 
 void	Server::_checkUser(void)
 {
-	int										status;
 	unsigned int							i;
 	std::map<std::string, User>::iterator	it;
 
