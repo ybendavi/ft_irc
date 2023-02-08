@@ -17,7 +17,7 @@ Server::~Server(void)
 	}
 }
 
-int	Server::init(int port)
+int	Server::init(int port, std::string pass)
 {
 	if (!(port >= 1 && port <= 65535))
 		return (-7);
@@ -46,7 +46,8 @@ int	Server::init(int port)
 		return (-3);
 	if (listen(_pollTab[0].fd, 2))
 		return (-4);
-	
+	_pass = pass;
+
 	return (0);
 }
 
@@ -181,7 +182,6 @@ void	Server::_pollfunction(void)
 //	for (unsigned i = 0;  i < _nbSock; i++)
 //			std::cout << "before : i = " << i << " event = " << _pollTab[i].events << "revent = " << _pollTab[i].revents << std::endl;
 
-//probably rajouter un checker de temp relpyesss pour pollout
 	ret = poll(_pollTab, _nbSock, 7000);
 //	for (unsigned i = 0;  i < _nbSock; i++)
 //			std::cout << "after : i = " << i << " event = " << _pollTab[i].events << "revent = " << _pollTab[i].revents << std::endl;
@@ -238,9 +238,17 @@ int		Server::start(void)
 
 void	Server::_execute(User *user)
 {
+	std::cout << "rcvd = " << user->receivedmsg.front().getToSend() << std::endl;
 	if (user->receivedmsg.empty() == true)
 	{
 	//	std::cout << "false" << std::endl;
+		return ;
+	}
+	if (user->getUsername().empty() && user->receivedmsg.front().getCommand().compare("USER"))
+	{
+		std::cout << "username = " << user->getUsername() << std::endl;
+		user->receivedmsg.pop_front();
+		user->tosendmsg.push_back(Message(ERR_NOTREGISTERED));
 		return ;
 	}
 
@@ -265,8 +273,8 @@ void	Server::_execute(User *user)
 		cmd_user(user);
 //	else if (user->receivedmsg.front().getCommand().compare("JOIN") == 0)
 //		_join(user);
-//	else if (user->receivedmsg.front().getCommand().compare("MODE") == 0)
-//		mode_cmd(user);
+	else if (user->receivedmsg.front().getCommand().compare("MODE") == 0)
+		mode_cmd(user);
 	else if (user->receivedmsg.front().getCommand().compare("QUIT") == 0)
 	{
 		_quit(user);

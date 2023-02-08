@@ -28,7 +28,7 @@ std::string	gnm(std::string & buff)
 
 void	readySendy(std::string &str, std::string domain, std::string nick)
 {
-	if (str[0] != ':')
+	if (str[0] != ':' && str.compare(0, 3, "PONG", 0, 3))
 	{
 		std::string temp = " ";
 
