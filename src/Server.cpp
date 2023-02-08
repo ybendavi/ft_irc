@@ -86,15 +86,21 @@ void	Server::_ft_Pollin(unsigned int i, iterator it)
 //	std::cout << "buffer = " << buffer << std::endl;
 	std::string buff(buffer);
 	bzero(buffer, strlen(buffer));
+	std::cout << " buff a la reception " << buff << std::endl;
 	while (!buff.empty()) // si msg coupes go here
 	{
+		std::string	s = gnm(buff);
+		if (s.empty())
 		if ( it != _users.end() )
 		{
-			it->second.receivedmsg.push_back(Message( gnm(buff) ));
+
+			it->second.receivedmsg.push_back(Message(  ));
+			std::cout << " 1 buffer after out = " << buff << std::endl;
 			_execute(&(it->second));
 		}
 		else
 			_unrgUser(i, gnm(buff) );
+		std::cout << " 2 buffer after out = " << buff << std::endl;
 		it = _findUserByFd(_pollTab[i].fd);
 	}
 	buff.erase();
@@ -147,6 +153,7 @@ void	Server::_checkUser(void)
 	i = 1;
 	while (i < _nbSock)
 	{
+		std::cout << "i = " << i << " nb sock = " << _nbSock << std::endl;
 		it = _findUserByFd(_pollTab[i].fd);
 		if ((_pollTab[i].revents & 1) == POLLIN)
 			_ft_Pollin(i, it);
@@ -241,6 +248,7 @@ void	Server::_execute(User *user)
 						+= std::string(buffer)
 						+= std::string(" "));
 	//std::cout << "prefix:" << user->receivedmsg.front().setPrefix(std::string(":0.0.0.0")) << std::endl;
+	std::cout << "msg.front = " << user->receivedmsg.front().getToSend() << std::endl;
 	if (user->receivedmsg.front().getCommand().compare("PING") == 0)
 	{
 		std::string	pong("PONG \r\n");

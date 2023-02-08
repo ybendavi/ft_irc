@@ -5,20 +5,25 @@
 
 std::string	gnm(std::string & buff)
 {
-	int	i;
+	size_t	i;
 	std::string	ret;
 
 	ret = buff;
 	if (buff.size() >= 512)
-	{
-		buff[511] = '\n';
-		buff[510] = '\r';
-		buff.resize(512);
-	}
+		buff.resize(510);
 	i = buff.find("\r\n");
-	if (i == -1)
-		return ("cKasse");
+	if ( !(i != std::string::npos) )
+	{
+		buff.push_back('\r');
+		buff.push_back('\n');
+		i = buff.find("\r\n");
+		std::cout << "it goes in tho \n";
+	}
 	ret.resize(i + 2);
-	buff.erase(0, i + 2);
+	if (!buff.compare("\r\n"))
+		buff.erase();
+	else
+		buff.erase(0, i + 2);
+	std::cout << "buff before out = " << buff << std::endl;
 	return ( ret );
 }
