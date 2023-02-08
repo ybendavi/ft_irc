@@ -260,7 +260,7 @@ void	Server::_execute(User *user)
 	//	std::cout << "false" << std::endl;
 		return ;
 	}
-	inet_ntop(AF_INET6, &(_addrServer.sin6_addr), buffer, INET6_ADDRSTRLEN);
+	/*inet_ntop(AF_INET6, &(_addrServer.sin6_addr), buffer, INET6_ADDRSTRLEN);
 	user->receivedmsg.front().setSender(std::string(":")
 						+= user->getNickname()
 						+= std::string("!")
@@ -269,7 +269,7 @@ void	Server::_execute(User *user)
 						+= std::string(buffer)
 						+= std::string(" "));
 	//std::cout << "prefix:" << user->receivedmsg.front().setPrefix(std::string(":0.0.0.0")) << std::endl;
-	std::cout << "msg.front = " << user->receivedmsg.front().getToSend() << std::endl;
+	std::cout << "msg.front = " << user->receivedmsg.front().getToSend() << std::endl;*/
 
 	if (user->receivedmsg.front().getCommand().compare("PING") == 0)
 	{
