@@ -2,17 +2,16 @@
 
 extern volatile sig_atomic_t loop;
 
-Server::Server(void) : _ret(0), _clientSize(sizeof(struct sockaddr) ) , _users(), _channels(), _nbUsers(0), _nbSock(0), _on(1), _off(0)
-{ 
-	bzero( _addrInfo, sizeof(struct sockaddr));
-	bzero( _tempRpl, MAX_CONN);
-}
+Server::Server(void) : _ret(0), _clientSize(sizeof(struct sockaddr) ),
+	_addrInfo(), _pollTab(), _tempRpl(), _users(), _channels(),
+	_nbUsers(0), _nbSock(0), _on(1), _off(0)
+{ }
 
 Server::~Server(void)
 {
-	while (_nbSock-- > 0)
+	while (_nbSock > 0)
 	{
-		//--_nbSock; add decrement in condition
+		--_nbSock;
 		if (_pollTab[_nbSock].fd != -1)
 			close(_pollTab[_nbSock].fd);
 	}
@@ -45,10 +44,11 @@ int	Server::init(int port)
 	_addrServer.sin6_port = htons(port);
 	if ( bind(_pollTab[0].fd, (sockaddr *)&_addrServer, sizeof(_addrServer)) )
 		return (-3);
-
-	if (listen(_pollTab[0].fd, MAX_USER)) //what macro should we use in listen call ?
+	if (listen(_pollTab[0].fd, 2))
 		return (-4);
-
+	
+	inet_ntop(AF_INET6, &(_addrServer.sin6_addr), _infoServer, INET6_ADDRSTRLEN);
+	
 	return (0);
 }
 
@@ -58,15 +58,114 @@ void	Server::_unrgUser(int index, std::string buffer)
 
 	if (!msg.getCommand().compare("CAP"))
 		return ;
+	_pollTab[index].events = POLLIN | POLLOUT;
+//	std::cout << "cmd = " << msg.getCommand() << std::endl;
 	if (msg.getCommand().compare("NICK") && msg.getCommand().compare("QUIT"))
 	{
 		_tempRpl[index] = ERR_NOTREGISTERED;
 		return ;
 	}
-	if (!msg.getCommand().compare("NICK"))
+	if (!msg.getCommand().compare("NICK") && msg.getParams().size() > 0)
+	{
 		_tempRpl[index] = nick_cmd(msg.getParams()[0], "", &(_pollTab[index]), &(_addrInfo[index]) );
-
+	}
+	else
+		_tempRpl[index] = ERR_NONICKNAMEGIVEN;
+		
 	//coder quit ;)
+}
+
+void	Server::_disconnectClient(pollfd& client)
+{
+	iterator	cli;
+
+	std::cout << "Client with fd " << client.fd << " disconnected" << std::endl;
+
+	cli = _findUserByFd(client.fd);
+	if (cli != _users.end())
+	{
+		_users.erase(cli);
+		--_nbUsers;
+	}
+	close(client.fd);
+	client = _pollTab[_nbSock - 1];
+	--_nbSock;
+}
+
+void	Server::_ft_Pollin(unsigned int i, iterator it)
+{
+	int			status;
+	char		buffer[512];
+
+	bzero(buffer, 512);
+	status = recv(_pollTab[i].fd, buffer, 512, MSG_DONTWAIT);
+	if (status <= 0)
+	{
+		if (status == -1)
+			_ret = -5;
+		_disconnectClient(_pollTab[i]);
+		return;
+	}
+//	std::cout << "buffer = " << buffer << std::endl;
+	std::string buff(buffer);
+	bzero(buffer, strlen(buffer));
+//	std::cout << " buff a la reception " << buff << std::endl;
+	while (!buff.empty()) // si msg coupes go here
+	{
+		std::string	s = gnm(buff);
+		if (s.empty())
+			return ;
+		if ( it != _users.end() )
+		{
+
+			it->second.receivedmsg.push_back(Message(s));
+//			std::cout << " 1 buffer after out = " << buff << std::endl;
+			_execute(&(it->second));
+		}
+		else
+			_unrgUser(i, gnm(s) );
+//		std::cout << " 2 buffer after out = " << buff << std::endl;
+		it = _findUserByFd(_pollTab[i].fd);
+	}
+	buff.erase();
+}
+
+void	Server::_ft_Pollout(unsigned int i, iterator it)
+{
+	if ( it != _users.end() )
+	{
+		if (!it->second.tosendmsg.empty())
+		{
+			std::string str = it->second.tosendmsg.front().getToSend();
+			if (str[0] != ':')
+			{
+				std::string temp = " ";
+
+				temp += it->second.getNickname();
+				str.insert(3, temp);
+				temp.erase();
+				temp = ":";
+			//	temp += _infoServer;
+				temp += "domain.main ";
+				str.insert(0, temp);
+			}	
+
+			if (send(_pollTab[i].fd, str.c_str(),
+					strlen(str.c_str()), MSG_DONTWAIT) == -1)	
+				_ret = -6;
+			it->second.tosendmsg.pop_front();
+		}
+		else
+			it->second.setEvent(POLLIN);
+	}
+	else
+	{
+		if (!_tempRpl[i].empty() && send(_pollTab[i].fd, _tempRpl[i].c_str(),
+				strlen(_tempRpl[i].c_str()), MSG_DONTWAIT) == -1)
+			_ret = -6;
+		_tempRpl[i].clear();
+		_pollTab[i].events = POLLIN ;
+	}
 }
 
 void	Server::_checkUser(void)
@@ -78,49 +177,16 @@ void	Server::_checkUser(void)
 	while (i < _nbSock)
 	{
 		it = _findUserByFd(_pollTab[i].fd);
-		if ((_pollTab[i].revents & 1) == POLLIN) //prob une foction par bail
-		{
-			char		buffer[512];
-			
-			if (recv(_pollTab[i].fd, buffer, 512, MSG_DONTWAIT) == -1)
-			{
-				_ret = -5;
-				return;
-			}
-
-			std::string buff(buffer);
-			while (!buff.empty()) // si msg coupes go here
-			{
-				if ( it != _users.end() )
-				{
-					it->second.receivedmsg.push_back(Message( gnm(buff) ));
-					_execute(&(it->second));
-					//	std::cout << "incoming = " << buffer << std::endl;
-				}
-				else
-					_unrgUser(i, gnm(buff) );
-				it = _findUserByFd(_pollTab[i].fd);
-			}
-		}
+    
+		if ((_pollTab[i].revents & 1) == POLLIN)
+			_ft_Pollin(i, it);
+		if (_ret)
+			return ;
+		it = _findUserByFd(_pollTab[i].fd);
 		if ((_pollTab[i].revents & 4) == POLLOUT)
-		{
-			if ( it != _users.end() )
-			{
-				if (!it->second.tosendmsg.empty())
-				{
-					if (send(_pollTab[i].fd, it->second.tosendmsg.front().getToSend().c_str(),
-							strlen(it->second.tosendmsg.front().getToSend().c_str()), MSG_DONTWAIT) == -1)	
-					_ret = -6;
-				it->second.tosendmsg.pop_front();
-				}
-			}
-			else
-			{
-				if (!_tempRpl[i].empty() && send(_pollTab[i].fd, _tempRpl[i].c_str(), strlen(_tempRpl[i].c_str()), MSG_DONTWAIT) == -1)
-					_ret = -6;
-				_tempRpl[i].clear();
-			}
-		}
+			_ft_Pollout(i, it);
+		if (_ret)
+			return ;
 		++i;
 	}
 }
@@ -129,15 +195,19 @@ void	Server::_pollfunction(void)
 {
 	int		ret;
 
-//	for (int i = 0;  i < _nbSock; i++)
+//	for (unsigned i = 0;  i < _nbSock; i++)
 //			std::cout << "before : i = " << i << " event = " << _pollTab[i].events << "revent = " << _pollTab[i].revents << std::endl;
+
+//probably rajouter un checker de temp relpyesss pour pollout
 	ret = poll(_pollTab, _nbSock, 7000);
-//	for (int i = 0;  i < _nbSock; i++)
+//	for (unsigned i = 0;  i < _nbSock; i++)
 //			std::cout << "after : i = " << i << " event = " << _pollTab[i].events << "revent = " << _pollTab[i].revents << std::endl;
 	if (ret == 0)
 		std::cout << "Timeout\n";
 	else if (ret == -1)
-		perror("poll :"); //au moment ou tu ecriras ta gestion d'user qui part faut gerr cap
+		_ret = -12;
+	if (_ret)
+		return ;
 	else if ( (_pollTab[0].events & (POLLNVAL|POLLERR|POLLHUP) ))
 		std::cout << "buggybugg" << std::endl;
 	else
@@ -149,64 +219,31 @@ void	Server::_pollfunction(void)
 
 		if (_pollTab[0].revents == POLLIN)
 		{
-			_ret = _initSocket();
+			_initSocket();
 			if (_ret)
 				return ;
-		}
-
-		if (ret > 0)
-		{
-	//		std::cout << "reste du ret de poll == " << ret << std::endl;
-	//		for (int i = 0;  i < _nbSock; ++i)
-	//			std::cout << "i = " << i << " event = " << _pollTab[i].events << "revent = " << _pollTab[i].revents << std::endl;
 		}
 	}
 }
 
-int		Server::_initSocket(void)
+void		Server::_initSocket(void)
 {
-//	std::cout << "init sockt\n";
 	_pollTab[_nbSock].fd  = accept(_pollTab[0].fd, (struct sockaddr* )&_addrInfo[_nbSock],
 			&_clientSize);
 	if (_pollTab[_nbSock].fd  == -1)
 	{
-		perror("accept : ");
-		return (0);
+		_ret = -10;
+		return ;
 	}
 	if (fcntl(_pollTab[_nbSock].fd , F_SETFL, O_NONBLOCK) == -1)
 	{
 		close(_pollTab[_nbSock].fd);
-		return (0);
+		_ret = -11;
+		return ;
 	}
-	_pollTab[_nbSock].events = POLLIN | POLLOUT;
+	_pollTab[_nbSock].events = POLLIN;
 	_pollTab[_nbSock].revents = 0;
 	++_nbSock;
-	return (0);
-}
-
-int		Server::_initClient(int index)
-{
-	char			buffer[512];
-	std::string		nick;
-
-	if ( _users.find(nick) == _users.end() )
-	{
-		User		user( &(_pollTab[index]), &(_addrInfo[index]) );
-    
-	//	std::cout << "goto user\n";
-		user.parseUser( buffer );
-		_users.insert( std::pair<std::string, User>(nick, user) );
-		}
-	else
-	{
-		std::cout << "goto err\n";
-		--_nbSock;
-		send(_pollTab[_nbSock].fd, ERR_NICKNAMEINUSE,
-			strlen(ERR_NICKNAMEINUSE), 0);
-		close(_pollTab[index].fd);
-		return (1);
-	}
-	return (0);
 }
 
 int		Server::start(void)
@@ -220,15 +257,31 @@ void	Server::_execute(User *user)
 {
 	if (user->receivedmsg.empty() == true)
 	{
-		std::cout << "false" << std::endl;
+	//	std::cout << "false" << std::endl;
 		return ;
 	}
+	/*inet_ntop(AF_INET6, &(_addrServer.sin6_addr), buffer, INET6_ADDRSTRLEN);
+	user->receivedmsg.front().setSender(std::string(":")
+						+= user->getNickname()
+						+= std::string("!")
+						+= user->getUsername()
+						+= std::string("@")
+						+= std::string(buffer)
+						+= std::string(" "));
+	//std::cout << "prefix:" << user->receivedmsg.front().setPrefix(std::string(":0.0.0.0")) << std::endl;
+	std::cout << "msg.front = " << user->receivedmsg.front().getToSend() << std::endl;*/
+
 	if (user->receivedmsg.front().getCommand().compare("PING") == 0)
 	{
 		std::string	pong("PONG \r\n");
 
-		pong.insert(5, *(user->receivedmsg.front().getParams().begin()));
-		user->tosendmsg.push_back(Message(pong.c_str()));
+		if (user->receivedmsg.front().getParams().empty() == true)
+			user->tosendmsg.push_back(Message(ERR_NOORIGIN));
+		else
+		{
+			pong.insert(5, *(user->receivedmsg.front().getParams().begin()));
+			user->tosendmsg.push_back(Message(pong.c_str()));
+		}
 	}
 	else if (user->receivedmsg.front().getCommand().compare("NOTICE") == 0)
 		_notice(user);
@@ -238,18 +291,32 @@ void	Server::_execute(User *user)
 		cmd_user(user);
 	else if (user->receivedmsg.front().getCommand().compare("JOIN") == 0)
 		_join(user);
-/*	else
+//	else if (user->receivedmsg.front().getCommand().compare("MODE") == 0)
+//		mode_cmd(user);
+	else if (user->receivedmsg.front().getCommand().compare("QUIT") == 0)
 	{
-		std::cout << "not handled:" << user->receivedmsg.front().getCommand() << std::endl;
-	}*/
+		_quit(user);
+		return ;
+	}	
+	else if (user->receivedmsg.front().getCommand().compare("WHOIS") == 0)
+			_whoIs(user);
+	else
+	{
+	//	std::cout << "cmd:" << user->receivedmsg.front().getCommand() << std::endl;
+		//user->tosendmsg.push_back(Message(ERR_UNKNOWNCOMMAND));
+	}
 	user->receivedmsg.pop_front();
-
+	if (!user->tosendmsg.empty())
+		user->setEvent(POLLIN | POLLOUT);
 }
 
+void	Server::_whoIs(User *user)
+{
+	(void)user;
+}
 void	Server::_notice(User *user)
 {
 	std::string				to_send;
-	char					buffer[INET6_ADDRSTRLEN];
 
 	//std::cout << "ici" << std::endl;
 	if (user->receivedmsg.front().getParams().empty() == true
@@ -263,24 +330,17 @@ void	Server::_notice(User *user)
 	//std::cout << "userlooking:" << _users.begin()->first << std::endl;
 	//std::cout << "userlooking:" << _users.find(std::string("LS\r\n"))->second.getNickname()<< std::endl;
 	//std::cout << "encore ici" << std::endl;
-	to_send += std::string(":");
-	to_send += user->getNickname();
-	to_send.push_back('!');
-	inet_ntop(AF_INET6, &(_addrServer.sin6_addr), buffer, INET6_ADDRSTRLEN);
-	to_send += std::string(buffer);
-	to_send += std::string(" ");
 	to_send += user->receivedmsg.front().getToSend();
 	to_send += std::string("\r");
 	to_send += std::string("\n");
 	//std::cout << "envoyé:" << to_send << std::endl;
 	user->receivedmsg.front().setToSend(to_send);
-	_users.find(*(user->receivedmsg.front().getParams().begin()))->second.tosendmsg.push_back(Message(user->receivedmsg.front().getToSend().c_str()));
+	_users.find(*(user->receivedmsg.front().getParams().begin()))->second.tosendmsg.push_back(Message(user->getNickname(), user->getUsername(), user->receivedmsg.front().getToSend().c_str(), std::string("0.0.0.0")));
 }
 
 void	Server::_privMsg(User *user)
 {
 	std::string				to_send;
-	char					buffer[INET6_ADDRSTRLEN];
 
 	//std::cout << "ici" << std::endl;
 	if (user->receivedmsg.front().getParams().empty() == true
@@ -299,18 +359,13 @@ void	Server::_privMsg(User *user)
 	//std::cout << "userlooking:" << _users.begin()->first << std::endl;
 	//std::cout << "userlooking:" << _users.find(std::string("LS\r\n"))->second.getNickname()<< std::endl;
 //	std::cout << "encore ici" << std::endl;
-	to_send += std::string(":");
-	to_send += user->getNickname();
-	to_send.push_back('!');
-	inet_ntop(AF_INET6, &(_addrServer.sin6_addr), buffer, INET6_ADDRSTRLEN);
-	to_send += std::string(buffer);
-	to_send += std::string(" ");
 	to_send += user->receivedmsg.front().getToSend();
 	to_send += std::string("\r");
 	to_send += std::string("\n");
 	//std::cout << "envoyé:" << to_send << std::endl;
 	user->receivedmsg.front().setToSend(to_send);
-	_users.find(*(user->receivedmsg.front().getParams().begin()))->second.tosendmsg.push_back(Message(user->receivedmsg.front().getToSend().c_str()));
+	_users.find(*(user->receivedmsg.front().getParams().begin()))->second.tosendmsg.push_back(Message(user->getNickname(), user->getUsername(), user->receivedmsg.front().getToSend().c_str(), std::string("0.0.0.0")));
+
 }
 
 std::map<std::string, User>::iterator	Server::getUser(std::string nick)

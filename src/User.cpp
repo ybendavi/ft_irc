@@ -14,11 +14,11 @@
 #include <iostream>
 
 User::User(void) : _isOperator(false), _isInvisible(false),
-					_isWallopable(true), _online(true), _socket(NULL), _addr(NULL)
+					_isWallopable(true), _socket(NULL), _addr(NULL)
 { }
 
 User::User(struct pollfd * socket, struct sockaddr * addr) : _isOperator(false), 
-					_isInvisible(false), _isWallopable(true), _online(true),
+					_isInvisible(false), _isWallopable(true),
 					_socket(socket), _addr(addr)
 { }
 
@@ -42,7 +42,6 @@ User	&User::operator=(const User &ref)
 		this->_realname = ref.getRealname();
 		this->_nickname = ref.getNickname();
 		this->_pass = ref.getPass();
-		this->_online = ref.getOnline();
 		this->_ip = ref.getIp();
 		this->_socket = ref.getSocket();
 		this->_addr = ref.getAddr();
@@ -55,8 +54,6 @@ bool		User::getOp(void) const { return (this->_isOperator); }
 bool		User::getInv(void) const { return (this->_isInvisible); }
 
 bool		User::getWal(void) const { return (this->_isWallopable); }
-
-bool		User::getOnline(void) const { return (this->_online); }
 
 std::string	User::getRealname(void) const { return (this->_realname); }
 
@@ -85,6 +82,10 @@ void		User::setOp(bool b)
 		_isOperator = b;
 }
 
+void		User::setEvent(short i)
+{
+	_socket->events = i;
+}
 void		User::setIp(std::string s) 
 { 
 	if (_ip != s)
