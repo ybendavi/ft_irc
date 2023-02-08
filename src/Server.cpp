@@ -59,13 +59,16 @@ void	Server::_unrgUser(int index, std::string buffer)
 	if (!msg.getCommand().compare("CAP"))
 		return ;
 	_pollTab[index].events = POLLIN | POLLOUT;
+//	std::cout << "cmd = " << msg.getCommand() << std::endl;
 	if (msg.getCommand().compare("NICK") && msg.getCommand().compare("QUIT"))
 	{
 		_tempRpl[index] = ERR_NOTREGISTERED;
 		return ;
 	}
 	if (!msg.getCommand().compare("NICK") && msg.getParams().size() > 0)
+	{
 		_tempRpl[index] = nick_cmd(msg.getParams()[0], "", &(_pollTab[index]), &(_addrInfo[index]) );
+	}
 	else
 		_tempRpl[index] = ERR_NONICKNAMEGIVEN;
 		
@@ -106,15 +109,22 @@ void	Server::_ft_Pollin(unsigned int i, iterator it)
 //	std::cout << "buffer = " << buffer << std::endl;
 	std::string buff(buffer);
 	bzero(buffer, strlen(buffer));
+//	std::cout << " buff a la reception " << buff << std::endl;
 	while (!buff.empty()) // si msg coupes go here
 	{
+		std::string	s = gnm(buff);
+		if (s.empty())
+			return ;
 		if ( it != _users.end() )
 		{
-			it->second.receivedmsg.push_back(Message( gnm(buff) ));
+
+			it->second.receivedmsg.push_back(Message(s));
+//			std::cout << " 1 buffer after out = " << buff << std::endl;
 			_execute(&(it->second));
 		}
 		else
-			_unrgUser(i, gnm(buff) );
+			_unrgUser(i, gnm(s) );
+//		std::cout << " 2 buffer after out = " << buff << std::endl;
 		it = _findUserByFd(_pollTab[i].fd);
 	}
 	buff.erase();
@@ -250,6 +260,17 @@ void	Server::_execute(User *user)
 	//	std::cout << "false" << std::endl;
 		return ;
 	}
+	inet_ntop(AF_INET6, &(_addrServer.sin6_addr), buffer, INET6_ADDRSTRLEN);
+	user->receivedmsg.front().setSender(std::string(":")
+						+= user->getNickname()
+						+= std::string("!")
+						+= user->getUsername()
+						+= std::string("@")
+						+= std::string(buffer)
+						+= std::string(" "));
+	//std::cout << "prefix:" << user->receivedmsg.front().setPrefix(std::string(":0.0.0.0")) << std::endl;
+	std::cout << "msg.front = " << user->receivedmsg.front().getToSend() << std::endl;
+
 	if (user->receivedmsg.front().getCommand().compare("PING") == 0)
 	{
 		std::string	pong("PONG \r\n");
@@ -268,6 +289,8 @@ void	Server::_execute(User *user)
 		_privMsg(user);
 	else if (user->receivedmsg.front().getCommand().compare("USER") == 0)
 		cmd_user(user);
+//	else if (user->receivedmsg.front().getCommand().compare("MODE") == 0)
+//		mode_cmd(user);
 	else if (user->receivedmsg.front().getCommand().compare("QUIT") == 0)
 	{
 		_quit(user);
