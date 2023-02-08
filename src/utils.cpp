@@ -17,7 +17,7 @@ std::string	gnm(std::string & buff)
 		buff.push_back('\r');
 		buff.push_back('\n');
 		i = buff.find("\r\n");
-	//	std::cout << "it goes in tho \n";
+		std::cout << "it goes in tho \n";
 	}
 	ret.resize(i + 2);
 	if (!buff.compare("\r\n"))
@@ -26,4 +26,22 @@ std::string	gnm(std::string & buff)
 		buff.erase(0, i + 2);
 	//std::cout << "buff before out = " << buff << std::endl;
 	return ( ret );
+}
+
+void	readySendy(std::string &str, std::string domain, std::string nick)
+{
+	if (str[0] != ':')
+	{
+		std::string temp = " ";
+
+		temp += nick;
+		str.insert(3, temp);
+		temp.erase();
+		temp = ":";
+		//	temp += _infoServer;
+		temp += domain + " ";
+		str.insert(0, temp);
+	}	
+	str += "\r\n";
+	std::cout << "before send = " << str;
 }

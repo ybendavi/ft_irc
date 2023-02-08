@@ -79,7 +79,7 @@ class	Server
 
 			/*server infos*/
 			struct sockaddr_in6				_addrServer;
-			char							_infoServer[INET6_ADDRSTRLEN];
+			char							_domainName[16];
 			int								_ret;
 
 			/*users mayhem*/
@@ -104,5 +104,6 @@ class	Server
 
 std::string	findNick(std::string buffer);
 std::string	gnm(std::string & buff);
+void		readySendy(std::string &str, std::string domain, std::string nick);
 
 #endif
