@@ -86,9 +86,11 @@ class	Server
 			char							_domainName[16];
 			int								_ret;
 
+
 			/*users mayhem*/
 			socklen_t						_clientSize;
 			struct sockaddr					_addrInfo[MAX_CONN];
+		//	struct time_t					_wait30[MAX_CONN];
 			struct pollfd					_pollTab[MAX_CONN];
 			std::string						_tempRpl[MAX_CONN];
 			std::string						_leftover[MAX_CONN];
@@ -105,7 +107,7 @@ class	Server
 };
 
 std::string	findNick(std::string buffer);
-std::string	gnm(std::string & buff);
+std::string	gnm(std::string & buff, std::string & s);
 void		readySendy(std::string &str, std::string domain, std::string nick);
 void		sendMessagetochan(User *user, Channel *channel, std::map<std::string, User>::iterator users, std::map<std::string, User>::iterator end, char *domainName);
 void	sendMessage(User *user, User *receiver, char *domainName);

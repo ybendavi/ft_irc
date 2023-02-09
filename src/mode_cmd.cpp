@@ -6,7 +6,7 @@ void	Server::get_mode(User * user)
 	char		umode;
 
 	mode = RPL_UMODEIS;
-	mode += (" +");
+	mode += ("+");
 	umode = user->getMode();
 	if (umode & 4)
 		mode.push_back('o');
