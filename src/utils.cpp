@@ -38,7 +38,7 @@ void	sendMessage(User *user, User *receiver, char *domainName)
 
 	receiver->tosendmsg.push_back(Message(user->getNickname(), user->getUsername(), user->receivedmsg.front().getToSend().c_str(), std::string(domainName)));
 }
-
+/*
 void	sendMessagetochan(User *user, Channel *channel, std::map<std::string, User>::iterator users, std::map<std::string, User>::iterator end, char *domainName)
 {
 	while (users != end)
@@ -48,7 +48,7 @@ void	sendMessagetochan(User *user, Channel *channel, std::map<std::string, User>
 		users++;
 	}
 }
-
+*/
 std::string	gnm(std::string & buff)
 {
 	size_t	i;

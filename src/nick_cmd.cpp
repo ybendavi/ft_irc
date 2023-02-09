@@ -11,7 +11,7 @@
 //l'erreur generee ; il conviendra donc de passer son retour a toSend.push_back() dans les utilisateurs
 //existants
 
-User		*Server::nick_holder(User * user) //il faut fix ce segfault !!
+User		*Server::nick_holder(User * user) 
 {
 	const std::vector<std::string>	&params = user->receivedmsg.front().getParams();
 	
@@ -49,7 +49,9 @@ std::string	Server::nick_cmd(std::string nick, std::string oldnick,
 	}
 	else
 	{
+		_users[nick];
 		std::swap(_users[nick], _users[oldnick]);
+		_users[nick].setNickname(nick);
 		_users.erase(oldnick);
 	}
 	return ("");

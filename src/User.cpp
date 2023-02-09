@@ -6,7 +6,7 @@
 /*   By: ccottin <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/18 18:30:30 by ccottin           #+#    #+#             */
-/*   Updated: 2023/02/08 18:06:10 by ccottin          ###   ########.fr       */
+/*   Updated: 2023/02/09 13:36:02 by ccottin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,11 +36,14 @@ User	&User::operator=(const User &ref)
 	{
 		this->_mode = ref.getMode();
 		this->_realname = ref.getRealname();
+		this->_username = ref.getUsername();
 		this->_nickname = ref.getNickname();
 		this->_pass = ref.getPass();
 		this->_ip = ref.getIp();
 		this->_socket = ref.getSocket();
 		this->_addr = ref.getAddr();
+		this->receivedmsg = ref.receivedmsg;
+		this->tosendmsg = ref.tosendmsg;
 	}
 	return (*this);
 }
