@@ -72,6 +72,10 @@ class	Server
 			void							_ft_Pollout(unsigned int i, iterator it);
 			void							_part(User *user);
 			void							_topic(User *user);
+			void							_removeUserFromChannels(const std::string& nickname);
+			void							_names(User *user);
+			void							_list(User *user);
+			void    						_listAllChannels(User *user);
 			void							_pong(User *user);
 
 			/*tmp commands stash*/

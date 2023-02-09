@@ -6,7 +6,7 @@
 /*   By: cdapurif <cdapurif@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/09 12:08:57 by cdapurif          #+#    #+#             */
-/*   Updated: 2023/02/09 16:11:39 by cdapurif         ###   ########.fr       */
+/*   Updated: 2023/02/09 16:57:02 by cdapurif         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ void    Server::_topic(User *user)
     }
     
     //no topic specified
-    if (user->receivedmsg.front().getParamsopt().empty()) //maybe use boolean here to check if paramopt was never set
+    if (user->receivedmsg.front().getParamsopt().empty() && user->receivedmsg.front().getColon() == false) //maybe use boolean here to check if paramopt was never set
     {
         if (chan->second.getTopic().empty())
             user->tosendmsg.push_back(Message(std::string(RPL_NOTOPIC) + channelName + " :No topic is set"));
@@ -64,5 +64,6 @@ void    Server::_topic(User *user)
     {
         chan->second.getTopic() = user->receivedmsg.front().getParamsopt();
         chan->second.getTopicCreator() = user->getNickname();
+        user->tosendmsg.push_back(Message(std::string(":") + user->getNickname() + "!~" + user->getUsername() + "@" + "hostname TOPIC " + channelName + " :" + chan->second.getTopic()));
     }
 }

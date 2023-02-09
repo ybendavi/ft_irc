@@ -6,7 +6,7 @@
 /*   By: cdapurif <cdapurif@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/03 20:14:44 by cdapurif          #+#    #+#             */
-/*   Updated: 2023/02/09 15:37:16 by cdapurif         ###   ########.fr       */
+/*   Updated: 2023/02/09 19:05:29 by cdapurif         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,4 +85,20 @@ unsigned short  Channel::getChannelModes(void)
 unsigned char   Channel::getUserModes(const std::string& nickname)
 {
     return (_chanUsers[nickname]);
+}
+
+std::string Channel::listUsersOnChannel()
+{
+    std::string toSend = std::string(RPL_NAMREPLY) + "= " + _channel + " :";
+    std::map<std::string, unsigned char>::iterator  it = _chanUsers.begin();
+
+    for (; it != _chanUsers.end(); it++)
+    {
+        if (it->second & OPERATOR)
+            toSend += "@" + it->first;
+        else
+            toSend += it->first;
+        toSend += " ";
+    }
+    return (toSend);
 }
