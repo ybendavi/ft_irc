@@ -6,7 +6,7 @@
 /*   By: cdapurif <cdapurif@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/07 17:37:02 by cdapurif          #+#    #+#             */
-/*   Updated: 2023/02/08 20:21:07 by cdapurif         ###   ########.fr       */
+/*   Updated: 2023/02/09 11:08:07 by cdapurif         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,6 @@ void	Server::_join(User *user)
             _channels.insert(std::make_pair(channelName, Channel(channelName, function)));*/
         chan = _channels.find(channelName);
         chan->second.addUser(user->getNickname(), OPERATOR | VOICE | INVITE | TOPIC);
-        return ;
     }
     else
     {
@@ -61,4 +60,5 @@ void	Server::_join(User *user)
         //HERE 
         chan->second.addUser(user->getNickname());
     }
+    user->tosendmsg.push_back(Message(std::string(":") + user->getNickname() + "!~" + user->getUsername() + "@" + "hostname JOIN :" + channelName));
 }

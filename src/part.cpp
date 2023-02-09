@@ -6,7 +6,7 @@
 /*   By: cdapurif <cdapurif@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/08 20:23:55 by cdapurif          #+#    #+#             */
-/*   Updated: 2023/02/08 21:00:01 by cdapurif         ###   ########.fr       */
+/*   Updated: 2023/02/09 11:06:31 by cdapurif         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ void    Server::_part(User *user)
 {
     std::string to_send;
     std::string channelName;
+    std::string leaveMessage;
 
     //check parameters
     if (user->receivedmsg.front().getParams().empty())
@@ -23,6 +24,8 @@ void    Server::_part(User *user)
         user->tosendmsg.push_back(Message(std::string(ERR_NEEDMOREPARAMS) + " PART :Syntax error\r\n"));
         return ;
     }
+    if (user->receivedmsg.front().getParamsopt().empty() == false)
+        leaveMessage = user->receivedmsg.front().getParamsopt();
     channelName = (user->receivedmsg.front().getParams())[0];
     std::cout << "User " << user->getNickname() << " wants to leave channel " << channelName << std::endl;
     if (invalidChannelName(channelName))
@@ -39,7 +42,10 @@ void    Server::_part(User *user)
     else
     {
         if (chan->second.isUserOnChannel(user->getNickname()))
+        {
             chan->second.removeUserFromChannel(user->getNickname());
+            user->tosendmsg.push_back(Message(std::string(":") + user->getNickname() + "!~" + user->getUsername() + "@" + "hostname PART " + channelName + " :" + leaveMessage));
+        }
         else
             user->tosendmsg.push_back(Message(std::string(ERR_NOTONCHANNEL) + channelName + " :You're not on that channel\r\n"));
     }
