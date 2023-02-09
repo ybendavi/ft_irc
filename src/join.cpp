@@ -6,7 +6,7 @@
 /*   By: cdapurif <cdapurif@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/07 17:37:02 by cdapurif          #+#    #+#             */
-/*   Updated: 2023/02/09 17:02:09 by cdapurif         ###   ########.fr       */
+/*   Updated: 2023/02/09 20:19:59 by cdapurif         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,8 @@ void	Server::_join(User *user)
         chan->second.addUser(user->getNickname());
     }
     user->tosendmsg.push_back(Message(std::string(":") + user->getNickname() + "!~" + user->getUsername() + "@" + "hostname JOIN :" + channelName));
+    user->tosendmsg.push_back(Message(chan->second.listUsersOnChannel()));
+    user->tosendmsg.push_back(Message(std::string(RPL_ENDOFNAMES) + channelName + " :End of NAMES list"));
     if (chan->second.getTopic().empty() == false)
         user->tosendmsg.push_back(Message(std::string(RPL_TOPIC) + channelName + " :" + chan->second.getTopic()));
 }
