@@ -36,6 +36,8 @@ class	Server
 
 		/*types*/
 			typedef std::map<std::string, User>::iterator	iterator; //should change name if we gonna use other containers with iterator
+			typedef void (Server::*func_ptr)(User *);
+			std::map<std::string, func_ptr> cmd_map;
 
 			Server(void);
 			~Server(void);
@@ -74,12 +76,14 @@ class	Server
 			void							_names(User *user);
 			void							_list(User *user);
 			void    						_listAllChannels(User *user);
+			void							_pong(User *user);
 
 			/*tmp commands stash*/
 
 			std::string	nick_cmd(std::string nick, std::string oldnick = "",
 					struct pollfd * fd = NULL, struct sockaddr * addr = NULL);
 			void	cmd_user(User * user);
+			void	kill_cmd(User * user);
 			void	mode_cmd(User * user);
 			void	get_mode(User * user);
 			void	oper_cmd(User * user);
