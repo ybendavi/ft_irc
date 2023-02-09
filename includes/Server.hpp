@@ -72,6 +72,7 @@ class	Server
 			void							_topic(User *user);
 			void							_removeUserFromChannels(const std::string& nickname);
 			void							_names(User *user);
+			void							_list(User *user);
 			void    						_listAllChannels(User *user);
 
 			/*tmp commands stash*/
