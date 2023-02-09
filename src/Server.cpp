@@ -237,7 +237,7 @@ int		Server::start(void)
 
 void	Server::_execute(User *user)
 {
-	std::cout << "rcvd = " << user->receivedmsg.front().getToSend() << std::endl;
+	//std::cout << "rcvd = " << user->receivedmsg.front().getToSend() << std::endl;
 	if (user->receivedmsg.empty() == true)
 	{
 	//	std::cout << "false" << std::endl;
