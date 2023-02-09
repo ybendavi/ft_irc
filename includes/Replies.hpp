@@ -14,6 +14,8 @@
 # define ERR_NICKNAMEINUSE "433 :Nick in use"
 # define ERR_NOSUCHNICK "401 "
 # define ERR_NOSUCHCHANNEL "403 "
+# define ERR_CANNOTSENDTOCHAN "404 "
+# define ERR_NOTEXTTOSEND "412 "
 # define ERR_NONICKNAMEGIVEN "431 :No nickname given"
 # define ERR_NOTREGISTERED "451 :You have not registered"
 

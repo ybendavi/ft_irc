@@ -6,7 +6,7 @@
 /*   By: ccottin <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/24 18:28:25 by ccottin           #+#    #+#             */
-/*   Updated: 2023/02/02 14:41:40 by ybendavi         ###   ########.fr       */
+/*   Updated: 2023/02/09 15:07:04 by ybendavi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,8 @@
 
 		Message::~Message(void){ } 
 
-		Message::Message(const std::string message )
-		{ 
+		Message::Message(const std::string message ): _colon(false)
+		{	
 			std::vector<std::string>::iterator it;
 
 			_tosend = message;
@@ -63,6 +63,8 @@ Message		&Message::operator=(const Message &ref)
 			}
 			return (*this);
 		}
+
+bool		Message::getColon(void) { return (_colon); };
 
 std::string	Message::getToSend(void) const { return (_tosend); }
 
@@ -139,6 +141,7 @@ int		Message::parseMessage(const std::string message)
 			}
 			if (param_pos < last_pos && param_pos != std::string::npos && message[param_pos] == ':')
 			{
+				_colon = true;
 				if (message.find_first_of("\n\r:", param_pos + 1) != std::string::npos)
 					_paramsopt = message.substr(param_pos + 1,  message.find_first_of("\n\r:", param_pos + 1) - param_pos - 1);
 			}

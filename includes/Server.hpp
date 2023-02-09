@@ -109,5 +109,7 @@ class	Server
 std::string	findNick(std::string buffer);
 std::string	gnm(std::string & buff, std::string & s);
 void		readySendy(std::string &str, std::string domain, std::string nick);
+void		sendMessagetochan(User *user, Channel *channel, std::map<std::string, User>::iterator users, std::map<std::string, User>::iterator end, char *domainName);
+void	sendMessage(User *user, User *receiver, char *domainName);
 
 #endif
