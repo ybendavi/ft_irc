@@ -33,11 +33,9 @@ class	User {
 
 
 		/*Accessors*/
-		bool			getOp(void) const;
-		bool			getInv(void) const;
-		bool			getWal(void) const;
 		std::string		getRealname(void) const;
 		std::string		getIp(void) const;
+		char			getMode(void) const;
 		std::string		getUsername(void) const;
 		std::string		getNickname(void) const;
 		std::string		getPass(void) const;
@@ -46,41 +44,26 @@ class	User {
 		struct sockaddr	*getAddr(void);
 		struct sockaddr	*getAddr(void) const;
 
-		void			setOp(bool);
-		void			setInv(bool);
-		void			setWal(bool);
 		void			setIp(std::string);
+		void			setMode(char m);
 		void			setRealname(std::string);
 		void			setUsername(std::string);
 		void			setNickname(std::string);
 		void			setPass(std::string);
 		void			setEvent(short);	
-		/*pushback le dernier lu & pop front qund on affiche*/
-		std::list< Message >		receivedmsg; //will eventually become a class so...
-		std::list< Message >		tosendmsg; //will eventually become a class so...
-		/*simple = on push back ce que l on doit envoyer et pop front ce au on envoye*/
-
-		/*parser*/
-
-		void		parseUser(char *buffer);
-
+		
+		std::list< Message >		receivedmsg;
+		std::list< Message >		tosendmsg; 
 
 	private :
-		
-		/*user modes*/
-
-		bool		_isOperator;
-		bool		_isInvisible;
-		bool		_isWallopable;
-
+	
 		std::string	_username;
 		std::string _ip;
 		std::string	_realname;
-		std::string	_nickname; // max nine char
 		std::string	_pass;
+		std::string	_nickname; // max nine char
 
-		std::string	_checkParam(void);
-
+		char		_mode;
 
 	public : 
 		/*le temps de faire un truc propre il sera PUBLIK*/

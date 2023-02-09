@@ -6,19 +6,17 @@
 /*   By: ccottin <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/18 18:30:30 by ccottin           #+#    #+#             */
-/*   Updated: 2023/02/01 23:49:53 by ybendavi         ###   ########.fr       */
+/*   Updated: 2023/02/09 13:36:02 by ccottin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "User.hpp"
 #include <iostream>
 
-User::User(void) : _isOperator(false), _isInvisible(false),
-					_isWallopable(true), _socket(NULL), _addr(NULL)
+User::User(void) : _mode(3), _socket(NULL), _addr(NULL)
 { }
 
-User::User(struct pollfd * socket, struct sockaddr * addr) : _isOperator(false), 
-					_isInvisible(false), _isWallopable(true),
+User::User(struct pollfd * socket, struct sockaddr * addr) : _mode(3), 
 					_socket(socket), _addr(addr)
 { }
 
@@ -36,24 +34,19 @@ User	&User::operator=(const User &ref)
 {
 	if (this != &ref)
 	{
-		this->_isOperator = ref.getOp();
-		this->_isInvisible = ref.getInv();
-		this->_isWallopable = ref.getWal();
+		this->_mode = ref.getMode();
 		this->_realname = ref.getRealname();
+		this->_username = ref.getUsername();
 		this->_nickname = ref.getNickname();
 		this->_pass = ref.getPass();
 		this->_ip = ref.getIp();
 		this->_socket = ref.getSocket();
 		this->_addr = ref.getAddr();
+		this->receivedmsg = ref.receivedmsg;
+		this->tosendmsg = ref.tosendmsg;
 	}
 	return (*this);
 }
-
-bool		User::getOp(void) const { return (this->_isOperator); } 
-
-bool		User::getInv(void) const { return (this->_isInvisible); }
-
-bool		User::getWal(void) const { return (this->_isWallopable); }
 
 std::string	User::getRealname(void) const { return (this->_realname); }
 
@@ -73,14 +66,9 @@ struct sockaddr	*User::getAddr(void) { return (this->_addr); }
  
 struct sockaddr	*User::getAddr(void) const { return (this->_addr); }
 
+char			User::getMode(void) const { return (this->_mode); }
 
 //struct pollfd	User::getSocket(void) const { return (this->_socket); }
-
-void		User::setOp(bool b) 
-{ 
-	if (_isOperator != b)
-		_isOperator = b;
-}
 
 void		User::setEvent(short i)
 {
@@ -92,16 +80,10 @@ void		User::setIp(std::string s)
 		_ip = s;
 }
 
-void		User::setInv(bool b)
-{ 
-	if (_isInvisible != b)
-		_isInvisible = b;
-}
-
-void		User::setWal(bool b)
-{ 
-	if (_isWallopable != b)
-		_isWallopable = b;
+void		User::setMode(char m)
+{
+	if (_mode != m)
+		_mode = m;
 }
 
 void		User::setRealname(std::string s)
@@ -127,36 +109,3 @@ void		User::setPass(std::string s)
 	if (_pass != s)
 		_pass = s;
 }
-/*
-std::string		User::_checkParam(void)
-{
-	if (_nickname.size() > 9)
-		return (
-}*/
-
-void	User::parseUser(char * buffer)
-{
-	std::string	s(buffer);
-	int	i;
-	int	y;
-
-	i = s.find('\r') + 1;
-	std::string	tmp(buffer, 0, i + 1);
-	i++;
-	i = s.find(' ', i) + 1;
-	y = s.find('\r', i);
-	this->_nickname = s.substr(i, y - i);
-	i = y + 2;
-	i = s.find(' ', i) + 1;
-	y = s.find(' ', i);
-	this->_username = s.substr(i, y - i);
-	i = s.find(' ', y + 1) + 1;
-	y = s.find(' ', i);
-	this->_ip = s.substr(i, y - i);
-	i = s.find(':', y) + 1;
-	y = s.find('\r', i);
-	this->_realname = s.substr(i, y - i);
-	//return (checkParams());
-	//return (RPL_WELCOME);
-}
-

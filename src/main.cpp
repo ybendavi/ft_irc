@@ -51,6 +51,7 @@ int		main(int ac, char **av)
 	int		ret;
 
 	signal(SIGINT, sighandler);
+	signal(SIGPIPE, sighandler);
 
 	if (ac != 3)
 	{
@@ -58,7 +59,7 @@ int		main(int ac, char **av)
 		return (EXIT_FAILURE);
 	}
 
-	ret = server.init( atoi(av[1]) );
+	ret = server.init( atoi(av[1]), av[2] );
 	if (ret)
 		return ( printErr(ret) );
 	ret = server.start();

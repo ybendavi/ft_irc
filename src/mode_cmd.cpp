@@ -1,58 +1,62 @@
 #include "Server.hpp"
 
-void	get_mode(User * user)
+void	Server::get_mode(User * user)
 {
 	std::string	mode;
+	char		umode;
 
 	mode = RPL_UMODEIS;
-	mode += user->getNickname();
-	mode += (" +");
-	if (user->getOp())
+	mode += ("+");
+	umode = user->getMode();
+	if (umode & 4)
 		mode.push_back('o');
-	if (user->getInv())
+	if (umode & 1)
 		mode.push_back('i');
-	if (user->getWal())
+	if (umode & 2)
 		mode.push_back('w');
-	mode += "\r\n";
 	user->tosendmsg.push_back(Message(mode));
 }
 
 void	add_mode(std::string s, User * user)
 {
-	for (unsigned int i = 0; i < s.size(); ++i)
+	char	mode;
+
+	mode = user->getMode();
+	for (unsigned int i = 1; i < s.size(); ++i)
 	{
 		if (s[i] == 'i')
-			user->setInv(true);
+			mode |= 1;
 		else if (s[i] == 'w')
-			user->setWal(true);
+			mode |= 2;
 		else
 			user->tosendmsg.push_back(Message(ERR_UMODEUNKNOWNFLAG));
 	}
+	user->setMode(mode);
 }
 
 void	rm_mode(std::string s, User * user)
 {
-	for (unsigned int i = 0; i < s.size(); ++i)
+	char	mode;
+	
+	mode = user->getMode();
+	for (unsigned int i = 1; i < s.size(); ++i)
 	{
-		if (s[i] == 'o')
-			user->setOp(false);
-		if (s[i] == 'i')
-			user->setInv(false);
-		if (s[i] == 'w')
-			user->setWal(false);
+		if (s[i] == 'o' && (mode & 4))
+			mode -= 4;
+		else if (s[i] == 'i' && (mode & 1))
+			mode -= 1;
+		else if (s[i] == 'w' && (mode & 2))
+			mode -= 2;
 		else
 			user->tosendmsg.push_back(Message(ERR_UMODEUNKNOWNFLAG));
 	}
+	user->setMode(mode);
 }
 
 void	Server::mode_cmd(User * user)
 {
-	if (user->getUsername().empty())
-	{
-		user->tosendmsg.push_back(Message(ERR_NOTREGISTERED));
-		return ;
-	}
 	std::vector<std::string>	params;
+	
 	params = user->receivedmsg.front().getParams();
 	if (params.size() < 1)
 	{
@@ -82,6 +86,11 @@ void	Server::mode_cmd(User * user)
 		else if (s[0] == '-')
 			rm_mode(s, user);
 		else
+		{
 			user->tosendmsg.push_back(Message(ERR_UMODEUNKNOWNFLAG));
+			return ;
+		}
+		it++;
 	}
+	get_mode(user);
 }

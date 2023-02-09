@@ -3,7 +3,7 @@
 extern volatile sig_atomic_t loop;
 
 Server::Server(void) : _domainName("InRatableCrash"), _ret(0), _clientSize(sizeof(struct sockaddr) ),
-	_addrInfo(), _pollTab(), _tempRpl(), _users(), _channels(),
+	_addrInfo(), _pollTab(), _tempRpl(), _leftover(), _users(), _channels(),
 	_nbUsers(0), _nbSock(0), _on(1), _off(0)
 { }
 
@@ -12,12 +12,13 @@ Server::~Server(void)
 	while (_nbSock > 0)
 	{
 		--_nbSock;
+		std::cout << "sock closed : " << _pollTab[_nbSock].fd << std::endl;
 		if (_pollTab[_nbSock].fd != -1)
 			close(_pollTab[_nbSock].fd);
 	}
 }
 
-int	Server::init(int port)
+int	Server::init(int port, std::string pass)
 {
 	if (!(port >= 1 && port <= 65535))
 		return (-7);
@@ -46,7 +47,8 @@ int	Server::init(int port)
 		return (-3);
 	if (listen(_pollTab[0].fd, 2))
 		return (-4);
-	
+	_pass = pass;
+
 	return (0);
 }
 
@@ -104,13 +106,11 @@ void	Server::_ft_Pollin(unsigned int i, iterator it)
 		_disconnectClient(_pollTab[i]);
 		return;
 	}
-	std::string buff(buffer);
+	_leftover[i] += buffer;
 	bzero(buffer, strlen(buffer));
-	while (!buff.empty() && _pollTab[i].fd > 0) // si msg coupes go here
+	std::string s;
+	while ( !gnm(_leftover[i], s).empty() )
 	{
-		std::string	s = gnm(buff);
-		if (s.empty())
-			return ;
 		if ( it != _users.end() )
 		{
 			it->second.receivedmsg.push_back(Message(s));
@@ -121,7 +121,6 @@ void	Server::_ft_Pollin(unsigned int i, iterator it)
 		it = _findUserByFd(_pollTab[i].fd);
 		s.erase();
 	}
-	buff.erase();
 }
 
 void	Server::_ft_Pollout(unsigned int i, iterator it)
@@ -146,7 +145,7 @@ void	Server::_ft_Pollout(unsigned int i, iterator it)
 		_tempRpl[i].clear();
 		_pollTab[i].events = POLLIN ;
 	}
-	if ( !str.empty() && send(_pollTab[i].fd, str.c_str(),
+	if ( !str.empty() &&  send(_pollTab[i].fd, str.c_str(),
 				strlen(str.c_str()), MSG_DONTWAIT) == -1)
 		_ret = -6;
 }
@@ -181,7 +180,6 @@ void	Server::_pollfunction(void)
 //	for (unsigned i = 0;  i < _nbSock; i++)
 //			std::cout << "before : i = " << i << " event = " << _pollTab[i].events << "revent = " << _pollTab[i].revents << std::endl;
 
-//probably rajouter un checker de temp relpyesss pour pollout
 	ret = poll(_pollTab, _nbSock, 7000);
 //	for (unsigned i = 0;  i < _nbSock; i++)
 //			std::cout << "after : i = " << i << " event = " << _pollTab[i].events << "revent = " << _pollTab[i].revents << std::endl;
@@ -226,6 +224,7 @@ void		Server::_initSocket(void)
 	}
 	_pollTab[_nbSock].events = POLLIN;
 	_pollTab[_nbSock].revents = 0;
+	std::cout << "sock created : " << _pollTab[_nbSock].fd << std::endl;
 	++_nbSock;
 }
 
@@ -238,9 +237,16 @@ int		Server::start(void)
 
 void	Server::_execute(User *user)
 {
+	std::cout << "rcvd = " << user->receivedmsg.front().getToSend() << std::endl;
 	if (user->receivedmsg.empty() == true)
 	{
 	//	std::cout << "false" << std::endl;
+		return ;
+	}
+	if (user->getUsername().empty() && user->receivedmsg.front().getCommand().compare("USER"))
+	{
+		user->receivedmsg.pop_front();
+		user->tosendmsg.push_back(Message(ERR_NOTREGISTERED));
 		return ;
 	}
 
@@ -269,8 +275,14 @@ void	Server::_execute(User *user)
 		_part(user);
 	else if (user->receivedmsg.front().getCommand().compare("TOPIC") == 0)
 		_topic(user);
-//	else if (user->receivedmsg.front().getCommand().compare("MODE") == 0)
-//		mode_cmd(user);
+	else if (user->receivedmsg.front().getCommand().compare("MODE") == 0)
+	{
+		std::string	s = user->receivedmsg.front().getParams()[0];
+			if (s[0] == '#'  || s[0] == '&' )
+				std::cout << "handle-Chaaaaaaan :3\n";
+			else
+				mode_cmd(user);
+	}
 	else if (user->receivedmsg.front().getCommand().compare("QUIT") == 0)
 	{
 		_quit(user);
@@ -278,6 +290,10 @@ void	Server::_execute(User *user)
 	}	
 	else if (user->receivedmsg.front().getCommand().compare("WHOIS") == 0)
 			_whoIs(user);
+	else if (user->receivedmsg.front().getCommand().compare("OPER") == 0)
+			oper_cmd(user);
+	else if (user->receivedmsg.front().getCommand().compare("NICK") == 0)
+		user = nick_holder(user);
 	else
 	{
 	//	std::cout << "cmd:" << user->receivedmsg.front().getCommand() << std::endl;
@@ -292,6 +308,7 @@ void	Server::_whoIs(User *user)
 {
 	(void)user;
 }
+	
 void	Server::_notice(User *user)
 {
 	std::string				to_send;
@@ -303,17 +320,21 @@ void	Server::_notice(User *user)
 	//std::cout << "et ici" << std::endl;
 	//std::cout << "nick:" << *(user->receivedmsg.front().getParams().begin()) << std::endl;
 	//std::cout << "nick of user:" << (_users.begin()++)->second.getNickname() << std::endl;
-	if (getUser(*(user->receivedmsg.front().getParams().begin())) == _users.end())
+	if ((user->receivedmsg.front().getParams().begin())->find('#', 0) == 0
+		|| (user->receivedmsg.front().getParams().begin())->find('&', 0) == 0)
+	{
+
+		if (_channels.find(*(user->receivedmsg.front().getParams().begin())) != _channels.end())
+		{
+		//	sendMessagetochan(user, &((_channels.find((*(user->receivedmsg.front().getParams().begin()))))->second), _users.begin(), _users.end(), _domainName);
+		}
+		else
+			return ;
+	}
+	if (_users.find(*(user->receivedmsg.front().getParams().begin())) == _users.end())
 		return ;
-	//std::cout << "userlooking:" << _users.begin()->first << std::endl;
-	//std::cout << "userlooking:" << _users.find(std::string("LS\r\n"))->second.getNickname()<< std::endl;
-	//std::cout << "encore ici" << std::endl;
-	to_send += user->receivedmsg.front().getToSend();
-	to_send += std::string("\r");
-	to_send += std::string("\n");
-	//std::cout << "envoyé:" << to_send << std::endl;
-	user->receivedmsg.front().setToSend(to_send);
-	_users.find(*(user->receivedmsg.front().getParams().begin()))->second.tosendmsg.push_back(Message(user->getNickname(), user->getUsername(), user->receivedmsg.front().getToSend().c_str(), std::string("0.0.0.0")));
+	else
+		sendMessage(user, &((_users.find(*(user->receivedmsg.front().getParams().begin())))->second), _domainName);
 }
 
 void	Server::_privMsg(User *user)
@@ -323,27 +344,41 @@ void	Server::_privMsg(User *user)
 	//std::cout << "ici" << std::endl;
 	if (user->receivedmsg.front().getParams().empty() == true
 		|| user->receivedmsg.front().getParamsopt().empty() == true)
+	{
+		user->tosendmsg.push_back(Message(ERR_NEEDMOREPARAMS));
 		return ;
+	}
+	if (user->receivedmsg.front().getParams().begin() + 1 == user->receivedmsg.front().getParams().end())
+	{
+		
+		user->tosendmsg.push_back(Message(ERR_NEEDMOREPARAMS));
+		return ;
+	}
 	//std::cout << "et ici" << std::endl;
 	//std::cout << "nick:" << *(user->receivedmsg.front().getParams().begin()) << std::endl;
 	//std::cout << "nick of user:" << (_users.begin()++)->second.getNickname() << std::endl;
-	//std::cout << "user found:" << _users.find(*(user->receivedmsg.front().getParams().begin()))->second.getNickname() << std::endl;
+	if ((user->receivedmsg.front().getParams().begin())->find('#', 0) == 0
+		|| (user->receivedmsg.front().getParams().begin())->find('&', 0) == 0)
+	{
+
+		if (_channels.find(*(user->receivedmsg.front().getParams().begin())) != _channels.end())
+		{
+	//		sendMessagetochan(user, &((_channels.find((*(user->receivedmsg.front().getParams().begin()))))->second), _users.begin(), _users.end(), _domainName);
+		}
+		else
+		{
+			user->tosendmsg.push_back(Message(ERR_NOSUCHCHANNEL));
+			return ;
+		}
+	}
 	if (_users.find(*(user->receivedmsg.front().getParams().begin())) == _users.end())
 	{
 		//std::cout << "trouve pas user" << std::endl;
 		user->tosendmsg.push_back(Message(ERR_NOSUCHNICK));
 		return ;
 	}
-	//std::cout << "userlooking:" << _users.begin()->first << std::endl;
-	//std::cout << "userlooking:" << _users.find(std::string("LS\r\n"))->second.getNickname()<< std::endl;
-//	std::cout << "encore ici" << std::endl;
-	to_send += user->receivedmsg.front().getToSend();
-	to_send += std::string("\r");
-	to_send += std::string("\n");
-	//std::cout << "envoyé:" << to_send << std::endl;
-	user->receivedmsg.front().setToSend(to_send);
-	_users.find(*(user->receivedmsg.front().getParams().begin()))->second.tosendmsg.push_back(Message(user->getNickname(), user->getUsername(), user->receivedmsg.front().getToSend().c_str(), std::string("0.0.0.0")));
-
+	else
+		sendMessage(user, &((_users.find(*(user->receivedmsg.front().getParams().begin())))->second), _domainName);
 }
 
 std::map<std::string, User>::iterator	Server::getUser(std::string nick)
