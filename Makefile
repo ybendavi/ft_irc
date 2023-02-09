@@ -18,7 +18,8 @@ SRCS	=	Server.cpp \
 			join.cpp \
 			part.cpp \
 			topic.cpp \
-			oper_cmd.cpp
+			oper_cmd.cpp \
+			names.cpp
 
 OBJS	= $(addprefix src/, $(SRCS:.cpp=.o))
 

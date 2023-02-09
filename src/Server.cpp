@@ -276,6 +276,8 @@ void	Server::_execute(User *user)
 		_part(user);
 	else if (user->receivedmsg.front().getCommand().compare("TOPIC") == 0)
 		_topic(user);
+	else if (user->receivedmsg.front().getCommand().compare("NAMES") == 0)
+		_names(user);
 	else if (user->receivedmsg.front().getCommand().compare("MODE") == 0)
 	{
 		std::string	s = user->receivedmsg.front().getParams()[0];

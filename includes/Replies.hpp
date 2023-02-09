@@ -10,6 +10,8 @@
 # define RPL_NOTOPIC "331 "
 # define RPL_TOPIC "332 "
 # define RPL_TOPICWHOTIME "333 "
+# define RPL_NAMREPLY "353 "
+# define RPL_ENDOFNAMES "366 "
 # define RPL_YOUREOPER "381 :You are now an IRC operator"
 
 # define ERR_UNKNOWNCOMMAND "421 "
