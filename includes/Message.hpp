@@ -6,7 +6,7 @@
 /*   By: ccottin <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/24 18:26:30 by ccottin           #+#    #+#             */
-/*   Updated: 2023/02/03 17:53:32 by ccottin          ###   ########.fr       */
+/*   Updated: 2023/02/09 15:03:48 by ybendavi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ class	Message {
 		std::string			getMessage(void) const;
 		std::string			getCommand(void) const;
 		std::vector<std::string>	getParams(void) const;
+		bool				getColon(void);
 		void				setToSend(std::string message);
 	private :
 		//User				& _receiver;
@@ -41,6 +42,7 @@ class	Message {
 		std::vector<std::string>	_params;
 		std::string			_paramsopt;
 		std::string			_tosend;
+		bool				_colon;
 
 };
 
