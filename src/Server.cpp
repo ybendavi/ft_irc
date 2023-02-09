@@ -17,6 +17,8 @@ Server::Server(void) : _domainName("IRrealisteCrash"), _ret(0), _clientSize(size
 	cmd_map[std::string("PING")] = &Server::_pong;
 	cmd_map[std::string("JOIN")] = &Server::_join;
 	cmd_map[std::string("PART")] = &Server::_part;
+	cmd_map[std::string("TOPIC")] = &Server::_topic;
+	cmd_map[std::string("LIST")] = &Server::_list;
 }
 
 Server::~Server(void)
