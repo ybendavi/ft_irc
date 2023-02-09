@@ -68,6 +68,8 @@ class	Server
 			void							_quit(User *user);
 			void							_ft_Pollin(unsigned int i, iterator it);
 			void							_ft_Pollout(unsigned int i, iterator it);
+			void							_part(User *user);
+			void							_topic(User *user);
 
 			/*tmp commands stash*/
 
@@ -109,6 +111,7 @@ class	Server
 std::string	findNick(std::string buffer);
 std::string	gnm(std::string & buff, std::string & s);
 void		readySendy(std::string &str, std::string domain, std::string nick);
+bool    	invalidChannelName(const std::string& channelName);
 void		sendMessagetochan(User *user, Channel *channel, std::map<std::string, User>::iterator users, std::map<std::string, User>::iterator end, char *domainName);
 void	sendMessage(User *user, User *receiver, char *domainName);
 
