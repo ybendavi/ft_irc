@@ -52,7 +52,7 @@ void	readySendy(std::string &str, std::string domain, std::string nick)
 	{
 		std::string temp = " ";
 
-		temp += nick;
+		temp += nick + " 📉"; //la blague st incroyable promis on enleve
 		str.insert(3, temp);
 		temp.erase();
 		temp = ":";

@@ -6,7 +6,7 @@
 /*   By: ccottin <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/18 18:30:30 by ccottin           #+#    #+#             */
-/*   Updated: 2023/02/09 13:36:02 by ccottin          ###   ########.fr       */
+/*   Updated: 2023/02/09 22:36:44 by ccottin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,6 @@ User	&User::operator=(const User &ref)
 		this->_realname = ref.getRealname();
 		this->_username = ref.getUsername();
 		this->_nickname = ref.getNickname();
-		this->_pass = ref.getPass();
 		this->_ip = ref.getIp();
 		this->_socket = ref.getSocket();
 		this->_addr = ref.getAddr();
@@ -54,8 +53,6 @@ std::string	User::getUsername(void) const { return (this->_username); }
 
 std::string	User::getNickname(void) const { return (this->_nickname); }
 		
-std::string	User::getPass(void) const { return (this->_pass); }
-
 std::string	User::getIp(void) const { return (this->_ip); }
 
 struct pollfd	*User::getSocket(void) { return (this->_socket); }
@@ -102,10 +99,4 @@ void		User::setUsername(std::string s)
 {
 	if (_username != s)
 		_username = s;
-}
-
-void		User::setPass(std::string s)
-{
-	if (_pass != s)
-		_pass = s;
 }

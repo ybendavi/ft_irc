@@ -2,8 +2,8 @@
 
 extern volatile sig_atomic_t loop;
 
-Server::Server(void) : _domainName("IRrealisteCrash"), _ret(0), _clientSize(sizeof(struct sockaddr) ),
-	_addrInfo(), _pollTab(), _tempRpl(), _leftover(), _users(), _channels(),
+Server::Server(void) : _domainName("IRCrash"), _ret(0), _clientSize(sizeof(struct sockaddr) ),
+	_addrInfo(), _pollTab(), _tempRpl(), _leftover(),  _passTab(), _users(), _channels(), 
 	_nbUsers(0), _nbSock(0), _on(1), _off(0)
 {
 	cmd_map[std::string("USER")] = &Server::cmd_user;
@@ -19,6 +19,8 @@ Server::Server(void) : _domainName("IRrealisteCrash"), _ret(0), _clientSize(size
 	cmd_map[std::string("PART")] = &Server::_part;
 	cmd_map[std::string("TOPIC")] = &Server::_topic;
 	cmd_map[std::string("LIST")] = &Server::_list;
+	cmd_map[std::string("NAMES")] = &Server::_names;
+	cmd_map[std::string("DIE")] = &Server::die_cmd;
 }
 
 Server::~Server(void)
@@ -59,21 +61,51 @@ int	Server::init(int port, std::string pass)
 	_addrServer.sin6_port = htons(port);
 	if ( bind(_pollTab[0].fd, (sockaddr *)&_addrServer, sizeof(_addrServer)) )
 		return (-3);
-	if (listen(_pollTab[0].fd, 2))
+	if (listen(_pollTab[0].fd, 0))
 		return (-4);
 	_pass = pass;
 
 	return (0);
 }
 
+void	Server::_handlePass(int index, Message msg)
+{
+	{
+		if (msg.getCommand().compare("PASS"))
+		{
+			_pollTab[index].events = POLLIN | POLLOUT;
+			_tempRpl[index] = ERR_NOTREGISTERED;
+			return ;
+		}
+		if (msg.getParams().empty())
+		{
+			_pollTab[index].events = POLLIN | POLLOUT;
+			_tempRpl[index] = ERR_NEEDMOREPARAMS;
+			return ;
+		}
+		if (msg.getParams()[0].compare(_pass))
+		{
+			_pollTab[index].events = POLLIN | POLLOUT;
+			_tempRpl[index] = ERR_PASSWDMISMATCH;
+			return ;
+		}
+		_passTab[index] = true;
+	}
+
+}
+
 void	Server::_unrgUser(int index, std::string buffer)
 {
 	Message	msg(buffer);
 
+	std::cout << "cmd = " << buffer << std::endl;
 	if (!msg.getCommand().compare("CAP"))
 		return ;
-	_pollTab[index].events = POLLIN | POLLOUT;
 //	std::cout << "cmd = " << msg.getCommand() << std::endl;
+	if (_passTab[index] == false)
+		return (_handlePass(index, msg));
+	
+	_pollTab[index].events = POLLIN | POLLOUT;
 	if (msg.getCommand().compare("NICK") && msg.getCommand().compare("QUIT"))
 	{
 		_tempRpl[index] = ERR_NOTREGISTERED;
@@ -224,6 +256,8 @@ void	Server::_pollfunction(void)
 
 void		Server::_initSocket(void)
 {
+	if (_nbSock == MAX_CONN - 1)
+		return ;
 	_pollTab[_nbSock].fd  = accept(_pollTab[0].fd, (struct sockaddr* )&_addrInfo[_nbSock],
 			&_clientSize);
 	if (_pollTab[_nbSock].fd  == -1)
