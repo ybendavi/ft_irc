@@ -6,7 +6,7 @@
 /*   By: cdapurif <cdapurif@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/08 20:23:55 by cdapurif          #+#    #+#             */
-/*   Updated: 2023/02/09 11:06:31 by cdapurif         ###   ########.fr       */
+/*   Updated: 2023/02/09 11:43:36 by cdapurif         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,14 +26,16 @@ void    Server::_part(User *user)
     }
     if (user->receivedmsg.front().getParamsopt().empty() == false)
         leaveMessage = user->receivedmsg.front().getParamsopt();
+
     channelName = (user->receivedmsg.front().getParams())[0];
-    std::cout << "User " << user->getNickname() << " wants to leave channel " << channelName << std::endl;
     if (invalidChannelName(channelName))
     {
         std::cout << "Invalid channel name" << std::endl;
         user->tosendmsg.push_back(Message(std::string(ERR_NOSUCHCHANNEL) + " " + channelName + " :No such channel\r\n"));
         return ;
     }
+
+    std::cout << "User " << user->getNickname() << " wants to leave channel " << channelName << std::endl;
 
     //check if channel exist and if user is on it
     std::map<std::string, Channel>::iterator    chan = _channels.find(channelName);
@@ -43,8 +45,14 @@ void    Server::_part(User *user)
     {
         if (chan->second.isUserOnChannel(user->getNickname()))
         {
+            std::cout << "User " << user->getNickname() << " is leaving channel " << channelName << std::endl;
             chan->second.removeUserFromChannel(user->getNickname());
             user->tosendmsg.push_back(Message(std::string(":") + user->getNickname() + "!~" + user->getUsername() + "@" + "hostname PART " + channelName + " :" + leaveMessage));
+            if (chan->second.size() == 0)
+            {
+                std::cout << "last user leaving channel, destroying " << channelName << std::endl;
+                _channels.erase(chan);
+            }
         }
         else
             user->tosendmsg.push_back(Message(std::string(ERR_NOTONCHANNEL) + channelName + " :You're not on that channel\r\n"));

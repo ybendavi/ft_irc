@@ -6,7 +6,7 @@
 /*   By: cdapurif <cdapurif@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/03 20:14:44 by cdapurif          #+#    #+#             */
-/*   Updated: 2023/02/08 20:56:07 by cdapurif         ###   ########.fr       */
+/*   Updated: 2023/02/09 11:16:25 by cdapurif         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,4 +60,9 @@ void    Channel::addUser(const std::string& user, unsigned char modes)
         else
             std::cout << "special case when adding user " << user << " to channel " << _channel << std::endl;
     }
+}
+
+unsigned short  Channel::size()
+{
+    return (_chanUsers.size());
 }
