@@ -34,7 +34,7 @@ void	sendMessage(User *user, User *receiver, char *domainName)
 	receiver->_socket->events = POLLIN | POLLOUT ;
 
 }
-/*
+
 void	sendMessagetochan(User *user, Channel *channel, std::map<std::string, User>::iterator users, std::map<std::string, User>::iterator end, char *domainName)
 {
 	while (users != end)
@@ -44,7 +44,7 @@ void	sendMessagetochan(User *user, Channel *channel, std::map<std::string, User>
 		users++;
 	}
 }
-*/
+
 
 void	readySendy(std::string &str, std::string domain, std::string nick)
 {

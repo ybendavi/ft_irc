@@ -288,3 +288,7 @@ std::map<std::string, User>::iterator	Server::_findUserByFd(int fd)
 
 	return (user);
 }
+void	Server::_whoIs(User *user)
+{
+	(void)user;
+}
