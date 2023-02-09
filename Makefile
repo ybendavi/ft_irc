@@ -18,7 +18,10 @@ SRCS	=	Server.cpp \
 			join.cpp \
 			part.cpp \
 			topic.cpp \
-			oper_cmd.cpp
+			oper_cmd.cpp \
+			pong.cpp \
+			cmd_notice.cpp \
+			cmd_privmsg.cpp \
 
 OBJS	= $(addprefix src/, $(SRCS:.cpp=.o))
 
