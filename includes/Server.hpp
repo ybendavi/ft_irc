@@ -36,6 +36,8 @@ class	Server
 
 		/*types*/
 			typedef std::map<std::string, User>::iterator	iterator; //should change name if we gonna use other containers with iterator
+			typedef void (Server::*func_ptr)(User *);
+			std::map<std::string, func_ptr> cmd_map;
 
 			Server(void);
 			~Server(void);
