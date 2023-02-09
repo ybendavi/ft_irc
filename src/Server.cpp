@@ -12,6 +12,7 @@ Server::~Server(void)
 	while (_nbSock > 0)
 	{
 		--_nbSock;
+		std::cout << "sock closed : " << _pollTab[_nbSock].fd << std::endl;
 		if (_pollTab[_nbSock].fd != -1)
 			close(_pollTab[_nbSock].fd);
 	}
@@ -226,6 +227,7 @@ void		Server::_initSocket(void)
 	}
 	_pollTab[_nbSock].events = POLLIN;
 	_pollTab[_nbSock].revents = 0;
+	std::cout << "sock created : " << _pollTab[_nbSock].fd << std::endl;
 	++_nbSock;
 }
 
@@ -283,8 +285,8 @@ void	Server::_execute(User *user)
 			_whoIs(user);
 	else if (user->receivedmsg.front().getCommand().compare("OPER") == 0)
 			oper_cmd(user);
-//	else if (user->receivedmsg.front().getCommand().compare("NICK") == 0)
-//		user = nick_holder(user); FOR NOW IT SEGV
+	else if (user->receivedmsg.front().getCommand().compare("NICK") == 0)
+		user = nick_holder(user);
 	else
 	{
 	//	std::cout << "cmd:" << user->receivedmsg.front().getCommand() << std::endl;
@@ -318,7 +320,7 @@ void	Server::_notice(User *user)
 
 		if (_channels.find(*(user->receivedmsg.front().getParams().begin())) != _channels.end())
 		{
-			sendMessagetochan(user, &((_channels.find((*(user->receivedmsg.front().getParams().begin()))))->second), _users.begin(), _users.end(), _domainName);
+		//	sendMessagetochan(user, &((_channels.find((*(user->receivedmsg.front().getParams().begin()))))->second), _users.begin(), _users.end(), _domainName);
 		}
 		else
 			return ;
@@ -355,7 +357,7 @@ void	Server::_privMsg(User *user)
 
 		if (_channels.find(*(user->receivedmsg.front().getParams().begin())) != _channels.end())
 		{
-			sendMessagetochan(user, &((_channels.find((*(user->receivedmsg.front().getParams().begin()))))->second), _users.begin(), _users.end(), _domainName);
+	//		sendMessagetochan(user, &((_channels.find((*(user->receivedmsg.front().getParams().begin()))))->second), _users.begin(), _users.end(), _domainName);
 		}
 		else
 		{

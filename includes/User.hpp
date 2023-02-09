@@ -51,10 +51,9 @@ class	User {
 		void			setNickname(std::string);
 		void			setPass(std::string);
 		void			setEvent(short);	
-		/*pushback le dernier lu & pop front qund on affiche*/
-		std::list< Message >		receivedmsg; //will eventually become a class so...
-		std::list< Message >		tosendmsg; //will eventually become a class so...
-		/*simple = on push back ce que l on doit envoyer et pop front ce au on envoye*/
+		
+		std::list< Message >		receivedmsg;
+		std::list< Message >		tosendmsg; 
 
 	private :
 	
