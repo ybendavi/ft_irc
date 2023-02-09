@@ -84,6 +84,7 @@ void	Server::_disconnectClient(pollfd& client)
 	cli = _findUserByFd(client.fd);
 	if (cli != _users.end())
 	{
+		_removeUserFromChannels(cli->first);
 		_users.erase(cli);
 		--_nbUsers;
 	}
@@ -397,4 +398,21 @@ std::map<std::string, User>::iterator	Server::_findUserByFd(int fd)
 	}
 
 	return (user);
+}
+
+void	Server::_removeUserFromChannels(const std::string& nickname)
+{
+	std::map<std::string, Channel>::iterator	it = _channels.begin();
+
+	while (it != _channels.end())
+	{
+		it->second.removeUserFromChannel(nickname);
+		if (it->second.size() == 0)
+		{
+			std::cout << "channel " << it->first << " removed because last member quit" << std::endl;
+			_channels.erase(it++);
+			continue ;
+		}
+		it++;
+	}
 }
