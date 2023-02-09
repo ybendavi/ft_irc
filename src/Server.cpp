@@ -19,6 +19,7 @@ Server::Server(void) : _domainName("IRrealisteCrash"), _ret(0), _clientSize(size
 	cmd_map[std::string("PART")] = &Server::_part;
 	cmd_map[std::string("TOPIC")] = &Server::_topic;
 	cmd_map[std::string("LIST")] = &Server::_list;
+	cmd_map[std::string("NAMES")] = &Server::_names;
 }
 
 Server::~Server(void)
