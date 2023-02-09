@@ -267,6 +267,8 @@ void	Server::_execute(User *user)
 		_join(user);
 	else if (user->receivedmsg.front().getCommand().compare("PART") == 0)
 		_part(user);
+	else if (user->receivedmsg.front().getCommand().compare("TOPIC") == 0)
+		_topic(user);
 //	else if (user->receivedmsg.front().getCommand().compare("MODE") == 0)
 //		mode_cmd(user);
 	else if (user->receivedmsg.front().getCommand().compare("QUIT") == 0)

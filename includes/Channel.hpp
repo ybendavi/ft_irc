@@ -6,7 +6,7 @@
 /*   By: cdapurif <cdapurif@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/03 20:02:03 by cdapurif          #+#    #+#             */
-/*   Updated: 2023/02/09 11:15:24 by cdapurif         ###   ########.fr       */
+/*   Updated: 2023/02/09 11:56:13 by cdapurif         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,7 @@ class Channel
         std::map<std::string, unsigned char>    _chanUsers; //nickname of the user and bitmask on the specific channel
         std::vector<std::string>                _banList;   //list of ban people on the server (should be empty/clear if channel doesn't have ban mask)
         int                                     _chanLimit; //limit of people in the channel (should be set to -1 when limit mask isn't set)
+        //std::string                             _topic[2];  //topic[0] is the chanel topic and _topic[1] is the user who set the topic
 };
 
 #endif
