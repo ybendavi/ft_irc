@@ -72,6 +72,7 @@ class	Server
 			void							_ft_Pollout(unsigned int i, iterator it);
 			void							_part(User *user);
 			void							_topic(User *user);
+			void							_pong(User *user);
 
 			/*tmp commands stash*/
 
