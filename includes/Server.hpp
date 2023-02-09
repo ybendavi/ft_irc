@@ -47,6 +47,7 @@ class	Server
 			
 			/*getters ; faire un get channel*/
 
+			std::map<std::string, User>::iterator	getUser(std::string);
 
 	private :
 
@@ -78,6 +79,7 @@ class	Server
 			std::string	nick_cmd(std::string nick, std::string oldnick = "",
 					struct pollfd * fd = NULL, struct sockaddr * addr = NULL);
 			void	cmd_user(User * user);
+			void	kill_cmd(User * user);
 			void	mode_cmd(User * user);
 			void	get_mode(User * user);
 			void	oper_cmd(User * user);
