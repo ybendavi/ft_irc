@@ -6,7 +6,7 @@
 /*   By: cdapurif <cdapurif@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/08 20:23:55 by cdapurif          #+#    #+#             */
-/*   Updated: 2023/02/09 11:43:36 by cdapurif         ###   ########.fr       */
+/*   Updated: 2023/02/09 13:59:07 by cdapurif         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ void    Server::_part(User *user)
     //check parameters
     if (user->receivedmsg.front().getParams().empty())
     {
-        user->tosendmsg.push_back(Message(std::string(ERR_NEEDMOREPARAMS) + " PART :Syntax error\r\n"));
+        user->tosendmsg.push_back(Message(std::string(ERR_NEEDMOREPARAMS) + " PART :Syntax error"));
         return ;
     }
     if (user->receivedmsg.front().getParamsopt().empty() == false)
@@ -31,7 +31,7 @@ void    Server::_part(User *user)
     if (invalidChannelName(channelName))
     {
         std::cout << "Invalid channel name" << std::endl;
-        user->tosendmsg.push_back(Message(std::string(ERR_NOSUCHCHANNEL) + " " + channelName + " :No such channel\r\n"));
+        user->tosendmsg.push_back(Message(std::string(ERR_NOSUCHCHANNEL) + " " + channelName + " :No such channel"));
         return ;
     }
 
@@ -40,7 +40,7 @@ void    Server::_part(User *user)
     //check if channel exist and if user is on it
     std::map<std::string, Channel>::iterator    chan = _channels.find(channelName);
     if (chan == _channels.end())
-        user->tosendmsg.push_back(Message(std::string(ERR_NOSUCHCHANNEL) + " " + channelName + " :No such channel\r\n"));
+        user->tosendmsg.push_back(Message(std::string(ERR_NOSUCHCHANNEL) + " " + channelName + " :No such channel"));
     else
     {
         if (chan->second.isUserOnChannel(user->getNickname()))
@@ -55,6 +55,6 @@ void    Server::_part(User *user)
             }
         }
         else
-            user->tosendmsg.push_back(Message(std::string(ERR_NOTONCHANNEL) + channelName + " :You're not on that channel\r\n"));
+            user->tosendmsg.push_back(Message(std::string(ERR_NOTONCHANNEL) + channelName + " :You're not on that channel"));
     }
 }

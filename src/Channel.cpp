@@ -6,7 +6,7 @@
 /*   By: cdapurif <cdapurif@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/03 20:14:44 by cdapurif          #+#    #+#             */
-/*   Updated: 2023/02/09 11:16:25 by cdapurif         ###   ########.fr       */
+/*   Updated: 2023/02/09 15:37:16 by cdapurif         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,4 +65,24 @@ void    Channel::addUser(const std::string& user, unsigned char modes)
 unsigned short  Channel::size()
 {
     return (_chanUsers.size());
+}
+
+std::string&    Channel::getTopic()
+{
+    return (_topic[0]);
+}
+
+std::string&    Channel::getTopicCreator()
+{
+    return (_topic[1]);
+}
+
+unsigned short  Channel::getChannelModes(void)
+{
+    return (_chanMode);
+}
+
+unsigned char   Channel::getUserModes(const std::string& nickname)
+{
+    return (_chanUsers[nickname]);
 }

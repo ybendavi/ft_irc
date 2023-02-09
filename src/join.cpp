@@ -6,7 +6,7 @@
 /*   By: cdapurif <cdapurif@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/07 17:37:02 by cdapurif          #+#    #+#             */
-/*   Updated: 2023/02/09 11:38:54 by cdapurif         ###   ########.fr       */
+/*   Updated: 2023/02/09 13:59:54 by cdapurif         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,14 +30,14 @@ void	Server::_join(User *user)
 	//check parameters
     if (user->receivedmsg.front().getParams().empty())
     {
-        user->tosendmsg.push_back(Message(std::string(ERR_NEEDMOREPARAMS) + " JOIN :Syntax error\r\n"));
+        user->tosendmsg.push_back(Message(std::string(ERR_NEEDMOREPARAMS) + " JOIN :Syntax error"));
         return ;
     }
     channelName = (user->receivedmsg.front().getParams())[0];
     if (invalidChannelName(channelName))
     {
         std::cout << "Invalid channel name" << std::endl;
-        user->tosendmsg.push_back(Message(std::string(ERR_NOSUCHCHANNEL) + " " + channelName + " :No such channel\r\n"));
+        user->tosendmsg.push_back(Message(std::string(ERR_NOSUCHCHANNEL) + " " + channelName + " :No such channel"));
         return ;
     }
 
