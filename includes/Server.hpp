@@ -77,6 +77,7 @@ class	Server
 			void							_list(User *user);
 			void    						_listAllChannels(User *user);
 			void							_pong(User *user);
+			void    						_channelsList(User *user);
 
 			/*tmp commands stash*/
 

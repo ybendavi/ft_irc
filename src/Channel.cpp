@@ -6,7 +6,7 @@
 /*   By: cdapurif <cdapurif@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/03 20:14:44 by cdapurif          #+#    #+#             */
-/*   Updated: 2023/02/09 19:05:29 by cdapurif         ###   ########.fr       */
+/*   Updated: 2023/02/09 22:08:19 by cdapurif         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,4 +101,15 @@ std::string Channel::listUsersOnChannel()
         toSend += " ";
     }
     return (toSend);
+}
+
+std::string Channel::listChannelsInfo()
+{
+    std::string         number; 
+    std::stringstream   ss;
+
+    ss << size();
+    ss >> number;
+
+    return (std::string(RPL_LIST) + _channel + " " + number + " :" + _topic[0]);
 }

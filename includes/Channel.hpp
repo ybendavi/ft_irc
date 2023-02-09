@@ -6,7 +6,7 @@
 /*   By: cdapurif <cdapurif@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/03 20:02:03 by cdapurif          #+#    #+#             */
-/*   Updated: 2023/02/09 19:02:40 by cdapurif         ###   ########.fr       */
+/*   Updated: 2023/02/09 22:05:30 by cdapurif         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include <iostream>
 # include <map>
 # include <vector>
+# include <sstream>
 
 #include "Replies.hpp"
 
@@ -58,6 +59,7 @@ class Channel
         unsigned short  getChannelModes(void);
         unsigned char   getUserModes(const std::string& nickname);
         std::string     listUsersOnChannel(void);
+        std::string     listChannelsInfo(void);
     
     private:
 
