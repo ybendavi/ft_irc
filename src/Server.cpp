@@ -15,6 +15,8 @@ Server::Server(void) : _domainName("IRrealisteCrash"), _ret(0), _clientSize(size
 	cmd_map[std::string("WHOIS")] = &Server::_whoIs;
 	cmd_map[std::string("KILL")] = &Server::kill_cmd;
 	cmd_map[std::string("PING")] = &Server::_pong;
+	cmd_map[std::string("JOIN")] = &Server::_join;
+	cmd_map[std::string("PART")] = &Server::_part;
 }
 
 Server::~Server(void)
@@ -256,8 +258,6 @@ void	Server::_execute(User *user)
 	if (it != cmd_map.end())
 	{
 		(this->*(it->second))(user);
-	//	else if (user->receivedmsg.front().getCommand().compare("JOIN") == 0)
-//		_join(user);
 		if ( !(it->first.compare("QUIT")) )
 			return ;
 	}
