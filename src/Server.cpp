@@ -106,20 +106,20 @@ void	Server::_ft_Pollin(unsigned int i, iterator it)
 		return;
 	}
 	_leftover[i] += buffer;
-	//std::cout << "lefto =" <<  _leftover[i] << std::cout ;
 	bzero(buffer, strlen(buffer));
-	std::string	s = gnm(_leftover[i]);
-	if (s.empty())
-		return ;
-	if ( it != _users.end() )
+	std::string s;
+	while ( !gnm(_leftover[i], s).empty() )
 	{
-		it->second.receivedmsg.push_back(Message(s));
-		_execute(&(it->second));
+		if ( it != _users.end() )
+		{
+			it->second.receivedmsg.push_back(Message(s));
+			_execute(&(it->second));
+		}
+		else
+			_unrgUser(i, s) ;
+		it = _findUserByFd(_pollTab[i].fd);
+		s.erase();
 	}
-	else
-		_unrgUser(i, s) ;
-	it = _findUserByFd(_pollTab[i].fd);
-	s.erase();
 }
 
 void	Server::_ft_Pollout(unsigned int i, iterator it)
@@ -270,7 +270,13 @@ void	Server::_execute(User *user)
 //	else if (user->receivedmsg.front().getCommand().compare("JOIN") == 0)
 //		_join(user);
 	else if (user->receivedmsg.front().getCommand().compare("MODE") == 0)
-		mode_cmd(user);
+	{
+		std::string	s = user->receivedmsg.front().getParams()[0];
+			if (s[0] == '#'  || s[0] == '&' )
+				std::cout << "handle-Chaaaaaaan :3\n";
+			else
+				mode_cmd(user);
+	}
 	else if (user->receivedmsg.front().getCommand().compare("QUIT") == 0)
 	{
 		_quit(user);
@@ -287,7 +293,6 @@ void	Server::_execute(User *user)
 	//	std::cout << "cmd:" << user->receivedmsg.front().getCommand() << std::endl;
 		//user->tosendmsg.push_back(Message(ERR_UNKNOWNCOMMAND));
 	}
-	std::cout << user->getNickname() << std::endl;
 	user->receivedmsg.pop_front();
 	if (!user->tosendmsg.empty())
 		user->setEvent(POLLIN | POLLOUT);

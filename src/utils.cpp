@@ -1,20 +1,19 @@
 #include "Server.hpp"
 
-std::string	gnm(std::string & buff)
+std::string	gnm(std::string & buff, std::string & s)
 {
 	size_t	i;
-	std::string	ret;
 
 	i = buff.find("\r\n");
 	if ( !(i != std::string::npos) )
 		return ("");
-	ret = buff;
-	ret.resize(i + 2);
+	s = buff;
+	s.resize(i + 2);
 	if (!buff.compare("\r\n"))
 		buff.erase();
 	else
 		buff.erase(0, i + 2);
-	return ( ret );
+	return (s);
 }
 
 
