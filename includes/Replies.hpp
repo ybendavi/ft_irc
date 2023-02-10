@@ -26,6 +26,7 @@
 # define ERR_NONICKNAMEGIVEN "431 :No nickname given"
 # define ERR_ERRONEUSNICKNAME "432"
 # define ERR_NICKNAMEINUSE "433 :Nick in use"
+# define ERR_USERNOTINCHANNEL "441 "
 # define ERR_NOTONCHANNEL "442 "
 # define ERR_NOTREGISTERED "451 :You have not registered"
 # define ERR_CHANOPRIVSNEEDED "482 "

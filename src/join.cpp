@@ -6,7 +6,7 @@
 /*   By: cdapurif <cdapurif@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/07 17:37:02 by cdapurif          #+#    #+#             */
-/*   Updated: 2023/02/09 20:19:59 by cdapurif         ###   ########.fr       */
+/*   Updated: 2023/02/10 13:08:09 by cdapurif         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ bool    invalidChannelName(const std::string& channelName)
 
 void	Server::_join(User *user)
 {
-    //std::string to_send; //might be useful for formatting responses
+    std::string toSend;
     std::string channelName;
 
 	//check parameters
@@ -48,21 +48,24 @@ void	Server::_join(User *user)
     if (chan == _channels.end())
     {
         std::cout << "channel " << channelName << " didn't exist, so " << user->getNickname() << " creates it join as operator" << std::endl;
-        //if (user->receivedmsg.front().getParamsopt().empty()) //option might be useful to create channl with specific modes
         _channels.insert(std::make_pair(channelName, Channel(channelName)));
-        /*else
-            _channels.insert(std::make_pair(channelName, Channel(channelName, function_to_give_mode() )));*/
         chan = _channels.find(channelName);
         chan->second.addUser(user->getNickname(), OPERATOR | VOICE | INVITE | TOPIC);
     }
     else
     {
-        //check user modes first
+        //check if user is already on the channel
+        if (chan->second.isUserOnChannel(user->getNickname()))
+            return ;
+        //check if user is banned
         //HERE
         std::cout << user->getNickname() << " join channel " << channelName << " as normal user" << std::endl;
         chan->second.addUser(user->getNickname());
     }
-    user->tosendmsg.push_back(Message(std::string(":") + user->getNickname() + "!~" + user->getUsername() + "@" + "hostname JOIN :" + channelName));
+    //join message should be sent to all channel members
+    toSend = std::string(":") + user->getNickname() + "!~" + user->getUsername() + "@hostname JOIN :" + channelName;
+    sendMessageToAllChan(&(chan->second), _users.begin(), _users.end(),toSend);
+    //user->tosendmsg.push_back(Message(std::string(":") + user->getNickname() + "!~" + user->getUsername() + "@hostname JOIN :" + channelName));
     user->tosendmsg.push_back(Message(chan->second.listUsersOnChannel()));
     user->tosendmsg.push_back(Message(std::string(RPL_ENDOFNAMES) + channelName + " :End of NAMES list"));
     if (chan->second.getTopic().empty() == false)
