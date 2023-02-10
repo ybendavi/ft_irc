@@ -82,6 +82,13 @@ void	Server::_execute(User *user)
 	nick = user->getNickname();
 	if (user->receivedmsg.empty() == true)
 		return ;
+	if (user->getUsername().empty() && user->receivedmsg.front().getCommand().compare("USER"))
+	{
+		user->receivedmsg.pop_front();
+		user->tosendmsg.push_back(Message(ERR_NOTREGISTERED));
+		user->setEvent(POLLIN | POLLOUT);
+		return ;
+	}
 	it = cmd_map.find(user->receivedmsg.front().getCommand());
 	if (it != cmd_map.end())
 	{
