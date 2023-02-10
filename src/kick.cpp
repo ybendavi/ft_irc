@@ -6,7 +6,7 @@
 /*   By: cdapurif <cdapurif@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/10 10:42:32 by cdapurif          #+#    #+#             */
-/*   Updated: 2023/02/10 13:24:26 by cdapurif         ###   ########.fr       */
+/*   Updated: 2023/02/10 14:43:27 by cdapurif         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,9 +61,7 @@ void    Server::_kick(User *user)
     reason = user->receivedmsg.front().getParamsopt();
     if (reason.empty())
         reason = user->getNickname();
-    //should send msg to every channel members
     toSend = ":" + user->getNickname() + "!~" + user->getUsername() + "@hostname KICK " + channelName + " " + targetName + " :" + reason;
     sendMessageToAllChan(&(chan->second), _users.begin(), _users.end(),toSend);
     chan->second.removeUserFromChannel(targetName);
-    //user->tosendmsg.push_back(Message(":" + user->getNickname() + "!~" + user->getUsername() + "@hostname KICK " + channelName + targetName + ":" + reason));
 }

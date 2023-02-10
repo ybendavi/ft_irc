@@ -6,7 +6,7 @@
 /*   By: cdapurif <cdapurif@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/03 20:14:44 by cdapurif          #+#    #+#             */
-/*   Updated: 2023/02/10 12:31:49 by cdapurif         ###   ########.fr       */
+/*   Updated: 2023/02/10 15:54:41 by cdapurif         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ std::string&    Channel::getTopicCreator()
     return (_topic[1]);
 }
 
-unsigned short  Channel::getChannelModes(void)
+unsigned short& Channel::getChannelModes(void)
 {
     return (_chanMode);
 }
