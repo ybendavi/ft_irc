@@ -35,8 +35,6 @@ void    Server::_part(User *user)
         return ;
     }
 
-    std::cout << "User " << user->getNickname() << " wants to leave channel " << channelName << std::endl;
-
     //check if channel exist and if user is on it
     std::map<std::string, Channel>::iterator    chan = _channels.find(channelName);
     if (chan == _channels.end())
@@ -45,11 +43,9 @@ void    Server::_part(User *user)
     {
         if (chan->second.isUserOnChannel(user->getNickname()))
         {
-            std::cout << "User " << user->getNickname() << " is leaving channel " << channelName << std::endl;
             toSend = std::string(":") + user->getNickname() + "!~" + user->getUsername() + "@" + "hostname PART " + channelName + " :" + leaveMessage;
             sendMessageToAllChan(&(chan->second), _users.begin(), _users.end(),toSend);
             chan->second.removeUserFromChannel(user->getNickname());
-            //user->tosendmsg.push_back(Message(std::string(":") + user->getNickname() + "!~" + user->getUsername() + "@" + "hostname PART " + channelName + " :" + leaveMessage));
             if (chan->second.size() == 0)
             {
                 std::cout << "last user leaving channel, destroying " << channelName << std::endl;

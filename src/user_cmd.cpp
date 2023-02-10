@@ -1,8 +1,5 @@
 #include "Server.hpp"
 
-//probably need some modifications because of params numbers being wird w/ irssi
-//also need to check for err need more params and how to put properly message into it
-
 void	Server::cmd_user(User * user)
 {
 	if ( !(user->getUsername().empty()) )

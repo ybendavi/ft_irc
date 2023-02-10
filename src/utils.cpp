@@ -21,13 +21,7 @@ void	sendMessage(User *user, User *receiver, char *domainName)
 
 	std::string				to_send;
 
-	//std::cout << "userlooking:" << _users.begin()->first << std::endl;
-	//std::cout << "userlooking:" << _users.find(std::string("LS\r\n"))->second.getNickname()<< std::endl;
-	//std::cout << "encore ici" << std::endl;
-	std::cout << user->getNickname() << std::endl;
-	std::cout << receiver->getNickname() << std::endl;
 	to_send += user->receivedmsg.front().getToSend();
-	//std::cout << "envoyé:" << to_send << std::endl;
 	user->receivedmsg.front().setToSend(to_send);
 
 	receiver->tosendmsg.push_back(Message(user->getNickname(), user->getUsername(), user->receivedmsg.front().getToSend().c_str(), std::string(domainName)));
@@ -72,5 +66,4 @@ void	readySendy(std::string &str, std::string domain, std::string nick)
 		str.insert(0, temp);
 	}	
 	str += "\r\n";
-	//std::cout << "before send = " << str;
 }

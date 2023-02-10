@@ -13,14 +13,6 @@
 #include "Message.hpp"
 #include <iostream>
 
-//Message::Message(void)
-//{ }
-
-//Message::Message(const Message &ref)
-//{ 
-//	*this = ref;
-//}
-
 		Message::~Message(void){ } 
 
 		Message::Message(const std::string message ): _colon(false)
@@ -30,17 +22,6 @@
 			_tosend = message;
 			_message = message;
 			parseMessage(message);
-//			std::cout << "Message:" << message << std::endl << "Receiver:" << _receiver << std::endl
-//				<< "Command:" << _command << std::endl
-//				<< "Params:";
-//			it = _params.begin();
-//			while (it != _params.end())
-//			{
-//				std::cout << *it << " ";
-//				it++;
-//			}
-//			std::cout << std::endl;
-//			std::cout << "ParamsOptional:" << _paramsopt << std::endl;
 		}
 
 		Message::Message(const std::string nickname, const std::string username, const std::string message, const std::string host)
@@ -90,16 +71,11 @@ int		Message::parseMessage(const std::string message)
 				return (-1);
 			last_pos = message.find_first_of('\r');
 			if (last_pos == std::string::npos || message[last_pos + 1] != '\n')
-			{
-//				std::cout << "retour chariot" << std::endl;
 				return (-1);
-			}
+
 //	CMDS		//
 			if (message.find_first_of("QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm") != 0 && message.find_first_of("01234567890") != 0)
-			{
-//				std::cout << "Pas les bons char" << std::endl;
 				return (-1);
-			}
 			else
 			{
 				if (message.find_first_of("0123456789") == 0 && message.find_first_not_of("0123456789") != 3)
@@ -113,10 +89,7 @@ int		Message::parseMessage(const std::string message)
 			if (pos <= last_pos)
 				_command = message.substr(0, pos);
 			else
-			{
-//				std::cout << "pos < " << std::endl;
 				return (-1);
-			}
 			param_pos = pos;
 			if (message[pos] != ' ')
 				return (-1);
@@ -129,6 +102,7 @@ int		Message::parseMessage(const std::string message)
 				return (-1);	
 			if (message[pos] == ' ')
 				pos++;
+				
 //	RECEIVER	//
 			param_pos = pos;
 			while ( pos != std::string::npos && pos != message.find_first_of("\r\n:"))

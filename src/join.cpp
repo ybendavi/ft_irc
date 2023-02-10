@@ -36,7 +36,6 @@ void	Server::_join(User *user)
     channelName = (user->receivedmsg.front().getParams())[0];
     if (invalidChannelName(channelName))
     {
-        std::cout << "Invalid channel name" << std::endl;
         user->tosendmsg.push_back(Message(std::string(ERR_NOSUCHCHANNEL) + " " + channelName + " :No such channel"));
         return ;
     }
@@ -69,7 +68,6 @@ void	Server::_join(User *user)
     //join message should be sent to all channel members
     toSend = std::string(":") + user->getNickname() + "!~" + user->getUsername() + "@hostname JOIN :" + channelName;
     sendMessageToAllChan(&(chan->second), _users.begin(), _users.end(),toSend);
-    //user->tosendmsg.push_back(Message(std::string(":") + user->getNickname() + "!~" + user->getUsername() + "@hostname JOIN :" + channelName));
     user->tosendmsg.push_back(Message(chan->second.listUsersOnChannel()));
     user->tosendmsg.push_back(Message(std::string(RPL_ENDOFNAMES) + channelName + " :End of NAMES list"));
     if (chan->second.getTopic().empty() == false)

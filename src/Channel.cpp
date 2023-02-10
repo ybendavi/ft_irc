@@ -53,13 +53,6 @@ void    Channel::addUser(const std::string& user, unsigned char modes)
     status = _checkUserPerms(user);
     if (status == 0)
         _chanUsers[user] = modes;
-    else
-    {
-        if (status == 1)
-            std::cout << "user " << user << " is banned from channel " << _channel << std::endl;
-        else
-            std::cout << "special case when adding user " << user << " to channel " << _channel << std::endl;
-    }
 }
 
 unsigned short  Channel::size()

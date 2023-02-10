@@ -63,8 +63,6 @@ struct sockaddr	*User::getAddr(void) const { return (this->_addr); }
 
 char			User::getMode(void) const { return (this->_mode); }
 
-//struct pollfd	User::getSocket(void) const { return (this->_socket); }
-
 void		User::setEvent(short i)
 {
 	_socket->events = i;

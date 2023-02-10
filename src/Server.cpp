@@ -57,10 +57,7 @@ void		Server::_initSocket(void)
 	_pollTab[_nbSock].fd  = accept(_pollTab[0].fd, (struct sockaddr* )&_addrInfo[_nbSock],
 			&_clientSize);	
 	if (_pollTab[_nbSock].fd  == -1)
-	{
-	//	_ret = -10;
 		return ;
-	}
 	if (fcntl(_pollTab[_nbSock].fd , F_SETFL, O_NONBLOCK) == -1)
 	{
 		close(_pollTab[_nbSock].fd);
@@ -72,7 +69,6 @@ void		Server::_initSocket(void)
 	_passTab[_nbSock] = false;
 	_pollTab[_nbSock].events = POLLIN;
 	_pollTab[_nbSock].revents = 0;
-//	std::cout << "sock created : " << _pollTab[_nbSock].fd << std::endl;
 	++_nbSock;
 }
 
@@ -190,20 +186,13 @@ void	Server::_pollfunction(void)
 {
 	int		ret;
 
-//	for (unsigned i = 0;  i < _nbSock; i++)
-//			std::cout << "before : i = " << i << " event = " << _pollTab[i].events << "revent = " << _pollTab[i].revents << std::endl;
-
 	ret = poll(_pollTab, _nbSock, 7000);
-//	for (unsigned i = 0;  i < _nbSock; i++)
-//			std::cout << "after : i = " << i << " event = " << _pollTab[i].events << "revent = " << _pollTab[i].revents << std::endl;
 	if (ret == 0)
-		std::cout << "Timeout\n";
+		return ;
 	else if (ret == -1)
 		_ret = -12;
 	if (_ret)
 		return ;
-//	else if ( (_pollTab[0].events & (POLLNVAL|POLLERR|POLLHUP) ))
-//		std::cout << "buggybugg" << std::endl;
 	else
 	{
 		if (_nbSock > 1)
@@ -313,7 +302,6 @@ Server::~Server(void)
 	while (_nbSock > 0)
 	{
 		--_nbSock;
-	//	std::cout << "sock closed : " << _pollTab[_nbSock].fd << std::endl;
 		if (_pollTab[_nbSock].fd != -1)
 			close(_pollTab[_nbSock].fd);
 	}

@@ -4,7 +4,7 @@
 
 volatile sig_atomic_t loop = 1;
 
-/*int		printErr(int ret)
+int		printErr(int ret)
 {
 	ret = std::abs(ret);
 
@@ -17,33 +17,15 @@ volatile sig_atomic_t loop = 1;
 		case 5: std::cerr << "Server problem : recv " << std::endl; break ;
 		case 6: std::cerr << "Server problem : send " << std::endl; break ;
 		case 7: std::cerr << "invalid port number/argument" << std::endl; break ;
+		case 8: std::cerr << "setsockopt for SO_REUSADDR " << std::endl; break ;
+		case 9: std::cerr << "setsockopt for IPV6_V6ONLY " << std::endl; break ;
+		case 10: std::cerr << "accept function " << std::endl; break ;
+		case 11: std::cerr << "new socket fcntl " << std::endl; break ;
+		case 12: std::cerr << "poll function " << std::endl; break ;
+		case 13: std::cerr << "Server is dead." << std::endl; break ;
+		case 14: std::cerr << "Password cannot be empty" << std::endl; break ;
+		case 15: std::cerr << "Invalid password caracter" << std::endl; break ;
 		default: std::cerr << "unknown error" << std::endl;
-	}	
-	return (ret);
-}*/
-
-int		printErr(int ret)
-{
-	ret = std::abs(ret);
-
-	switch (ret)
-	{
-		case 1: perror("Server init : socket problem "); break ;
-		case 2: perror("Server init : fcntl problem "); break ;
-		case 3: perror("Server init : bind problem "); break ;
-		case 4: perror("Server init : listen problem "); break ;
-		case 5: perror("Server problem : recv "); break ;
-		case 6: perror("Server problem : send "); break ;
-		case 7: std::cout << "invalid port number/argument\n"; break ;
-		case 8: perror("error: setsockopt for SO_REUSADDR "); break ;
-		case 9: perror("error: setsockopt for IPV6_V6ONLY "); break ;
-		case 10: perror("error: accept function "); break ;
-		case 11: perror("error: new socket fcntl "); break ;
-		case 12: perror("error: poll function "); break ;
-		case 13: std::cout << "Server is dead.\n"; break ;
-		case 14: std::cout << "Password cannot be empty\n"; break ;
-		case 15: std::cout << "Invalid password caracter\n"; break ;
-		default: perror("unknown error");
 	}	
 	return (ret);
 }

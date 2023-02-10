@@ -68,6 +68,8 @@ class	Server
 			void    			_listAllChannels(User *user);
 			void				_pong(User *user);
 			void				_handlePass(int index, Message msg);
+			void 				_channelsList(User *user);
+			void				_kick(User *user);
 
 			/*Commands stash*/
 

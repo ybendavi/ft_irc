@@ -56,10 +56,7 @@ void    Server::_topic(User *user)
 
     //set topic
     if (chan->second.getChannelModes() & PROTECTOP && !(chan->second.getUserModes(user->getNickname()) & OPERATOR)) //if topic is protected and user is not operator
-    {
-        std::cout << "user " << user->getNickname() << " isn't operator so cannot change topic" << std::endl;
         user->tosendmsg.push_back(Message(std::string(ERR_CHANOPRIVSNEEDED) + channelName + " :You're not channel operator"));
-    }
     else
     {
         chan->second.getTopic() = user->receivedmsg.front().getParamsopt();

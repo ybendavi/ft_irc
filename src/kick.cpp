@@ -52,11 +52,8 @@ void    Server::_kick(User *user)
     }
 
     //check if user is operator
-    if (!(chan->second.getUserModes(user->getNickname()) & OPERATOR)) //if user is not operator
-    {
-        std::cout << "user " << user->getNickname() << " isn't operator so cannot kick peoples" << std::endl;
+    if (!(chan->second.getUserModes(user->getNickname()) & OPERATOR))
         user->tosendmsg.push_back(Message(std::string(ERR_CHANOPRIVSNEEDED) + channelName + " :You're not channel operator"));
-    }
 
     reason = user->receivedmsg.front().getParamsopt();
     if (reason.empty())
