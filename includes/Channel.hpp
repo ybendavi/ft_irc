@@ -51,6 +51,7 @@ class Channel
         void    addUser(const std::string& user, unsigned char modes = VOICE | INVITE);
         void    removeUserFromChannel(const std::string& nickname);
         bool    isUserOnChannel(const std::string& nickname);
+        bool    isUserBan(const std::string& nickname);
 
         unsigned short  size(void);
 

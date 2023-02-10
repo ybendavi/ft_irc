@@ -1,8 +1,8 @@
 #ifndef REPLIES_HPP
 # define REPLIES_HPP
 
-# define RPL_WELCOME "001 :WELCOME MTHRFCKR "
-# define RPL_YOURHOST "002 "
+# define RPL_WELCOME "001 :Bienvenue sur IRCrash :)"
+# define RPL_YOURHOST "002 :Ce nom de domaine a ete base sur des faits reels"
 # define RPL_CREATED "003 "
 # define RPL_MYINFO "004 "
 # define RPL_PING "PING"
@@ -11,6 +11,7 @@
 # define RPL_LIST "322 "
 # define RPL_LISTEND "323 "
 # define RPL_CHANNELMODEIS "324 "
+# define RPL_WHOREPLY "352 "
 # define RPL_NOTOPIC "331 "
 # define RPL_TOPIC "332 "
 # define RPL_TOPICWHOTIME "333 "
@@ -25,7 +26,7 @@
 # define ERR_NOTEXTTOSEND "412 "
 # define ERR_UNKNOWNCOMMAND "421 :"
 # define ERR_NONICKNAMEGIVEN "431 :No nickname given"
-# define ERR_ERRONEUSNICKNAME "432"
+# define ERR_ERRONEUSNICKNAME "432 :Erroneous nickname"
 # define ERR_NICKNAMEINUSE "433 :Nick in use"
 # define ERR_USERNOTINCHANNEL "441 "
 # define ERR_NOTONCHANNEL "442 "

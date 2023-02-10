@@ -27,6 +27,20 @@ bool    Channel::isUserOnChannel(const std::string& nickname)
     return (true);
 }
 
+bool    Channel::isUserBan(const std::string& nickname)
+{
+	std::vector<std::string>::iterator	it;
+
+	it = _banList.begin();
+
+	while (it != _banList.end())
+	{
+		if ((*it).compare(nickname) == 0)
+			return (true);
+	}
+	return (false);
+}
+
 void    Channel::removeUserFromChannel(const std::string& nickname)
 {
     _chanUsers.erase(nickname);

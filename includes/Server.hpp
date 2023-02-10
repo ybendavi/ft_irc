@@ -79,6 +79,7 @@ class	Server
 			void							_pong(User *user);
 			void    						_channelsList(User *user);
 			void							_kick(User *user);
+			void							_handlePass(int index, Message msg);
 
 			/*tmp commands stash*/
 
@@ -87,8 +88,10 @@ class	Server
 			void	cmd_user(User * user);
 			void	kill_cmd(User * user);
 			void	mode_cmd(User * user);
+			void	who_cmd(User * user);
 			void	get_mode(User * user);
 			void	oper_cmd(User * user);
+			void	die_cmd(User * user);
 			User	*nick_holder(User * user);
 			
 
@@ -102,10 +105,10 @@ class	Server
 			/*users mayhem*/
 			socklen_t						_clientSize;
 			struct sockaddr					_addrInfo[MAX_CONN];
-		//	struct time_t					_wait30[MAX_CONN];
 			struct pollfd					_pollTab[MAX_CONN];
 			std::string						_tempRpl[MAX_CONN];
 			std::string						_leftover[MAX_CONN];
+			bool							_passTab[MAX_CONN];
 
 			std::map<std::string, User>		_users;
 			std::map<std::string, Channel>	_channels;

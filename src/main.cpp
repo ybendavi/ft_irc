@@ -34,12 +34,15 @@ int		printErr(int ret)
 		case 4: perror("Server init : listen problem "); break ;
 		case 5: perror("Server problem : recv "); break ;
 		case 6: perror("Server problem : send "); break ;
-		case 7: perror("invalid port number/argument "); break ;
+		case 7: std::cout << "invalid port number/argument\n"; break ;
 		case 8: perror("error: setsockopt for SO_REUSADDR "); break ;
 		case 9: perror("error: setsockopt for IPV6_V6ONLY "); break ;
 		case 10: perror("error: accept function "); break ;
 		case 11: perror("error: new socket fcntl "); break ;
 		case 12: perror("error: poll function "); break ;
+		case 13: std::cout << "Server is dead.\n"; break ;
+		case 14: std::cout << "Password cannot be empty\n"; break ;
+		case 15: std::cout << "Invalid password caracter\n"; break ;
 		default: perror("unknown error");
 	}	
 	return (ret);

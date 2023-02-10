@@ -31,7 +31,7 @@ void	sendMessage(User *user, User *receiver, char *domainName)
 	user->receivedmsg.front().setToSend(to_send);
 
 	receiver->tosendmsg.push_back(Message(user->getNickname(), user->getUsername(), user->receivedmsg.front().getToSend().c_str(), std::string(domainName)));
-	receiver->_socket->events = POLLIN | POLLOUT ;
+	receiver->getSocket()->events = POLLIN | POLLOUT ;
 
 }
 
