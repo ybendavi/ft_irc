@@ -86,7 +86,6 @@ void	Server::_execute(User *user)
 	std::string	nick;
 
 	nick = user->getNickname();
-	std::cout << "rcvd = " << user->receivedmsg.front().getToSend() << std::endl;
 	if (user->receivedmsg.empty() == true)
 		return ;
 	it = cmd_map.find(user->receivedmsg.front().getCommand());
@@ -252,7 +251,6 @@ void	Server::_removeUserFromChannels(const std::string& nickname)
 		it->second.removeUserFromChannel(nickname);
 		if (it->second.size() == 0)
 		{
-			std::cout << "channel " << it->first << " removed because last member quit" << std::endl;
 			_channels.erase(it++);
 			continue ;
 		}
@@ -264,8 +262,6 @@ void	Server::_disconnectClient(pollfd& client)
 {
 	iterator				cli;
 	unsigned int			i;
-
-	std::cout << "Client with fd " << client.fd << " disconnected" << std::endl;
 
 	cli = _findUserByFd(client.fd);
 	if (cli != _users.end())
@@ -288,10 +284,6 @@ void	Server::_disconnectClient(pollfd& client)
 	--_nbSock;
 }
 
-void	Server::_whoIs(User *user)
-{
-	(void)user;
-}
 
 /****	Server begin and Server end ***/
 
@@ -308,7 +300,6 @@ Server::Server(void) : _domainName("IRCrash"), _ret(0),
 	cmd_map[std::string("NOTICE")] = &Server::_notice;
 	cmd_map[std::string("PRIVMSG")] = &Server::_privMsg;
 	cmd_map[std::string("QUIT")] = &Server::_quit;
-	cmd_map[std::string("WHOIS")] = &Server::_whoIs;
 	cmd_map[std::string("KILL")] = &Server::kill_cmd;
 	cmd_map[std::string("PING")] = &Server::_pong;
 	cmd_map[std::string("JOIN")] = &Server::_join;
