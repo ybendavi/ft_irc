@@ -6,7 +6,7 @@
 /*   By: cdapurif <cdapurif@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/03 20:02:03 by cdapurif          #+#    #+#             */
-/*   Updated: 2023/02/10 15:53:58 by cdapurif         ###   ########.fr       */
+/*   Updated: 2023/02/10 17:26:57 by cdapurif         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,9 +57,12 @@ class Channel
         std::string&    getTopic(void);
         std::string&    getTopicCreator(void);
         unsigned short& getChannelModes(void);
-        unsigned char   getUserModes(const std::string& nickname);
+        unsigned char&  getUserModes(const std::string& nickname);
         std::string     listUsersOnChannel(void);
         std::string     listChannelsInfo(void);
+        void            banUser(std::string nickname);
+        void            unBanUser(std::string nickname);
+        bool            isUserBan(std::string nickname);
     
     private:
 

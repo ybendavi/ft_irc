@@ -140,6 +140,64 @@ void	rm_channel_mode(std::string s, std::map<std::string, Channel>::iterator cha
 	}
 }
 
+void	add_channel_user_mode(std::string s, std::map<std::string, Channel>::iterator channel, std::string nickname)
+{
+	if (channel->second.isUserOnChannel(nickname) == false)
+		return ;
+
+	unsigned char& mode = channel->second.getUserModes(nickname);
+
+	for (unsigned int i = 1; i < s.size(); ++i)
+	{
+		if (s[i] == 'o')
+			mode |= OPERATOR;
+		if (s[i] == 'v')
+			mode |= VOICE;
+		if (s[i] == 'b')
+		{
+			mode |= BAN;
+			std::cout << "banning user " << nickname << " from channel " << channel->first << std::endl;
+			channel->second.banUser(nickname);
+		}
+		if (s[i] == 'i')
+			mode |= INVITE;
+		if (s[i] == 'm')
+			mode |= MODERATED;
+		if (s[i] == 't')
+			mode |= TOPIC;
+	}
+}
+
+void	rm_channel_user_mode(std::string s, std::map<std::string, Channel>::iterator channel, std::string nickname)
+{
+	if (channel->second.isUserOnChannel(nickname) == false && s.size() > 1 && s[1] == 'b')
+	{
+		std::cout << "unbanning user " << nickname << " from channel " << channel->first << std::endl;
+		channel->second.unBanUser(nickname);
+	}
+
+	if (channel->second.isUserOnChannel(nickname) == false)
+		return ;
+
+	unsigned char&	mode = channel->second.getUserModes(nickname);
+
+	for (unsigned int i = 1; i < s.size(); ++i)
+	{
+		if (s[i] == 'o' && (mode & OPERATOR))
+			mode -= OPERATOR;
+		if (s[i] == 'v' && (mode & VOICE))
+			mode -= VOICE;
+		if (s[i] == 'b' && (mode & BAN))
+			mode -= BAN;
+		if (s[i] == 'i' && (mode & INVITE))
+			mode -= INVITE;
+		if (s[i] == 'm' && (mode & MODERATED))
+			mode -= MODERATED;
+		if (s[i] == 't' && (mode & TOPIC))
+			mode -= TOPIC;
+	}
+}
+
 void	Server::mode_cmd(User * user)
 {
 	std::vector<std::string>	params;
@@ -206,13 +264,11 @@ void	Server::mode_cmd(User * user)
 		std::map<std::string, Channel>::iterator chan = _channels.find(params[0]);
 		if (!(chan->second.getUserModes(user->getNickname()) & OPERATOR))
 			user->tosendmsg.push_back(Message(std::string(ERR_CHANOPRIVSNEEDED) + params[0] + " :You're not channel operator"));
-		
-		std::vector<std::string>::iterator	it;
-		it = params.begin();
-		++it;
-		while (it != params.end())
+
+		if (params.size() == 2)
 		{
-			std::string s = *it;
+			std::string s = params[1];
+
 			if (s[0] == '+')
 				add_channel_mode(s, chan);
 			else if (s[0] == '-')
@@ -222,8 +278,28 @@ void	Server::mode_cmd(User * user)
 				user->tosendmsg.push_back(Message(ERR_UMODEUNKNOWNFLAG));
 				return ;
 			}
-			it++;
+			get_channel_mode(chan, user);
 		}
-		get_channel_mode(chan, user);
+		if (params.size() == 3)
+		{
+			if (chan->second.isUserOnChannel(params[2]) == false && chan->second.isUserBan(params[2]) == false)
+			{
+	        	user->tosendmsg.push_back(Message(std::string(ERR_USERNOTINCHANNEL) + params[0] + " :They aren't on that channel"));
+    	    	return ;
+    		}
+
+			std::string s = params[1];
+
+			if (s[0] == '+')
+				add_channel_user_mode(s, chan, params[2]);
+			else if (s[0] == '-')
+				rm_channel_user_mode(s, chan, params[2]);
+			else
+			{
+				user->tosendmsg.push_back(Message(ERR_UMODEUNKNOWNFLAG));
+				return ;
+			}
+			//get_user_on_channel_mode
+		}
 	}
 }

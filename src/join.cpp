@@ -6,7 +6,7 @@
 /*   By: cdapurif <cdapurif@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/07 17:37:02 by cdapurif          #+#    #+#             */
-/*   Updated: 2023/02/10 13:08:09 by cdapurif         ###   ########.fr       */
+/*   Updated: 2023/02/10 17:34:15 by cdapurif         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,11 @@ void	Server::_join(User *user)
         if (chan->second.isUserOnChannel(user->getNickname()))
             return ;
         //check if user is banned
-        //HERE
+        if (chan->second.isUserBan(user->getNickname()))
+        {
+            user->tosendmsg.push_back(Message(ERR_BANNEDFROMCHAN + channelName + " :Cannot join channel (+b)"));
+            return ;
+        }
         std::cout << user->getNickname() << " join channel " << channelName << " as normal user" << std::endl;
         chan->second.addUser(user->getNickname());
     }

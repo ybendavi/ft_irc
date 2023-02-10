@@ -30,6 +30,7 @@
 # define ERR_USERNOTINCHANNEL "441 "
 # define ERR_NOTONCHANNEL "442 "
 # define ERR_NOTREGISTERED "451 :You have not registered"
+# define ERR_BANNEDFROMCHAN "474 "
 # define ERR_CHANOPRIVSNEEDED "482 "
 # define ERR_RESTRICTED "484 :Nickname is already in use"
 # define ERR_NEEDMOREPARAMS "461 :Not enough parameters"
