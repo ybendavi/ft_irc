@@ -39,9 +39,21 @@ void	sendMessagetochan(User *user, Channel *channel, std::map<std::string, User>
 {
 	while (users != end)
 	{
-		if (channel->isUserOnChannel(users->second.getNickname()) == true)
+		if (channel->isUserOnChannel(users->first) && &(users->second) != user)
 			sendMessage(user, &(users->second), domainName);
 		users++;
+	}
+}
+
+void	sendMessageToAllChan(Channel *channel, std::map<std::string, User>::iterator users, std::map<std::string, User>::iterator end, std::string message)
+{
+	for (; users != end; ++users)
+	{
+		if (channel->isUserOnChannel(users->first))
+		{
+			users->second.tosendmsg.push_back(Message(message));
+			users->second.getSocket()->events = POLLIN | POLLOUT ;
+		}
 	}
 }
 

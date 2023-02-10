@@ -6,7 +6,7 @@
 /*   By: cdapurif <cdapurif@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/08 20:23:55 by cdapurif          #+#    #+#             */
-/*   Updated: 2023/02/09 13:59:07 by cdapurif         ###   ########.fr       */
+/*   Updated: 2023/02/10 13:16:24 by cdapurif         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void    Server::_part(User *user)
 {
-    std::string to_send;
+    std::string toSend;
     std::string channelName;
     std::string leaveMessage;
 
@@ -46,8 +46,10 @@ void    Server::_part(User *user)
         if (chan->second.isUserOnChannel(user->getNickname()))
         {
             std::cout << "User " << user->getNickname() << " is leaving channel " << channelName << std::endl;
+            toSend = std::string(":") + user->getNickname() + "!~" + user->getUsername() + "@" + "hostname PART " + channelName + " :" + leaveMessage;
+            sendMessageToAllChan(&(chan->second), _users.begin(), _users.end(),toSend);
             chan->second.removeUserFromChannel(user->getNickname());
-            user->tosendmsg.push_back(Message(std::string(":") + user->getNickname() + "!~" + user->getUsername() + "@" + "hostname PART " + channelName + " :" + leaveMessage));
+            //user->tosendmsg.push_back(Message(std::string(":") + user->getNickname() + "!~" + user->getUsername() + "@" + "hostname PART " + channelName + " :" + leaveMessage));
             if (chan->second.size() == 0)
             {
                 std::cout << "last user leaving channel, destroying " << channelName << std::endl;

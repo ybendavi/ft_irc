@@ -6,7 +6,7 @@
 /*   By: cdapurif <cdapurif@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/03 20:02:03 by cdapurif          #+#    #+#             */
-/*   Updated: 2023/02/10 17:27:30 by ybendavi         ###   ########.fr       */
+/*   Updated: 2023/02/10 18:14:30 by cdapurif         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,9 @@
 # include <iostream>
 # include <map>
 # include <vector>
+# include <sstream>
 
-#include "Replies.hpp"
+# include "Replies.hpp"
 
 // USER MODES
 # define OPERATOR   1
@@ -50,15 +51,18 @@ class Channel
         void    addUser(const std::string& user, unsigned char modes = VOICE | INVITE);
         void    removeUserFromChannel(const std::string& nickname);
         bool    isUserOnChannel(const std::string& nickname);
-        bool    isUserBan(const std::string& nickname);
 
         unsigned short  size(void);
 
         std::string&    getTopic(void);
         std::string&    getTopicCreator(void);
-        unsigned short  getChannelModes(void);
-        unsigned char   getUserModes(const std::string& nickname);
+        unsigned short& getChannelModes(void);
+        unsigned char&  getUserModes(const std::string& nickname);
         std::string     listUsersOnChannel(void);
+        std::string     listChannelsInfo(void);
+        void            banUser(std::string nickname);
+        void            unBanUser(std::string nickname);
+        bool            isUserBan(std::string nickname);
     
     private:
 
