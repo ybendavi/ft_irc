@@ -41,6 +41,7 @@ int		printErr(int ret)
 		case 11: perror("error: new socket fcntl "); break ;
 		case 12: perror("error: poll function "); break ;
 		case 13: std::cout << "Server is dead.\n"; break ;
+		case 14: std::cout << "Password cannot be empty\n"; break ;
 		default: perror("unknown error");
 	}	
 	return (ret);

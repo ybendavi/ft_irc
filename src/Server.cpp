@@ -38,6 +38,8 @@ int	Server::init(int port, std::string pass)
 {
 	if (!(port >= 1 && port <= 65535))
 		return (-7);
+	if (pass.empty())
+		return (-14);
 
 	_pollTab[0].fd = socket(PF_INET6, SOCK_STREAM, 0);
 	if (_pollTab[0].fd < 0)
