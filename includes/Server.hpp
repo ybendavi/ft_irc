@@ -77,6 +77,8 @@ class	Server
 			void							_list(User *user);
 			void    						_listAllChannels(User *user);
 			void							_pong(User *user);
+			void    						_channelsList(User *user);
+			void							_kick(User *user);
 			void							_handlePass(int index, Message msg);
 
 			/*tmp commands stash*/
@@ -124,6 +126,7 @@ std::string	gnm(std::string & buff, std::string & s);
 void		readySendy(std::string &str, std::string domain, std::string nick);
 bool    	invalidChannelName(const std::string& channelName);
 void		sendMessagetochan(User *user, Channel *channel, std::map<std::string, User>::iterator users, std::map<std::string, User>::iterator end, char *domainName);
-void	sendMessage(User *user, User *receiver, char *domainName);
+void		sendMessageToAllChan(Channel *channel, std::map<std::string, User>::iterator users, std::map<std::string, User>::iterator end, std::string message);
+void		sendMessage(User *user, User *receiver, char *domainName);
 
 #endif

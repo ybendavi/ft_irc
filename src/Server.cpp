@@ -2,8 +2,6 @@
 
 extern volatile sig_atomic_t loop;
 
-/*** Register User ***/
-
 void	Server::_handlePass(int index, Message msg)
 {
 	{

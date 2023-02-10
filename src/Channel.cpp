@@ -6,7 +6,7 @@
 /*   By: cdapurif <cdapurif@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/03 20:14:44 by cdapurif          #+#    #+#             */
-/*   Updated: 2023/02/10 17:34:25 by ybendavi         ###   ########.fr       */
+/*   Updated: 2023/02/10 17:53:23 by cdapurif         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,12 +91,12 @@ std::string&    Channel::getTopicCreator()
     return (_topic[1]);
 }
 
-unsigned short  Channel::getChannelModes(void)
+unsigned short& Channel::getChannelModes(void)
 {
     return (_chanMode);
 }
 
-unsigned char   Channel::getUserModes(const std::string& nickname)
+unsigned char&  Channel::getUserModes(const std::string& nickname)
 {
     return (_chanUsers[nickname]);
 }
@@ -115,4 +115,43 @@ std::string Channel::listUsersOnChannel()
         toSend += " ";
     }
     return (toSend);
+}
+
+std::string Channel::listChannelsInfo()
+{
+    std::string         number; 
+    std::stringstream   ss;
+
+    ss << size();
+    ss >> number;
+
+    return (std::string(RPL_LIST) + _channel + " " + number + " :" + _topic[0]);
+}
+
+void    Channel::banUser(std::string nickname)
+{
+    _banList.push_back(nickname);
+    removeUserFromChannel(nickname);
+}
+
+void    Channel::unBanUser(std::string nickname)
+{
+    for (std::vector<std::string>::iterator it = _banList.begin(); it != _banList.end(); ++it)
+    {
+        if (*it == nickname)
+        {
+            _banList.erase(it);
+            break ;
+        }
+    }
+}
+
+bool    Channel::isUserBan(std::string nickname)
+{
+    for (std::vector<std::string>::iterator it = _banList.begin(); it != _banList.end(); ++it)
+    {
+        if (*it == nickname)
+            return (true);
+    }
+    return (false);
 }
