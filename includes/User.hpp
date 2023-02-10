@@ -35,21 +35,21 @@ class	User {
 		/*Accessors*/
 		std::string		getRealname(void) const;
 		std::string		getIp(void) const;
-		char			getMode(void) const;
 		std::string		getUsername(void) const;
 		std::string		getNickname(void) const;
-		std::string		getPass(void) const;
 		struct pollfd	*getSocket(void);
 		struct pollfd	*getSocket(void) const ;
 		struct sockaddr	*getAddr(void);
 		struct sockaddr	*getAddr(void) const;
+		char			getMode(void) const;
+		bool			getPass(void) const;
 
 		void			setIp(std::string);
 		void			setMode(char m);
 		void			setRealname(std::string);
 		void			setUsername(std::string);
 		void			setNickname(std::string);
-		void			setPass(std::string);
+		void			setPass(bool);
 		void			setEvent(short);	
 		
 		std::list< Message >		receivedmsg;
@@ -60,15 +60,13 @@ class	User {
 		std::string	_username;
 		std::string _ip;
 		std::string	_realname;
-		std::string	_pass;
-		std::string	_nickname; // max nine char
+		std::string	_nickname;
 
-		char		_mode;
-
-	public : 
-		/*le temps de faire un truc propre il sera PUBLIK*/
 		struct pollfd	*_socket;
 		struct sockaddr	*_addr;
+
+		char		_mode;
+		bool		_pass;
 };
 
 #endif

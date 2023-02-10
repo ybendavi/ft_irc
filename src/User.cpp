@@ -6,18 +6,18 @@
 /*   By: ccottin <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/18 18:30:30 by ccottin           #+#    #+#             */
-/*   Updated: 2023/02/09 13:36:02 by ccottin          ###   ########.fr       */
+/*   Updated: 2023/02/10 16:07:48 by ccottin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "User.hpp"
 #include <iostream>
 
-User::User(void) : _mode(3), _socket(NULL), _addr(NULL)
+User::User(void) : _socket(NULL), _addr(NULL), _mode(3)
 { }
 
-User::User(struct pollfd * socket, struct sockaddr * addr) : _mode(3), 
-					_socket(socket), _addr(addr)
+User::User(struct pollfd * socket, struct sockaddr * addr) : 
+					_socket(socket), _addr(addr), _mode(3) 
 { }
 
 User::User(const User &ref) : _socket(ref.getSocket()), _addr(ref.getAddr())
@@ -26,9 +26,7 @@ User::User(const User &ref) : _socket(ref.getSocket()), _addr(ref.getAddr())
 }
 
 User::~User(void)
-{ 
-	//close(_socket);
-}
+{ }
 
 User	&User::operator=(const User &ref)
 {
@@ -38,7 +36,6 @@ User	&User::operator=(const User &ref)
 		this->_realname = ref.getRealname();
 		this->_username = ref.getUsername();
 		this->_nickname = ref.getNickname();
-		this->_pass = ref.getPass();
 		this->_ip = ref.getIp();
 		this->_socket = ref.getSocket();
 		this->_addr = ref.getAddr();
@@ -54,8 +51,6 @@ std::string	User::getUsername(void) const { return (this->_username); }
 
 std::string	User::getNickname(void) const { return (this->_nickname); }
 		
-std::string	User::getPass(void) const { return (this->_pass); }
-
 std::string	User::getIp(void) const { return (this->_ip); }
 
 struct pollfd	*User::getSocket(void) { return (this->_socket); }
@@ -102,10 +97,4 @@ void		User::setUsername(std::string s)
 {
 	if (_username != s)
 		_username = s;
-}
-
-void		User::setPass(std::string s)
-{
-	if (_pass != s)
-		_pass = s;
 }

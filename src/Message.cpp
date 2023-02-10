@@ -6,7 +6,7 @@
 /*   By: ccottin <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/24 18:28:25 by ccottin           #+#    #+#             */
-/*   Updated: 2023/02/09 15:07:04 by ybendavi         ###   ########.fr       */
+/*   Updated: 2023/02/10 16:44:42 by ccottin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@
 			std::vector<std::string>::iterator it;
 
 			_tosend = message;
+			_message = message;
 			parseMessage(message);
 //			std::cout << "Message:" << message << std::endl << "Receiver:" << _receiver << std::endl
 //				<< "Command:" << _command << std::endl
@@ -85,7 +86,7 @@ int		Message::parseMessage(const std::string message)
 			int		count;
 
 			count = 0;
-			if (message.empty() == true || message.size() > 512)
+			if (message.empty() == true)
 				return (-1);
 			last_pos = message.find_first_of('\r');
 			if (last_pos == std::string::npos || message[last_pos + 1] != '\n')
