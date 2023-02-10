@@ -6,7 +6,7 @@
 /*   By: ybendavi <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/09 18:47:17 by ybendavi          #+#    #+#             */
-/*   Updated: 2023/02/09 18:47:42 by ybendavi         ###   ########.fr       */
+/*   Updated: 2023/02/10 17:32:52 by ybendavi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,10 +35,12 @@ void	Server::_privMsg(User *user)
 		it = _channels.find(*(user->receivedmsg.front().getParams().begin()));
 		if (it != _channels.end())
 		{
-			if (it->second.isUserOnChannel(user->getNickname()) == true)
-				sendMessagetochan(user, &(it->second), _users.begin(), _users.end(), _domainName);
-			else
+			if (it->second.isUserOnChannel(user->getNickname()) == false)
 				user->tosendmsg.push_back(Message(ERR_NOSUCHCHANNEL));
+			else if (it->second.isUserBan(user->getNickname()) == true)
+				user->tosendmsg.push_back(Message(std::string("ERROR You are banned from that channel")));
+			else
+				sendMessagetochan(user, &(it->second), _users.begin(), _users.end(), _domainName);
 		}
 		else
 			user->tosendmsg.push_back(Message(ERR_CANNOTSENDTOCHAN));
