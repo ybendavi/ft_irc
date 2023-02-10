@@ -35,7 +35,7 @@ class	Server
 	public:
 
 		/*types*/
-			typedef std::map<std::string, User>::iterator	iterator; //should change name if we gonna use other containers with iterator
+			typedef std::map<std::string, User>::iterator	iterator;
 			typedef void (Server::*func_ptr)(User *);
 			std::map<std::string, func_ptr> cmd_map;
 
@@ -51,49 +51,45 @@ class	Server
 
 	private :
 
-//			int		handleClient(void);
-
 			/*functions*/
-			void								_initSocket(void);
-			int							_initClient(int index);
-			void							_pollfunction(void);
-			void							_checkUser(void);
-			void							_handleMessage(void);
-			void							_execute(User *user);
-			void							_notice(User *user);
-			void							_privMsg(User *user);
-			void	_whoIs(User *user);
-			iterator						_findUserByFd(int fd);
-			void							_unrgUser(int index, std::string buffer);
-			void							_join(User *user);
-			void							_disconnectClient(pollfd& client);
-			void							_quit(User *user);
-			void							_ft_Pollin(unsigned int i, iterator it);
-			void							_ft_Pollout(unsigned int i, iterator it);
-			void							_part(User *user);
-			void							_topic(User *user);
-			void							_removeUserFromChannels(const std::string& nickname);
-			void							_names(User *user);
-			void							_list(User *user);
-			void    						_listAllChannels(User *user);
-			void							_pong(User *user);
-			void    						_channelsList(User *user);
-			void							_kick(User *user);
-			void							_handlePass(int index, Message msg);
 
-			/*tmp commands stash*/
+			void				_initSocket(void);
+			int					_initClient(int index);
+			void				_pollfunction(void);
+			void				_checkUser(void);
+			void				_handleMessage(void);
+			void				_execute(User *user);
+			iterator			_findUserByFd(int fd);
+			void				_unrgUser(int index, std::string buffer);
+			void				_disconnectClient(pollfd& client);
+			void				_ft_Pollin(unsigned int i, iterator it);
+			void				_ft_Pollout(unsigned int i, iterator it);
+			void				_removeUserFromChannels(const std::string& nickname);
+			void    			_listAllChannels(User *user);
+			void				_pong(User *user);
+			void				_handlePass(int index, Message msg);
 
-			std::string	nick_cmd(std::string nick, std::string oldnick = "",
-					struct pollfd * fd = NULL, struct sockaddr * addr = NULL);
-			void	cmd_user(User * user);
-			void	kill_cmd(User * user);
-			void	mode_cmd(User * user);
-			void	who_cmd(User * user);
-			void	get_mode(User * user);
-			void	oper_cmd(User * user);
-			void	die_cmd(User * user);
-			User	*nick_holder(User * user);
-			
+			/*Commands stash*/
+
+			std::string			nick_cmd(std::string nick, std::string oldnick = "",
+									struct pollfd * fd = NULL, struct sockaddr * addr = NULL);
+			void				cmd_user(User * user);
+			void				kill_cmd(User * user);
+			void				mode_cmd(User * user);
+			void				who_cmd(User * user);
+			void				get_mode(User * user);
+			void				oper_cmd(User * user);
+			void				die_cmd(User * user);
+			User				*nick_holder(User * user);
+			void				_notice(User *user);
+			void				_privMsg(User *user);
+			void				_join(User *user);
+			void				_quit(User *user);
+			void				_part(User *user);
+			void				_topic(User *user);
+			void				_names(User *user);
+			void				_list(User *user);
+
 
 			/*server infos*/
 			std::string						_pass;

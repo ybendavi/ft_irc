@@ -2,7 +2,7 @@
 # define REPLIES_HPP
 
 # define RPL_WELCOME "001 :Bienvenue sur IRCrash :)"
-# define RPL_YOURHOST "002 :Ce nom de domaine a ete base sur des faits reels"
+# define RPL_YOURHOST "002 :Ce nom de domaine est base sur des faits reels"
 # define RPL_CREATED "003 "
 # define RPL_MYINFO "004 "
 # define RPL_PING "PING"
