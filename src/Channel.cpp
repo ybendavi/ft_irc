@@ -6,7 +6,7 @@
 /*   By: cdapurif <cdapurif@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/03 20:14:44 by cdapurif          #+#    #+#             */
-/*   Updated: 2023/02/09 19:05:29 by cdapurif         ###   ########.fr       */
+/*   Updated: 2023/02/10 17:34:25 by ybendavi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,20 @@ bool    Channel::isUserOnChannel(const std::string& nickname)
     if (_chanUsers.find(nickname) == _chanUsers.end())
         return (false);
     return (true);
+}
+
+bool    Channel::isUserBan(const std::string& nickname)
+{
+	std::vector<std::string>::iterator	it;
+
+	it = _banList.begin();
+
+	while (it != _banList.end())
+	{
+		if ((*it).compare(nickname) == 0)
+			return (true);
+	}
+	return (false);
 }
 
 void    Channel::removeUserFromChannel(const std::string& nickname)
