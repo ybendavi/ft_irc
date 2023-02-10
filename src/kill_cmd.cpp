@@ -11,11 +11,6 @@ void	Server::kill_cmd(User * user)
 	std::vector<std::string>	params;
 	
 	params = user->receivedmsg.front().getParams();
-	if (params.size() < 2)
-	{
-		user->tosendmsg.push_back(Message(ERR_NEEDMOREPARAMS));
-		return ;
-	}
 
 	std::map<std::string, User>::iterator	it;
 

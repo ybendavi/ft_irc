@@ -31,7 +31,7 @@ void	sendMessage(User *user, User *receiver, char *domainName)
 	user->receivedmsg.front().setToSend(to_send);
 
 	receiver->tosendmsg.push_back(Message(user->getNickname(), user->getUsername(), user->receivedmsg.front().getToSend().c_str(), std::string(domainName)));
-	receiver->_socket->events = POLLIN | POLLOUT ;
+	receiver->getSocket()->events = POLLIN | POLLOUT ;
 
 }
 
@@ -52,7 +52,7 @@ void	readySendy(std::string &str, std::string domain, std::string nick)
 	{
 		std::string temp = " ";
 
-		temp += nick + " 📉"; //la blague st incroyable promis on enleve
+		temp += nick;
 		str.insert(3, temp);
 		temp.erase();
 		temp = ":";

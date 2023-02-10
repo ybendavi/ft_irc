@@ -6,18 +6,18 @@
 /*   By: ccottin <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/18 18:30:30 by ccottin           #+#    #+#             */
-/*   Updated: 2023/02/09 22:36:44 by ccottin          ###   ########.fr       */
+/*   Updated: 2023/02/10 16:07:48 by ccottin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "User.hpp"
 #include <iostream>
 
-User::User(void) : _mode(3), _socket(NULL), _addr(NULL)
+User::User(void) : _socket(NULL), _addr(NULL), _mode(3)
 { }
 
-User::User(struct pollfd * socket, struct sockaddr * addr) : _mode(3), 
-					_socket(socket), _addr(addr)
+User::User(struct pollfd * socket, struct sockaddr * addr) : 
+					_socket(socket), _addr(addr), _mode(3) 
 { }
 
 User::User(const User &ref) : _socket(ref.getSocket()), _addr(ref.getAddr())
@@ -26,9 +26,7 @@ User::User(const User &ref) : _socket(ref.getSocket()), _addr(ref.getAddr())
 }
 
 User::~User(void)
-{ 
-	//close(_socket);
-}
+{ }
 
 User	&User::operator=(const User &ref)
 {

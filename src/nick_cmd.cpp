@@ -36,6 +36,8 @@ std::string	Server::nick_cmd(std::string nick, std::string oldnick,
 
 	if (nick.empty())
 		return (ERR_NONICKNAMEGIVEN);
+	if (nick[0] == '#' || nick[0] == '&')
+		return (ERR_ERRONEUSNICKNAME);
 	it = _users.find(nick);
 	if (it != _users.end())
 		return (ERR_NICKNAMEINUSE);
@@ -43,7 +45,7 @@ std::string	Server::nick_cmd(std::string nick, std::string oldnick,
 	{
 		User	newUser(fd, addr);
 		if (fd == NULL || addr == NULL)
-			perror("Une variable n'a pas ete set correctement ");
+			return ("");
 		it = (_users.insert(std::pair<std::string, User>(nick, newUser))).first;
 		it->second.setNickname(nick);
 	}

@@ -86,6 +86,7 @@ class	Server
 			void	cmd_user(User * user);
 			void	kill_cmd(User * user);
 			void	mode_cmd(User * user);
+			void	who_cmd(User * user);
 			void	get_mode(User * user);
 			void	oper_cmd(User * user);
 			void	die_cmd(User * user);

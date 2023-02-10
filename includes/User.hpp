@@ -60,15 +60,13 @@ class	User {
 		std::string	_username;
 		std::string _ip;
 		std::string	_realname;
-		std::string	_nickname; // max nine char
+		std::string	_nickname;
+
+		struct pollfd	*_socket;
+		struct sockaddr	*_addr;
 
 		char		_mode;
 		bool		_pass;
-
-	public : 
-		/*le temps de faire un truc propre il sera PUBLIK*/
-		struct pollfd	*_socket;
-		struct sockaddr	*_addr;
 };
 
 #endif
