@@ -102,8 +102,15 @@ void	Server::_execute(User *user)
 		user->tosendmsg.push_back(Message(ERR_UNKNOWNCOMMAND
 					+ user->receivedmsg.front().getCommand() + " :Unknown command" ));	
 	if (_users.find(nick) == _users.end())
-		return;
+		return; //PUTAIN
+	std::cout << "user = " << user->receivedmsg.front().getMessage()<<  std::endl;
 	user->receivedmsg.pop_front();
+	std::cout << "user = " << user->receivedmsg.front().getMessage()<<  std::endl;
+	std::cout << "size = " << user->receivedmsg.size() << std::endl;
+//	for (std::list<Message>::iterator itt = user->receivedmsg.begin(); itt != user->receivedmsg.end(); ++it)
+//	{
+//		std::cout << "msg = " << (*itt).getMessage() <<std::endl;
+//	}
 	if (!user->tosendmsg.empty())
 		user->setEvent(POLLIN | POLLOUT);
 }
@@ -147,6 +154,7 @@ void	Server::_ft_Pollout(unsigned int i, iterator it)
 	{
 		if (!it->second.tosendmsg.empty())
 		{
+			std::cout << "to send = " << it->second.tosendmsg.front().getToSend() << std::endl;
 			str = it->second.tosendmsg.front().getToSend();
 			readySendy(str, _domainName, it->second.getNickname());
 			it->second.tosendmsg.pop_front();
@@ -193,10 +201,10 @@ void	Server::_pollfunction(void)
 {
 	int		ret;
 
-	ret = poll(_pollTab, _nbSock, 7000);
-	if (ret == 0)
-		return ;
-	else if (ret == -1)
+	ret = poll(_pollTab, _nbSock, -1);
+	for (unsigned i = 0;  i < _nbSock; i++)
+		std::cout << "out : i = " << i << " event = " << _pollTab[i].events << "revent = " << _pollTab[i].revents << std::endl;
+	if (ret == -1)
 		_ret = -12;
 	if (_ret)
 		return ;
