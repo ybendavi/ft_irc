@@ -9,10 +9,13 @@ std::string	gnm(std::string & buff, std::string & s)
 		return ("");
 	s = buff;
 	s.resize(i + 2);
-	if (!buff.compare("\r\n"))
+	buff.erase(0, i + 2);
+	if (!s.compare("\r\n"))
+		return ("");
+	/*if (!buff.compare("\r\n"))
 		buff.erase();
 	else
-		buff.erase(0, i + 2);
+		buff.erase(0, i + 2);*/
 	return (s);
 }
 
@@ -64,6 +67,7 @@ void	readySendy(std::string &str, std::string domain, std::string nick)
 		temp = ":";
 		temp += domain + " ";
 		str.insert(0, temp);
-	}	
-	str += "\r\n";
+	}
+	if (str.find_last_of("\r\n") == std::string::npos)
+		str += "\r\n";
 }

@@ -50,7 +50,8 @@ class	User {
 		void			setUsername(std::string);
 		void			setNickname(std::string);
 		void			setPass(bool);
-		void			setEvent(short);	
+		void			setEvent(short);
+		void			setSocket(struct pollfd *);
 		
 		std::list< Message >		receivedmsg;
 		std::list< Message >		tosendmsg; 

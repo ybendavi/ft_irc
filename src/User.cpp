@@ -6,7 +6,7 @@
 /*   By: ccottin <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/18 18:30:30 by ccottin           #+#    #+#             */
-/*   Updated: 2023/02/10 16:07:48 by ccottin          ###   ########.fr       */
+/*   Updated: 2023/02/12 22:38:01 by ccottin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,4 +95,10 @@ void		User::setUsername(std::string s)
 {
 	if (_username != s)
 		_username = s;
+}
+
+void		User::setSocket(struct pollfd * socket)
+{
+	if (_socket != socket)
+		_socket = socket;
 }

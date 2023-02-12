@@ -26,7 +26,8 @@ SRCS	=	Server.cpp \
 			cmd_privmsg.cpp \
 			kick.cpp \
 			die_cmd.cpp \
-			kill_cmd.cpp
+			kill_cmd.cpp \
+			who_cmd.cpp
 
 OBJS	= $(addprefix src/, $(SRCS:.cpp=.o))
 

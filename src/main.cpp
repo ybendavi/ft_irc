@@ -36,6 +36,7 @@ int		main(int ac, char **av)
 	int		ret;
 
 	signal(SIGINT, sighandler);
+	signal(SIGQUIT, sighandler);
 	signal(SIGPIPE, sighandler);
 
 	if (ac != 3)

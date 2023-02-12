@@ -11,6 +11,11 @@ void	Server::kill_cmd(User * user)
 	std::vector<std::string>	params;
 	
 	params = user->receivedmsg.front().getParams();
+	if (params.empty())
+	{
+		user->tosendmsg.push_back(Message(ERR_NEEDMOREPARAMS));
+		return ;
+	}
 
 	std::map<std::string, User>::iterator	it;
 
@@ -20,5 +25,7 @@ void	Server::kill_cmd(User * user)
 		user->tosendmsg.push_back(Message(ERR_NOSUCHNICK + params[0]));
 		return ;
 	}
+	if (it->first == user->getNickname())
+		_ret = 1;
 	_disconnectClient((*it->second.getSocket()));
 }
