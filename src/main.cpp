@@ -8,6 +8,7 @@ int		printErr(int ret)
 {
 	ret = std::abs(ret);
 
+	std::cerr << "Error" << std::endl;
 	switch (ret)
 	{
 		case 1: std::cerr << "Server init : socket problem " << std::endl; break ;
@@ -49,7 +50,7 @@ int		main(int ac, char **av)
 	if (ret)
 		return ( printErr(ret) );
 	ret = server.start();
-	if (ret)
+	if (ret && loop)
 		return ( printErr(ret) );
 
 	return (EXIT_SUCCESS);
