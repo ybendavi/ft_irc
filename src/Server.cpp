@@ -25,6 +25,7 @@ Server::Server(void) : _domainName("IRCrash"), _ret(0),
 	cmd_map[std::string("NAMES")] = &Server::_names;
 	cmd_map[std::string("DIE")] = &Server::die_cmd;
 	cmd_map[std::string("WHO")] = &Server::who_cmd;
+	cmd_map[std::string("KICK")] = &Server::_kick;
 }
 
 Server::~Server(void)
@@ -243,7 +244,7 @@ void	Server::_ft_Pollin(unsigned int i, iterator it)
 	std::string s;
 	while ( !gnm(_leftover[i], s).empty() )
 	{
-	//	std::cout << "i = "<< i << " , s = " << s << std::endl;
+		std::cout << "i = "<< i << " , s = " << s << std::endl;
 		if ( it != _users.end() )
 		{
 			it->second.receivedmsg.push_back(Message(s));
@@ -280,7 +281,7 @@ void	Server::_ft_Pollout(unsigned int i, iterator it)
 		_tempRpl[i].clear();
 		_pollTab[i].events = POLLIN ;
 	}
-//	std::cout << "i = "<< i << " , to send = " << str << std::endl;
+	std::cout << "i = "<< i << " , to send = " << str << std::endl;
 	if ( !str.empty() &&  send(_pollTab[i].fd, str.c_str(),
 				strlen(str.c_str()), MSG_DONTWAIT) == -1)
 		_ret = -6;
@@ -356,6 +357,22 @@ std::map<std::string, User>::iterator	Server::_findUserByFd(int fd)
 	return (user);
 }
 
+const std::string	Server::_findUserByUsername(const std::string& username)
+{
+	iterator	user = _users.begin();
+	std::string	nickname;
+
+	for (; user != _users.end(); user++)
+	{
+		if (user->second.getUsername() == username)
+		{
+			nickname = user->first;
+			break ;
+		}
+	}
+	return (nickname);
+}
+
 void	Server::_removeUserFromChannels(const std::string& nickname)
 {
 	std::map<std::string, Channel>::iterator	it = _channels.begin();
@@ -365,6 +382,7 @@ void	Server::_removeUserFromChannels(const std::string& nickname)
 		it->second.removeUserFromChannel(nickname);
 		if (it->second.size() == 0)
 		{
+			std::cout << "last user leaving channel, destroying " << it->first << std::endl;
 			_channels.erase(it++);
 			continue ;
 		}

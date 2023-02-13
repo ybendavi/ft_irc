@@ -18,7 +18,6 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <errno.h>
 #include "User.hpp"
 #include "Replies.hpp"
 #include "Message.hpp"
@@ -61,6 +60,7 @@ class	Server
 			void				_handleMessage(void);
 			void				_execute(User *user);
 			iterator			_findUserByFd(int fd);
+			const std::string	_findUserByUsername(const std::string& username);
 			void				_unrgUser(int index, std::string buffer);
 			void				_disconnectClient(pollfd& client);
 			void				_ft_Pollin(unsigned int i, iterator it);
@@ -69,6 +69,7 @@ class	Server
 			void    			_listAllChannels(User *user);
 			void				_handlePass(int index, Message msg);
 			void 				_channelsList(User *user);
+			void				add_channel_user_mode(std::string s, std::map<std::string, Channel>::iterator channel, std::string nickname, User *user, std::string format);
 
 			/*Commands stash*/
 

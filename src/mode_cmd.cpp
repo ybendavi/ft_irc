@@ -140,8 +140,10 @@ void	rm_channel_mode(std::string s, std::map<std::string, Channel>::iterator cha
 	}
 }
 
-void	add_channel_user_mode(std::string s, std::map<std::string, Channel>::iterator channel, std::string nickname)
+void	Server::add_channel_user_mode(std::string s, std::map<std::string, Channel>::iterator channel, std::string nickname, User *user, std::string format)
 {
+	std::string	toSend;
+
 	if (channel->second.isUserOnChannel(nickname) == false)
 		return ;
 
@@ -157,6 +159,9 @@ void	add_channel_user_mode(std::string s, std::map<std::string, Channel>::iterat
 		{
 			mode |= BAN;
 			std::cout << "banning user " << nickname << " from channel " << channel->first << std::endl;
+			//HERE
+			toSend = std::string(":") + user->getNickname() + "!~" + user->getUsername() + "@" + "hostname MODE " + channel->first + " +b " + format;
+			sendMessageToAllChan(&(channel->second), _users.begin(), _users.end(),toSend);
 			channel->second.banUser(nickname);
 		}
 		if (s[i] == 'i')
@@ -282,7 +287,15 @@ void	Server::mode_cmd(User * user)
 		}
 		if (params.size() == 3)
 		{
-			if (chan->second.isUserOnChannel(params[2]) == false && chan->second.isUserBan(params[2]) == false)
+			std::string nickname;
+
+			if (params[2].size() > 3 && params[2][1] == '!')
+			{
+				nickname = params[2].substr(3);
+				nickname = nickname.substr(0, nickname.find_last_of('@'));
+				nickname = _findUserByUsername(nickname);
+			}
+			if (chan->second.isUserOnChannel(nickname) == false && chan->second.isUserBan(nickname) == false)
 			{
 	        	user->tosendmsg.push_back(Message(std::string(ERR_USERNOTINCHANNEL) + params[0] + " :They aren't on that channel"));
     	    	return ;
@@ -291,9 +304,9 @@ void	Server::mode_cmd(User * user)
 			std::string s = params[1];
 
 			if (s[0] == '+')
-				add_channel_user_mode(s, chan, params[2]);
+				add_channel_user_mode(s, chan, nickname, user, params[2]);
 			else if (s[0] == '-')
-				rm_channel_user_mode(s, chan, params[2]);
+				rm_channel_user_mode(s, chan, nickname);
 			else
 			{
 				user->tosendmsg.push_back(Message(ERR_UMODEUNKNOWNFLAG));

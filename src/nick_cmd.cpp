@@ -36,7 +36,9 @@ std::string	Server::nick_cmd(std::string nick, std::string oldnick,
 
 	if (nick.empty())
 		return (ERR_NONICKNAMEGIVEN);
-	if (nick[0] == '#' || nick[0] == '&')
+	if (nick[0] == '#' || nick[0] == '&'
+			|| (nick.find_first_not_of("[]\\`_^{}|QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm0123456789")
+			!= std::string::npos) )
 		return (ERR_ERRONEUSNICKNAME);
 	it = _users.find(nick);
 	if (it != _users.end())
