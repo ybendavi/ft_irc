@@ -423,6 +423,10 @@ void	Server::_disconnectClient(pollfd& client)
 	_addrInfo[i] = _addrInfo[_nbSock];
 	_passTab[i] = _passTab[_nbSock];
 	
+	_pollTab[_nbSock].events = 0;
+	_pollTab[_nbSock].revents = 0;
+
+	
 	cli = _findUserByFd(_pollTab[i].fd);
 	cli->second.setSocket(&(_pollTab[i]));
 
