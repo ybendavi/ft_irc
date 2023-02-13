@@ -6,7 +6,7 @@
 /*   By: cdapurif <cdapurif@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/09 18:47:17 by ybendavi          #+#    #+#             */
-/*   Updated: 2023/02/13 18:34:35 by cdapurif         ###   ########.fr       */
+/*   Updated: 2023/02/13 20:43:16 by cdapurif         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,10 @@ void	Server::_privMsg(User *user)
 		it = _channels.find(*(user->receivedmsg.front().getParams().begin()));
 		if (it != _channels.end())
 		{
+			std::string	channelName = user->receivedmsg.front().getParams()[0];
+			
 			if (it->second.isUserOnChannel(user->getNickname()) == false)
-				user->tosendmsg.push_back(Message(ERR_CANNOTSENDTOCHAN));
+				user->tosendmsg.push_back(Message(ERR_CANNOTSENDTOCHAN + channelName + " :Cannot send to channel"));
 			else
 				sendMessagetochan(user, &(it->second), _users.begin(), _users.end(), _domainName);
 		}

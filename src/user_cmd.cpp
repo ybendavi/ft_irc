@@ -8,7 +8,8 @@ void	Server::cmd_user(User * user)
 		return ;
 	}
 	if (user->receivedmsg.front().getParams().size() < 3
-			|| user->receivedmsg.front().getParamsopt().empty() )
+			|| user->receivedmsg.front().getParamsopt().empty() 
+			|| user->receivedmsg.front().getParams()[0].empty())
 	{
 		user->tosendmsg.push_back(Message(ERR_NEEDMOREPARAMS));
 		return ;

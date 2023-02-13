@@ -27,7 +27,6 @@
 #define MAX_USER 10
 #define MAX_CONN 12
 
-
 class	Server
 {
 

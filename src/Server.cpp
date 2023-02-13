@@ -244,7 +244,7 @@ void	Server::_ft_Pollin(unsigned int i, iterator it)
 	std::string s;
 	while ( !gnm(_leftover[i], s).empty() )
 	{
-		std::cout << "i = "<< i << " , s = " << s << std::endl;
+//		std::cout << "i = "<< i << " , s = " << s << std::endl;
 		if ( it != _users.end() )
 		{
 			it->second.receivedmsg.push_back(Message(s));
@@ -281,7 +281,7 @@ void	Server::_ft_Pollout(unsigned int i, iterator it)
 		_tempRpl[i].clear();
 		_pollTab[i].events = POLLIN ;
 	}
-	std::cout << "i = "<< i << " , to send = " << str << std::endl;
+//	std::cout << "i = "<< i << " , to send = " << str << std::endl;
 	if ( !str.empty() &&  send(_pollTab[i].fd, str.c_str(),
 				strlen(str.c_str()), MSG_DONTWAIT) == -1)
 		_ret = -6;
@@ -315,8 +315,6 @@ void	Server::_pollfunction(void)
 	int		ret;
 
 	ret = poll(_pollTab, _nbSock, -1);
-//	for (unsigned i = 0;  i < _nbSock; i++)
-//		std::cout << "out : i = " << i << " event = " << _pollTab[i].events << "revent = " << _pollTab[i].revents << std::endl;
 	if (ret == -1)
 		_ret = -12;
 	if (_ret)
@@ -376,10 +374,19 @@ const std::string	Server::_findUserByUsername(const std::string& username)
 void	Server::_removeUserFromChannels(const std::string& nickname)
 {
 	std::map<std::string, Channel>::iterator	it = _channels.begin();
+	std::string									toSend;
+	iterator									itUser;
+
+	itUser = _users.find(nickname);
 
 	while (it != _channels.end())
 	{
-		it->second.removeUserFromChannel(nickname);
+		if (it->second.isUserOnChannel(nickname))
+		{
+			it->second.removeUserFromChannel(nickname);
+			toSend = ":" + nickname + "!~" + itUser->second.getUsername() + "@hostname QUIT :\"leaving\"";
+			sendMessageToAllChan(&(it->second), _users.begin(), _users.end(),toSend);
+		}
 		if (it->second.size() == 0)
 		{
 			std::cout << "last user leaving channel, destroying " << it->first << std::endl;
