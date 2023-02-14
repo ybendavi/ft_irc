@@ -295,10 +295,12 @@ void	Server::mode_cmd(User * user)
 				nickname = nickname.substr(0, nickname.find_last_of('@'));
 				nickname = _findUserByUsername(nickname);
 			}
+			else
+				nickname = params[2];
 			if (chan->second.isUserOnChannel(nickname) == false && chan->second.isUserBan(nickname) == false)
 			{
 	        	user->tosendmsg.push_back(Message(std::string(ERR_USERNOTINCHANNEL) + params[0] + " :They aren't on that channel"));
-    	    	return ;
+				return ;
     		}
 
 			std::string s = params[1];

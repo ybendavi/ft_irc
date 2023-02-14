@@ -14,7 +14,7 @@
 
 void    Server::_topic(User *user)
 {
-    //std::string to_send; will be useful for stocking successful message and sending it to every users on that channel
+    std::string toSend;
     std::string channelName;
 
     //no channel name given
@@ -61,6 +61,7 @@ void    Server::_topic(User *user)
     {
         chan->second.getTopic() = user->receivedmsg.front().getParamsopt();
         chan->second.getTopicCreator() = user->getNickname();
-        user->tosendmsg.push_back(Message(std::string(":") + user->getNickname() + "!~" + user->getUsername() + "@" + "hostname TOPIC " + channelName + " :" + chan->second.getTopic()));
+        toSend = std::string(":") + user->getNickname() + "!~" + user->getUsername() + "@" + "hostname TOPIC " + channelName + " :" + chan->second.getTopic();
+        sendMessageToAllChan(&(chan->second), _users.begin(), _users.end(),toSend);
     }
 }

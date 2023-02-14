@@ -430,7 +430,6 @@ void	Server::_disconnectClient(pollfd& client)
 	cli = _findUserByFd(_pollTab[i].fd);
 	cli->second.setSocket(&(_pollTab[i]));
 
-
 	if (_pollTab[0].events == 0)
 		_pollTab[0].events = POLLIN;
 }
