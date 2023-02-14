@@ -40,8 +40,6 @@ void	Server::_join(User *user)
         return ;
     }
 
-    std::cout << "user " << user->getNickname() << " wants to join/create channel " << channelName << std::endl;
-
     //check if channel exist or create it
     std::map<std::string, Channel>::iterator    chan = _channels.find(channelName);
     if (chan == _channels.end())
